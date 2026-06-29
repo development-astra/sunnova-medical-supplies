@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products &amp; Services — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="A complete suite of professional medical and aesthetic supplies and services for practices across Miami-Dade County." />
+
+  {# Same font + stylesheet as the rest of the site #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-services">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  <main>
+    {# ============================================================
+       PAGE HERO — Services & Catalog (blue split, shared .whyhero)
+       ============================================================ #}
+    <section class="whyhero">
+      {# Sun motif comes from the other-page-hero-section.webp background #}
+
+      <div class="container whyhero__inner">
+        <div class="whyhero__left">
+          <p class="whyhero__badge"><span class="whyhero__dot" aria-hidden="true"></span> Services &amp; Catalog</p>
+          <h1 class="whyhero__title">Professional Supplies. Delivered Same-Day.</h1>
+        </div>
+
+        <div class="whyhero__right">
+          <p class="whyhero__text">
+            25 clinical-grade products across 5 categories — curated for med spas,
+            aesthetic clinics, private practices, urgent care centers, and dermatology
+            offices in Miami-Dade County.
+          </p>
+          <div class="whyhero__actions">
+            <a href="#contact" class="btn btn--primary">
+              Request Pricing
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#how-to-order" class="btn btn--light">How to Order</a>
+          </div>
+          <p class="whyhero__assurance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            Founded by a medical professional. Serving med spas, clinics, and
+            practices across Miami-Dade.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       TRUST BAR — compact orange strip (shared with the homepage)
+       ============================================================ #}
+    <section class="trustbar">
+      <div class="container trustbar__row">
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+          </span>
+          <p class="trust-item__label">Fast local delivery</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <p class="trust-item__label">A real person, not a<br />call center</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <p class="trust-item__label">Vetted, clinic-grade<br />products</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <p class="trust-item__label">Competitive pricing<br />and flexible ordering</p>
+        </div>
+
+      </div>
+    </section>
+
+    {# ============================================================
+       OUR SERVICES — 6 cards, first highlighted (shared .whysec)
+       ============================================================ #}
+    <section class="section whysec">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dash">Our Services</p>
+          <h2 class="section__title">Built For How Busy Clinics Actually Order</h2>
+        </div>
+
+        <div class="whygrid">
+          <article class="whycard whycard--featured">
+            <span class="whycard__icon whycard__icon--orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+            </span>
+            <h3 class="whycard__title">Same-Day Local Delivery</h3>
+            <p class="whycard__text">
+              Order by noon, receive same afternoon. We deliver directly to your clinic
+              across all of Miami-Dade. Broward and Palm Beach available on request.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            </span>
+            <h3 class="whycard__title">Flexible Ordering — No Minimums</h3>
+            <p class="whycard__text">
+              Order one box or one case. No fixed minimums. No contracts. No pressure.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </span>
+            <h3 class="whycard__title">1-Hour Order Confirmation</h3>
+            <p class="whycard__text">
+              Every order confirmed within 1 hour of receipt. You always know the status.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 3.5-3.5"/></svg>
+            </span>
+            <h3 class="whycard__title">Standing Order Program</h3>
+            <p class="whycard__text">
+              Set-up monthly auto-delivery and never manually reorder again. Standing
+              order clients receive priority same-day delivery.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+            </span>
+            <h3 class="whycard__title">Custom Bundles</h3>
+            <p class="whycard__text">
+              We build a monthly supply bundle based on your procedure mix and volume.
+              One order. One invoice.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <h3 class="whycard__title">Dedicated Account Rep — Isabella Lara</h3>
+            <p class="whycard__text">
+              Your local Miami rep, reachable by phone, text, and email. One contact.
+              Every order.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       PRODUCT CATALOG — 5 category tables (data-driven)
+       ============================================================ #}
+    {% set catalog = [
+      {
+        'num': '01', 'accent': 'blue',
+        'title': 'PPE & Protection',
+        'sub': 'Gloves · Masks · Gowns · Face Shields',
+        'rows': [
+          ['01', 'Nitrile Exam Gloves - Small', '100/box', 'same'],
+          ['02', 'Nitrile Exam Gloves - Medium', '100/box', 'same'],
+          ['03', 'Nitrile Exam Gloves - Large', '100/box', 'same'],
+          ['04', 'Level 2 Surgical Masks', '50/box', 'same'],
+          ['05', 'Disposable Isolation Gowns', '10/pack', 'same']
+        ],
+        'notes': [
+          'All nitrile gloves are powder-free, latex-free, and FDA exam-grade compliant.',
+          'Level 2 Surgical Masks are ASTM F2100 rated — BFE and PFE 98%+, the correct standard for injectable and laser procedures.',
+          'XL gloves and case pricing available — ask your rep.'
+        ]
+      },
+      {
+        'num': '02', 'accent': 'orange',
+        'title': 'Exam Room & Linen Supplies',
+        'sub': 'Table Paper · Pillow Covers · Bed Sheets · Drapes',
+        'rows': [
+          ['06', 'Exam Table Paper Roll — 18" x 225ft', '12/case', 'same'],
+          ['07', 'Disposable Pillow Covers', '100/pack', 'same'],
+          ['08', 'Disposable Bed Sheet Roll — 31" x 180ft', 'Each roll', 'next'],
+          ['09', 'Disposable Paper Drapes', '50/pack', 'same']
+        ],
+        'notes': [
+          'Set up a monthly standing order on exam room linens and never run out mid-treatment day.',
+          'Standing order clients receive priority same-day delivery.'
+        ]
+      },
+      {
+        'num': '03', 'accent': 'blue',
+        'title': 'Wound Care & Procedure Supplies',
+        'sub': 'Gauze · Bandages · Tape · Wound Closure · Antiseptics',
+        'rows': [
+          ['10', 'Sterile Gauze Pads 4x4"', '200/box', 'same'],
+          ['11', 'Adhesive Bandages — Assorted', '100/box', 'same'],
+          ['12', 'Medical Tape — 1" Paper', '12/box', 'same'],
+          ['13', 'Alcohol Prep Pads', '200/box', 'same'],
+          ['14', 'Wound Closure Strips 1/4" x 3"', '50/box', 'same'],
+          ['15', 'Povidone-Iodine Swabsticks', '50/box', 'same'],
+          ['16', 'Saline Wound Wash Spray 7oz', '/pc', 'same']
+        ],
+        'notes': [
+          'All single-use and individually packaged for hygiene compliance.',
+          'Alcohol prep pads and sterile gauze available in bulk case quantities — contact us for pricing.'
+        ]
+      },
+      {
+        'num': '04', 'accent': 'orange',
+        'title': 'General Clinical Disposables',
+        'sub': 'Tongue Depressors · Speculums · Spatulas',
+        'rows': [
+          ['17', 'Tongue Depressors — Wooden', '12/case', 'same'],
+          ['18', 'Disposable Speculums — Vaginal, Asst. Sizes', 'Each', 'next'],
+          ['19', 'Disposable Spatulas — Wood', '50/pack', 'same']
+        ],
+        'notes': [
+          'High-volume packs designed for busy practices. Speculums available in assorted sizes.'
+        ]
+      },
+      {
+        'num': '05', 'accent': 'blue',
+        'title': 'Esthetic & Spa Supplies',
+        'sub': 'Facial Rounds · Esthetic Wipes · Headbands · Eye Pads · Microneedling',
+        'rows': [
+          ['20', 'Non-Woven Esthetic Wipes 3x3"', '200/pack', 'same'],
+          ['21', 'Disposable Facial Rounds', '100/bag', 'same'],
+          ['22', 'Disposable Headbands', '50/pack', 'same'],
+          ['23', 'Under-Eye Gel Pads', '50 pairs/pack', 'same'],
+          ['24', 'Microneedling Cartridges — 36 Pin', '10/box', 'same']
+        ],
+        'notes': [
+          'Microneedling cartridges compatible with most standard RF and manual microneedling devices.',
+          'Contact us with your device brand and model to confirm compatibility before your first order.'
+        ]
+      }
+    ] %}
+
+    <section class="section catalog2">
+      <div class="container">
+        <div class="catalog2__head">
+          <p class="eyebrow eyebrow--dash">Product Catalog</p>
+          <h2 class="section__title section__title--left">25 products. 5 categories. All clinical grade.</h2>
+          <p class="catalog2__sub">
+            Contact us for pricing. All products available for same-day or next-day
+            delivery across Miami-Dade.
+          </p>
+        </div>
+
+        <div class="catcat-list" data-catalog>
+        {% for cat in catalog %}
+        <article class="catcat catcat--{{ cat.accent }}">
+          <div class="catcat__head">
+            <span class="catcat__num catcat__num--{{ cat.accent }}">{{ cat.num }}</span>
+            <div>
+              <h3 class="catcat__title">{{ cat.title }}</h3>
+              <p class="catcat__sub">{{ cat.sub }}</p>
+            </div>
+            {# Chevron — visible only on mobile, where the catalog is a collapsible accordion #}
+            <svg class="catcat__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+
+          <div class="catcat__tablewrap">
+            <table class="cattable">
+              <thead>
+                <tr><th>#</th><th>Product</th><th>Pack Size</th><th>Delivery</th></tr>
+              </thead>
+              <tbody>
+                {% for r in cat.rows %}
+                <tr>
+                  <td class="cattable__num">{{ r[0] }}</td>
+                  <td class="cattable__product">{{ r[1] }}</td>
+                  <td>{{ r[2] }}</td>
+                  <td><span class="delivery-pill delivery-pill--{{ r[3] }}">{{ 'Same Day' if r[3] == 'same' else 'Next Day' }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <ul class="catcat__notes">
+            {% for n in cat.notes %}
+            <li>
+              <svg class="catcat__bullet" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7z"/></svg>
+              {{ n }}
+            </li>
+            {% endfor %}
+          </ul>
+        </article>
+        {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       ORDER TERMS — blue, 7-row terms list
+       ============================================================ #}
+    <section class="section terms">
+      <svg class="terms__sun" viewBox="0 0 300 300" fill="none" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="termsSun" x1="40" y1="120" x2="200" y2="260" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FDB94A"/>
+            <stop offset="1" stop-color="#E5550F"/>
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="190" r="76" fill="none" stroke="url(#termsSun)" stroke-width="30"/>
+        <g fill="url(#termsSun)">
+          <rect x="92" y="36" width="26" height="64" rx="13" transform="rotate(16 105 68)"/>
+          <rect x="148" y="64" width="26" height="62" rx="13" transform="rotate(44 161 95)"/>
+          <rect x="200" y="120" width="26" height="58" rx="13" transform="rotate(70 213 149)"/>
+        </g>
+      </svg>
+
+      <div class="container terms__inner">
+        <div class="terms__head">
+          <p class="eyebrow eyebrow--dash">Order Terms</p>
+          <h2 class="terms__title">Simpler terms, spelled out</h2>
+        </div>
+
+        <ul class="terms__list">
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+              <span class="term-row__label">Minimums</span>
+            </div>
+            <span class="term-row__desc">None. Order exactly what you need.</span>
+          </li>
+
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+              <span class="term-row__label">Delivery Area</span>
+            </div>
+            <span class="term-row__desc">Miami-Dade County — same-day or next-day. Broward and Palm Beach on request.</span>
+          </li>
+
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <span class="term-row__label">Confirmation</span>
+            </div>
+            <span class="term-row__desc">Within 1 hour of order receipt.</span>
+          </li>
+
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
+              <span class="term-row__label">Payment Terms</span>
+            </div>
+            <span class="term-row__desc">Net-15 for established accounts. First orders require payment prior to delivery.</span>
+          </li>
+
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="15" height="11" rx="2"/><path d="M6 7V5.5A1.5 1.5 0 0 1 7.5 4h13A1.5 1.5 0 0 1 22 5.5v8a1.5 1.5 0 0 1-1.5 1.5H19"/></svg></span>
+              <span class="term-row__label">Payment Methods</span>
+            </div>
+            <span class="term-row__desc">ACH, check, or credit card (Visa/MC/Amex). 2.9% processing fee applies to card transactions.</span>
+          </li>
+
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.7-6.4L3 8"/><path d="M3 3v5h5"/></svg></span>
+              <span class="term-row__label">Returns</span>
+            </div>
+            <span class="term-row__desc">Unopened, damaged items accepted within 14 days of delivery with original packaging.</span>
+          </li>
+
+          <li class="term-row">
+            <div class="term-row__head">
+              <span class="term-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v9H4v-9"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7"/><path d="M12 7S10.8 3 8.5 3a2.5 2.5 0 0 0 0 5H12zM12 7s1.2-4 3.5-4a2.5 2.5 0 0 1 0 5H12z"/></svg></span>
+              <span class="term-row__label">First Order</span>
+            </div>
+            <span class="term-row__desc">First-time clients receive a complimentary products sample with their initial order.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    {# ============================================================
+       FINAL CTA — orange banner (request pricing / place an order).
+       Right half is reserved for a product-collage background image.
+       ============================================================ #}
+    <section class="section cta cta--banner" id="how-to-order">
+      <svg class="cta__sun" viewBox="0 0 200 200" fill="none" aria-hidden="true" focusable="false">
+        <path d="M44 150 A70 70 0 1 1 150 156" stroke="#ffffff" stroke-width="16" stroke-linecap="round" fill="none"/>
+        <g fill="#ffffff">
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(-45 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(-18 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(9 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(36 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(63 100 100)"/>
+        </g>
+      </svg>
+
+      <div class="container cta__grid">
+        <div class="cta__copy">
+          <h2 class="cta__title">Request pricing or place an order</h2>
+          <p class="cta__text">
+            Isabella Lara — your local Miami rep · (305) 519-6804 ·
+            orders@sunnovamedical.com
+          </p>
+          <div class="cta__actions">
+            <a href="#contact" class="btn btn--light">
+              Request Pricing
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#how-to-order" class="btn btn--ghost">How to Order</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

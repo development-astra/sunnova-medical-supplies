@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="Get your clinic supplied. Reach a real person at Sunnova Medical Supplies — confirmed in 1 hour, same-day delivery across Miami-Dade." />
+
+  {# Same font + stylesheet as the rest of the site #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-contact">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  <main>
+    {# ============================================================
+       PAGE HERO — Contact (blue split, shared .whyhero + pills)
+       ============================================================ #}
+    <section class="whyhero">
+      {# Sun motif comes from the other-page-hero-section.webp background #}
+
+      <div class="container whyhero__inner">
+        <div class="whyhero__left">
+          <p class="whyhero__badge"><span class="whyhero__dot" aria-hidden="true"></span> Contact Us</p>
+          <h1 class="whyhero__title">Let's Get Your Clinic Supplied</h1>
+          <ul class="whyhero__pills">
+            <li>Confirmed in 1 Hour</li>
+            <li>Same-Day Delivery</li>
+            <li>No Minimums &middot; No Contracts</li>
+          </ul>
+        </div>
+
+        <div class="whyhero__right">
+          <p class="whyhero__text">
+            We confirm within 1 hour. Deliver same-day. Reach out — getting started
+            takes one conversation.
+          </p>
+          <div class="whyhero__actions">
+            <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">
+              Shop Products
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#sign-in" class="btn btn--light">Open an Account</a>
+          </div>
+          <p class="whyhero__assurance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            Founded by a medical professional. Serving med spas, clinics, and
+            practices across Miami-Dade.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       REP + CONTACT CARDS
+       ============================================================ #}
+    <section class="section contact-reach">
+      <div class="container">
+        <div class="rep-card">
+          <div class="rep-card__avatar" aria-hidden="true">IL</div>
+          <div class="rep-card__info">
+            <p class="rep-card__eyebrow">Your Local Miami Rep</p>
+            <h2 class="rep-card__name">Isabella Lara</h2>
+            <p class="rep-card__text">
+              One direct contact for your account — phone, text, and email. She knows
+              your practice, your products, and your delivery schedule.
+            </p>
+          </div>
+          <div class="rep-card__contact">
+            <a href="tel:+13055196804" class="rep-card__line">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              (305) 519-6804
+            </a>
+            <a href="mailto:orders@sunnovamedical.com" class="rep-card__line">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg>
+              orders@sunnovamedical.com
+            </a>
+            <a href="#request" class="btn btn--primary rep-card__btn">Contact Isabella</a>
+          </div>
+        </div>
+
+        <div class="contact-reach__grid">
+          <a class="reach-card" href="tel:+13055196804">
+            <span class="reach-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+            <h3 class="reach-card__title">Phone / Text</h3>
+            <p class="reach-card__value">(305) 519-6804</p>
+            <p class="reach-card__sub">Mon&ndash;Fri, 8am&ndash;6pm EST</p>
+          </a>
+          <a class="reach-card" href="mailto:orders@sunnovamedical.com">
+            <span class="reach-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg></span>
+            <h3 class="reach-card__title">Email</h3>
+            <p class="reach-card__value">orders@sunnovamedical.com</p>
+            <p class="reach-card__sub">Replies within 1 hour, business hours</p>
+          </a>
+          <a class="reach-card" href="#">
+            <span class="reach-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+            <h3 class="reach-card__title">Website</h3>
+            <p class="reach-card__value">sunnovamedical.com</p>
+            <p class="reach-card__sub">Catalog &amp; quotes — available 24/7</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       WHAT TO HAVE READY + WHAT HAPPENS NEXT + REQUEST FORM
+       ============================================================ #}
+    <section class="section ready" id="request">
+      <div class="container ready__layout">
+
+        <div class="ready__col">
+          <p class="eyebrow eyebrow--dash">What to Have Ready</p>
+          <h2 class="ready__heading">Helpful — but not required</h2>
+          <ul class="checklist">
+            <li>
+              <span class="checklist__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 6.5"/></svg></span>
+              <span>Facility type <b>(med spa, urgent care, aesthetic clinic, etc.)</b></span>
+            </li>
+            <li>
+              <span class="checklist__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 6.5"/></svg></span>
+              <span>Your <b>Miami-Dade location</b></span>
+            </li>
+            <li>
+              <span class="checklist__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 6.5"/></svg></span>
+              <span>Products or <b>categories you need</b></span>
+            </li>
+            <li>
+              <span class="checklist__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 6.5"/></svg></span>
+              <span>Approximate <b>order frequency</b></span>
+            </li>
+          </ul>
+          <p class="ready__note">A simple introduction is enough to get started.</p>
+
+          <p class="eyebrow eyebrow--dash ready__eyebrow2">After You Reach Out</p>
+          <h2 class="ready__heading">What happens next</h2>
+          <ol class="nextsteps">
+            <li><span class="nextsteps__num nextsteps__num--blue">1</span> We respond and confirm within 1 hour</li>
+            <li><span class="nextsteps__num nextsteps__num--orange">2</span> We learn your practice's supply needs</li>
+            <li><span class="nextsteps__num nextsteps__num--blue">3</span> We send a custom catalog and pricing overview</li>
+            <li><span class="nextsteps__num nextsteps__num--orange">4</span> You review — zero obligation</li>
+            <li><span class="nextsteps__num nextsteps__num--blue">5</span> Approve and receive same-day or next-day delivery</li>
+          </ol>
+        </div>
+
+        <form class="reqform" action="#" method="post">
+          <h2 class="reqform__title">Request A Catalog or Quote</h2>
+          <p class="reqform__sub">Tell us about your practice — Isabella will follow up within the hour.</p>
+
+          <div class="reqform__row">
+            <div class="reqform__field">
+              <label class="reqform__label" for="full-name">Full Name <span class="req">*</span></label>
+              <input class="reqform__input" id="full-name" name="full_name" type="text" placeholder="Jordan Rivera" required />
+            </div>
+            <div class="reqform__field">
+              <label class="reqform__label" for="practice-name">Practice Name <span class="req">*</span></label>
+              <input class="reqform__input" id="practice-name" name="practice_name" type="text" placeholder="Brickell Aesthetics" required />
+            </div>
+          </div>
+
+          <div class="reqform__row">
+            <div class="reqform__field">
+              <label class="reqform__label" for="facility-type">Facility Type <span class="req">*</span></label>
+              <select class="reqform__select" id="facility-type" name="facility_type" required>
+                <option value="" disabled selected>Select Facility Type...</option>
+                <option>Med Spa</option>
+                <option>Aesthetic Clinic</option>
+                <option>Dermatology Office</option>
+                <option>Private Practice</option>
+                <option>Urgent Care Center</option>
+                <option>Wellness Center</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="reqform__field">
+              <label class="reqform__label" for="location">Miami-Dade Location <span class="req">*</span></label>
+              <input class="reqform__input" id="location" name="location" type="text" placeholder="e.g. Coral Gables" required />
+            </div>
+          </div>
+
+          <div class="reqform__row">
+            <div class="reqform__field reqform__field--full">
+              <label class="reqform__label" for="products">Products/Categories Needed <span class="req">*</span></label>
+              <textarea class="reqform__textarea" id="products" name="products" placeholder="e.g. nitrile gloves, exam table paper, syringes" required></textarea>
+            </div>
+          </div>
+
+          <div class="reqform__row">
+            <div class="reqform__field reqform__field--full">
+              <label class="reqform__label" for="contact-method">Preferred Contact Method <span class="req">*</span></label>
+              <input class="reqform__input" id="contact-method" name="contact_method" type="text" placeholder="Phone / Email" required />
+            </div>
+          </div>
+
+          <button type="submit" class="reqform__btn">Send Inquiry</button>
+        </form>
+      </div>
+    </section>
+
+    {# ============================================================
+       ORDER TERMS AT A GLANCE — simple table
+       ============================================================ #}
+    <section class="section glance-sec">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dash">Order Terms at a Glance</p>
+          <h2 class="section__title">No surprises — here's how we work</h2>
+        </div>
+
+        <table class="glance">
+          <tbody>
+            <tr><th>Minimums</th><td>None</td></tr>
+            <tr><th>Contracts</th><td>None</td></tr>
+            <tr><th>Confirmation</th><td>Within 1 hour</td></tr>
+            <tr><th>Delivery</th><td>Same-day or next-day — Miami-Dade</td></tr>
+            <tr><th>Payment Terms</th><td>Net-15 established accounts &middot; First order pre-pay</td></tr>
+            <tr><th>Payment Methods</th><td>ACH &middot; Check &middot; Visa/MC/Amex (2.9% card fee)</td></tr>
+            <tr><th>Returns</th><td>Unopened items, within 14 days</td></tr>
+            <tr><th>First Order Bonus</th><td>Complimentary product sample included</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {# ============================================================
+       OUR DELIVERY AREA — blue card, neighborhood pills
+       ============================================================ #}
+    <section class="section delivery-sec">
+      <div class="container">
+        <div class="delivery-card">
+          <p class="eyebrow eyebrow--dash">Our Delivery Area</p>
+          <h2 class="section__title section__title--left text-white">
+            Same-day &amp; next-day<br />across Miami-Dade
+          </h2>
+          <p class="delivery-card__lead">
+            We deliver professional medical and aesthetic supplies to licensed
+            clinical facilities throughout Miami-Dade County, including:
+          </p>
+
+          <ul class="coverage__pills">
+            {% set areas = [
+              'Brickell', 'Downtown Miami', 'Coral Gables', 'Coconut Grove',
+              'Miami Beach', 'Midtown', 'South Miami', 'Doral', 'Westchester',
+              'Hialeah', 'Kendall', 'Aventura', 'Cutler Bay', 'Pinecrest', 'Sweetwater'
+            ] %}
+            {% for a in areas %}
+            <li class="pill">{{ a }}</li>
+            {% endfor %}
+            <li class="pill pill--accent">+ Surrounding Communities</li>
+          </ul>
+
+          <p class="delivery-card__note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Broward and Palm Beach available on request.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

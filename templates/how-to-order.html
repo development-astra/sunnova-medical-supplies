@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Order — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="Ordering from Sunnova takes minutes — no portal, no approval process. Three steps from first contact to a confirmed, same-day delivery across Miami-Dade." />
+
+  {# Same font + stylesheet as the rest of the site #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-order">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  <main>
+    {# ============================================================
+       PAGE HERO — How to Order (blue split, shared .whyhero)
+       ============================================================ #}
+    <section class="whyhero">
+      {# Sun motif comes from the other-page-hero-section.webp background #}
+
+      <div class="container whyhero__inner">
+        <div class="whyhero__left">
+          <p class="whyhero__badge"><span class="whyhero__dot" aria-hidden="true"></span> How to Order</p>
+          <h1 class="whyhero__title">Ordering Takes Minutes</h1>
+        </div>
+
+        <div class="whyhero__right">
+          <p class="whyhero__text">
+            No portal. No approval process. Three steps from first contact to
+            confirmed order.
+          </p>
+          <div class="whyhero__actions">
+            <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">
+              Shop Products
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#sign-in" class="btn btn--light">Open an Account</a>
+          </div>
+          <p class="whyhero__assurance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            Founded by a medical professional. Serving med spas, clinics, and
+            practices across Miami-Dade.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       TRUST BAR — compact orange strip (shared with the homepage)
+       ============================================================ #}
+    <section class="trustbar">
+      <div class="container trustbar__row">
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+          </span>
+          <p class="trust-item__label">Fast local delivery</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <p class="trust-item__label">A real person, not a<br />call center</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <p class="trust-item__label">Vetted, clinic-grade<br />products</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <p class="trust-item__label">Competitive pricing<br />and flexible ordering</p>
+        </div>
+
+      </div>
+    </section>
+
+    {# ============================================================
+       THE PROCESS — 3 numbered step cards
+       ============================================================ #}
+    <section class="section steps3sec">
+      <div class="container">
+        <div class="whysec__head">
+          <p class="eyebrow eyebrow--dash">The Process</p>
+          <h2 class="section__title section__title--left">Three Steps to Confirmation</h2>
+        </div>
+
+        <div class="steps3">
+          <article class="step3">
+            <span class="step3__num step3__num--blue">1</span>
+            <h3 class="step3__title">Reach Out</h3>
+            <p class="step3__text">
+              Call, text, or email. Tell us your facility type, location, and what you
+              need. We respond and confirm within 1 hour.
+            </p>
+          </article>
+
+          <span class="step3__arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+
+          <article class="step3">
+            <span class="step3__num step3__num--gold">2</span>
+            <h3 class="step3__title">Receive your Quote</h3>
+            <p class="step3__text">
+              Clear, itemized pricing — no hidden fees, no bundled surprises. Review it
+              before you commit to anything.
+            </p>
+          </article>
+
+          <span class="step3__arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+
+          <article class="step3">
+            <span class="step3__num step3__num--orange">3</span>
+            <h3 class="step3__title">Confirm and Receive</h3>
+            <p class="step3__text">
+              Approve by phone, email, or online. We fulfill and deliver same-day or
+              next-day directly to your clinic.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       AFTER YOUR FIRST ORDER — 4 cards (first highlighted, shared .whysec)
+       ============================================================ #}
+    <section class="section whysec">
+      <div class="container">
+        <div class="whysec__head">
+          <p class="eyebrow eyebrow--dash">After Your First Order</p>
+          <h2 class="section__title section__title--left">It Only Gets Easier</h2>
+        </div>
+
+        <div class="whysec__grid">
+          <article class="whycard whycard--featured">
+            <span class="whycard__icon whycard__icon--orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+            </span>
+            <h3 class="whycard__title">Reorder in Seconds</h3>
+            <p class="whycard__text">
+              We keep your order history on file, so repeat orders take moments.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 3.5-3.5"/></svg>
+            </span>
+            <h3 class="whycard__title">Standing Order Program</h3>
+            <p class="whycard__text">
+              Set monthly auto-delivery and never reorder again.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+            </span>
+            <h3 class="whycard__title">Custom Bundles</h3>
+            <p class="whycard__text">
+              We build a recurring supply package around your procedure mix.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            </span>
+            <h3 class="whycard__title">Proactive Restocking Alerts</h3>
+            <p class="whycard__text">
+              We flag when key items are running low before you do.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       HOW TO REACH US — 3 contact cards (centered)
+       ============================================================ #}
+    <section class="section reachus">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dash">How to Reach Us</p>
+          <h2 class="section__title">Reach a real person — every time</h2>
+        </div>
+
+        <div class="reach-grid">
+          <a class="reach-card" href="tel:+13055196804">
+            <span class="reach-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </span>
+            <h3 class="reach-card__title">Phone / Text</h3>
+            <p class="reach-card__value">(305) 519-6804</p>
+            <p class="reach-card__sub">Mon&ndash;Fri, 8am&ndash;6pm EST</p>
+          </a>
+
+          <a class="reach-card" href="mailto:orders@sunnovamedical.com">
+            <span class="reach-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg>
+            </span>
+            <h3 class="reach-card__title">Email</h3>
+            <p class="reach-card__value">orders@sunnovamedical.com</p>
+            <p class="reach-card__sub">Replies within 1 hour, business hours</p>
+          </a>
+
+          <a class="reach-card" href="#">
+            <span class="reach-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+            </span>
+            <h3 class="reach-card__title">Website</h3>
+            <p class="reach-card__value">sunnovamedical.com</p>
+            <p class="reach-card__sub">Catalog &amp; quotes — available 24/7</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       FAQ — accordion (reuses the shared .accordion JS in main.js)
+       ============================================================ #}
+    {% set faqs = [
+      ('Do you have order minimums?', 'No. Order exactly what you need — one box or one case. No minimums, no contracts, no pressure.'),
+      ('How fast can I receive my order?', 'Order by noon and receive the same afternoon. Same-day or next-day delivery across Miami-Dade, with every order confirmed within 1 hour.'),
+      ('Where do you deliver?', 'All of Miami-Dade County for same-day or next-day delivery. Broward and Palm Beach are available on request.'),
+      ('What practices do you work with?', 'Med spas, aesthetic clinics, dermatology offices, private practices, urgent care centers, and wellness centers — any licensed healthcare or aesthetics facility in Miami-Dade.'),
+      ('How does payment work?', 'Net-15 terms for established accounts; first orders are paid prior to delivery. We accept ACH, check, or credit card (Visa/MC/Amex) — a 2.9% processing fee applies to card transactions.'),
+      ('Can I set up automatic monthly delivery?', 'Yes. Our Standing Order Program sets up monthly auto-delivery so you never manually reorder, and standing-order clients receive priority same-day delivery.'),
+      ('Can I see the catalog and pricing first?', 'Absolutely. Browse our catalog anytime and contact us for clear, itemized pricing — no hidden fees — before you commit to anything.'),
+      ('What if I need a product not in your catalog?', 'Just ask. We source from vetted national distribution partners and regularly add items based on client needs — tell us what you need and we will track it down.')
+    ] %}
+
+    <section class="section faqsec">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dash">Frequently Asked Questions</p>
+          <h2 class="section__title">Answers Before You Ask</h2>
+        </div>
+
+        <div class="accordion faq">
+          {% for q, ans in faqs %}
+          <div class="accordion__item faq__item">
+            <button class="accordion__header faq__q" type="button" aria-expanded="false">
+              <span>{{ q }}</span>
+              <span class="faq__toggle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </span>
+            </button>
+            <div class="accordion__panel faq__panel">
+              <p>{{ ans }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       FINAL CTA — orange banner (set up your account)
+       ============================================================ #}
+    <section class="section cta cta--banner" id="get-started">
+      <svg class="cta__sun" viewBox="0 0 200 200" fill="none" aria-hidden="true" focusable="false">
+        <path d="M44 150 A70 70 0 1 1 150 156" stroke="#ffffff" stroke-width="16" stroke-linecap="round" fill="none"/>
+        <g fill="#ffffff">
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(-45 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(-18 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(9 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(36 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(63 100 100)"/>
+        </g>
+      </svg>
+
+      <div class="container cta__grid">
+        <div class="cta__copy">
+          <h2 class="cta__title">Set up Your Account Today!</h2>
+          <p class="cta__text">
+            Isabella Lara — your local Miami rep · (305) 519-6804 ·
+            orders@sunnovamedical.com
+          </p>
+          <div class="cta__actions">
+            <a href="#sign-in" class="btn btn--light">
+              Set Up Your Account
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#contact" class="btn btn--ghost">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

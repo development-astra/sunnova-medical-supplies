@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nitrile Exam Gloves – Small — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="Powder-free nitrile exam gloves, size small. Latex-free, FDA-compliant, same-day delivery across Miami-Dade." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-product">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  <main>
+    {# ============================================================
+       BREADCRUMB BAR (blue; padded to clear the fixed header)
+       ============================================================ #}
+    <div class="product-breadcrumb">
+      <nav class="container breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span class="breadcrumb__sep" aria-hidden="true">›</span>
+        <a href="{{ url_for('services_and_catalog') }}">PPE &amp; Protection</a>
+        <span class="breadcrumb__sep" aria-hidden="true">›</span>
+        <span class="breadcrumb__current" aria-current="page">Nitrile Exam Gloves – Small</span>
+      </nav>
+    </div>
+
+    {# ============================================================
+       PRODUCT HERO — gallery (left) + buy panel (right)
+       ============================================================ #}
+    <section class="section product">
+      <div class="container product__grid">
+
+        {# ---- Gallery ---- #}
+        <div class="product-gallery" data-gallery>
+          <div class="product-gallery__main">
+            <div class="product-gallery__badges">
+              <span class="badge badge--blue">FDA-Compliant</span>
+              <span class="badge badge--orange">Latex-Free</span>
+            </div>
+            <img class="product-gallery__img" data-main-image
+                 src="https://loremflickr.com/720/520/nitrile,gloves?lock=31"
+                 alt="Nitrile exam gloves, size small" />
+          </div>
+
+          <div class="product-gallery__thumbs">
+            <button class="thumb is-active" type="button"
+                    data-full="https://loremflickr.com/720/520/nitrile,gloves?lock=31">
+              <img src="https://loremflickr.com/160/160/nitrile,gloves?lock=31" alt="View 1" loading="lazy" />
+            </button>
+            <button class="thumb" type="button"
+                    data-full="https://loremflickr.com/720/520/medical,gloves?lock=32">
+              <img src="https://loremflickr.com/160/160/medical,gloves?lock=32" alt="View 2" loading="lazy" />
+            </button>
+            <button class="thumb" type="button"
+                    data-full="https://loremflickr.com/720/520/exam,gloves?lock=33">
+              <img src="https://loremflickr.com/160/160/exam,gloves?lock=33" alt="View 3" loading="lazy" />
+            </button>
+            <button class="thumb" type="button"
+                    data-full="https://loremflickr.com/720/520/glove,box?lock=34">
+              <img src="https://loremflickr.com/160/160/glove,box?lock=34" alt="View 4" loading="lazy" />
+            </button>
+          </div>
+        </div>
+
+        {# ---- Buy panel ---- #}
+        <div class="product-info">
+          <h1 class="product-info__title">Nitrile Exam Gloves – Small</h1>
+
+          <p class="product-info__meta">
+            <span>SKU: GLV-NIT-SM-100</span>
+            <span class="dot" aria-hidden="true">•</span>
+            <span>100/BOX</span>
+            <span class="dot" aria-hidden="true">•</span>
+            <a href="{{ url_for('services_and_catalog') }}" class="product-info__cat">PPE &amp; PROTECTION</a>
+          </p>
+
+          <p class="product-info__price">$18.50 <span>/box</span></p>
+
+          {# Delivery note #}
+          <div class="delivery-note">
+            <span class="delivery-note__icon" aria-hidden="true">
+              <img src="{{ url_for('static', filename='img/svg-icons/blue-car.svg') }}" width="22" height="22" alt="" />
+            </span>
+            <div>
+              <p class="delivery-note__title">Same-Day Delivery in Miami-Dade</p>
+              <p class="delivery-note__text">
+                Order now and receive your supplies today directly to your clinic.
+                No minimum order required.
+              </p>
+            </div>
+          </div>
+
+          {# Quantity + add to cart #}
+          <div class="buy-row">
+            <div class="qty" data-qty>
+              <button class="qty__btn" type="button" data-action="dec" aria-label="Decrease quantity">−</button>
+              <input class="qty__input" type="text" inputmode="numeric" value="1" aria-label="Quantity" />
+              <button class="qty__btn" type="button" data-action="inc" aria-label="Increase quantity">+</button>
+            </div>
+            <button class="btn btn--primary btn--lg buy-row__cart" type="button">Add to Cart</button>
+          </div>
+
+          {# Trust badges #}
+          <ul class="trust-row">
+            <li><img class="trust-row__icon" src="{{ url_for('static', filename='img/svg-icons/od-1.svg') }}" alt="" aria-hidden="true" /> Secure Checkout</li>
+            <li><img class="trust-row__icon" src="{{ url_for('static', filename='img/svg-icons/od-2.svg') }}" alt="" aria-hidden="true" /> Always in Stock</li>
+            <li><img class="trust-row__icon" src="{{ url_for('static', filename='img/svg-icons/od-3.svg') }}" alt="" aria-hidden="true" /> Easy reorder</li>
+          </ul>
+
+          {# Product description #}
+          <div class="product-desc">
+            <div class="product-desc__head">
+              <img src="{{ url_for('static', filename='img/svg-icons/product-desc.svg') }}" alt="" aria-hidden="true" /> Product Description
+            </div>
+            <div class="product-desc__body">
+              <p>
+                Powder-free nitrile exam gloves in size small, engineered for maximum
+                tactile sensitivity during injectable treatments, aesthetic procedures,
+                and clinical exams. Latex-free and hypoallergenic, making them safe for
+                providers and patients with latex sensitivities.
+              </p>
+              <p>
+                The textured fingertip design ensures a confident, non-slip grip on
+                syringes, cannulas, and delicate instruments. Used daily in med spas,
+                dermatology offices, aesthetic clinics, and private practices across
+                Miami-Dade County.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {# ============================================================
+       WHY CLINICS CHOOSE THIS PRODUCT — 6 feature cards (3 cols)
+       ============================================================ #}
+    <section class="section prodfeat">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--orange">Why Clinics Choose This Product</p>
+          <h2 class="section__title">Built for <span class="text-blue">aesthetic professionals</span></h2>
+          <p class="section__sub">
+            Engineered for the demands of med spas, dermatology offices, and fast-paced
+            aesthetic practices across South Florida.
+          </p>
+        </div>
+
+        <div class="prodfeat__grid">
+          <article class="prodfeat-card">
+            <img class="prodfeat-card__icon" src="{{ url_for('static', filename='img/svg-icons/aes-1.svg') }}" alt="" aria-hidden="true" />
+            <h3 class="prodfeat-card__title">Textured Fingertips</h3>
+            <p class="prodfeat-card__text">
+              Confident, non-slip grip during injections, filler procedures, and delicate
+              instrument handling.
+            </p>
+          </article>
+
+          <article class="prodfeat-card">
+            <img class="prodfeat-card__icon" src="{{ url_for('static', filename='img/svg-icons/aes-2.svg') }}" alt="" aria-hidden="true" />
+            <h3 class="prodfeat-card__title">100% Latex-Free</h3>
+            <p class="prodfeat-card__text">
+              Safe for providers and patients with latex allergies – reduces liability and
+              improves patient trust.
+            </p>
+          </article>
+
+          <article class="prodfeat-card">
+            <img class="prodfeat-card__icon" src="{{ url_for('static', filename='img/svg-icons/aes-3.svg') }}" alt="" aria-hidden="true" />
+            <h3 class="prodfeat-card__title">Powder-Free Formula</h3>
+            <p class="prodfeat-card__text">
+              Eliminates contamination risk for open-skin treatments and aesthetic
+              procedures.
+            </p>
+          </article>
+
+          <article class="prodfeat-card">
+            <img class="prodfeat-card__icon" src="{{ url_for('static', filename='img/svg-icons/aes-4.svg') }}" alt="" aria-hidden="true" />
+            <h3 class="prodfeat-card__title">FDA-Compliant</h3>
+            <p class="prodfeat-card__text">
+              Exam-grade quality meeting strict clinical standards for medical environments
+              and private practices.
+            </p>
+          </article>
+
+          <article class="prodfeat-card">
+            <img class="prodfeat-card__icon" src="{{ url_for('static', filename='img/svg-icons/aes-5.svg') }}" alt="" aria-hidden="true" />
+            <h3 class="prodfeat-card__title">High-Volume Value</h3>
+            <p class="prodfeat-card__text">
+              100 gloves per box lowers your per-unit cost and reduces how often you need to
+              reorder.
+            </p>
+          </article>
+
+          <article class="prodfeat-card">
+            <img class="prodfeat-card__icon" src="{{ url_for('static', filename='img/svg-icons/aes-6.svg') }}" alt="" aria-hidden="true" />
+            <h3 class="prodfeat-card__title">Same-Day Miami Delivery</h3>
+            <p class="prodfeat-card__text">
+              Never run out mid-treatment. Order exactly what your clinic needs, delivered
+              the same day.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       PRODUCT DETAILS — spec table
+       ============================================================ #}
+    <section class="section prodspecs">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--orange">More</p>
+          <h2 class="section__title">Product <span class="text-blue">details</span></h2>
+        </div>
+
+        <div class="prodspecs__wrap">
+          <table class="specs-table">
+            <tbody>
+              <tr><th scope="row">Quantity</th><td>100 gloves per box</td></tr>
+              <tr><th scope="row">Material</th><td>Nitrile (Latex-free)</td></tr>
+              <tr>
+                <th scope="row">Powder-free</th>
+                <td><span class="specs-yes">{% include 'check.svg' ignore missing %}Yes</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Fingertip Texture</th>
+                <td><span class="specs-yes">{% include 'check.svg' ignore missing %}Yes</span></td>
+              </tr>
+              <tr>
+                <th scope="row">FDA-compliant</th>
+                <td><span class="specs-yes">{% include 'check.svg' ignore missing %}Yes</span></td>
+              </tr>
+              <tr><th scope="row">Size</th><td>Small</td></tr>
+              <tr><th scope="row">Delivery Availability</th><td>Same-day across Miami-Dade</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       RELATED SEARCHES — pill tag cluster
+       ============================================================ #}
+    <section class="section related">
+      <div class="container">
+        <p class="related__title">Related Searches</p>
+        <ul class="related__tags">
+          <li><a href="#" class="tag">Nitrile gloves small Miami</a></li>
+          <li><a href="#" class="tag">Powder-free exam gloves med spa</a></li>
+          <li><a href="#" class="tag">Latex-free gloves aesthetic clinic</a></li>
+          <li><a href="#" class="tag">Nitrile gloves 100 box Miami-Dade</a></li>
+          <li><a href="#" class="tag">Medical gloves same-day delivery Miami</a></li>
+          <li><a href="#" class="tag">Exam gloves for injections</a></li>
+          <li><a href="#" class="tag">Gloves for Botox clinic Miami</a></li>
+        </ul>
+      </div>
+    </section>
+
+    {# ============================================================
+       FINAL CTA — running low on gloves
+       ============================================================ #}
+    <section class="section section--blue cta">
+      <span class="cta__blob cta__blob--bl" aria-hidden="true"></span>
+      <span class="cta__blob cta__blob--tr" aria-hidden="true"></span>
+
+      <div class="container cta__inner">
+        <p class="eyebrow eyebrow--gold">Don't Run Out Mid-Treatment</p>
+        <h2 class="cta__title">Running <span class="text-gold">low on gloves?</span></h2>
+        <p class="cta__text">
+          We deliver to your clinic same-day across Miami-Dade. Order now – no minimums,
+          no contracts.
+        </p>
+        <div class="cta__actions">
+          <a href="mailto:sunnovamedical@gmail.com" class="btn btn--primary btn--lg">Order Now</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

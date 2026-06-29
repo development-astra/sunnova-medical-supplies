@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Choose Sunnova? — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="What sets Sunnova Medical Supplies apart from every other medical supply distributor serving Miami-Dade County." />
+
+  {# Same font + stylesheet as the homepage #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-why">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  <main>
+    {# ============================================================
+       PAGE HERO — Why Us (blue split: badge + heading | copy + CTAs)
+       ============================================================ #}
+    <section class="whyhero">
+      {# Sun motif comes from the other-page-hero-section.webp background #}
+
+      <div class="container whyhero__inner">
+        <div class="whyhero__left">
+          <p class="whyhero__badge"><span class="whyhero__dot" aria-hidden="true"></span> Why Choose Sunnova</p>
+          <h1 class="whyhero__title">Miami-Dade's Local Medical Supply Partner</h1>
+        </div>
+
+        <div class="whyhero__right">
+          <p class="whyhero__text">
+            Not a warehouse. Not a call center. A Miami-based distributor built
+            specifically for the clinics, med spas, and practices in our community.
+          </p>
+          <div class="whyhero__actions">
+            <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">
+              Shop Products
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#contact" class="btn btn--light">Open an Account</a>
+          </div>
+          <p class="whyhero__assurance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            Founded by a medical professional. Serving med spas, clinics, and
+            practices across Miami-Dade.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       TRUST BAR — compact orange strip (shared with the homepage)
+       ============================================================ #}
+    <section class="trustbar">
+      <div class="container trustbar__row">
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+          </span>
+          <p class="trust-item__label">Fast local delivery</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <p class="trust-item__label">A real person, not a<br />call center</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <p class="trust-item__label">Vetted, clinic-grade<br />products</p>
+        </div>
+
+        <div class="trust-item">
+          <span class="trust-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <p class="trust-item__label">Competitive pricing<br />and flexible ordering</p>
+        </div>
+
+      </div>
+    </section>
+
+    {# ============================================================
+       WHY MIAMI-DADE CLINICS CHOOSE SUNNOVA — 6 cards + rep card
+       ============================================================ #}
+    <section class="section whysec">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dash">Built for Clinical Reality</p>
+          <h2 class="section__title">Why Miami-Dade Clinics Choose Sunnova</h2>
+          <p class="section__sub">Six reasons practices switch to a local distributor — and stay.</p>
+        </div>
+
+        <div class="whygrid">
+          <article class="whycard whycard--featured">
+            <span class="whycard__icon whycard__icon--orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+            </span>
+            <h3 class="whycard__title">Same-Day Delivery Across Miami-Dade</h3>
+            <p class="whycard__text">
+              Order confirmed within 1 hour. Delivered same-day or next-day — directly
+              to your clinic. No waiting on national shipping. No tracking a package
+              through three states.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            </span>
+            <h3 class="whycard__title">No Minimums. No Contracts.</h3>
+            <p class="whycard__text">
+              Order exactly what your practice needs — one box or one case. No
+              long-term commitments. No minimum order thresholds. First-time order?
+              We deliver before you pay.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </span>
+            <h3 class="whycard__title">Confirmed Within 1 Hour.</h3>
+            <p class="whycard__text">
+              Call, text, or email us. We confirm your order within one hour — every
+              time. You will always know what is coming and when.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h4"/></svg>
+            </span>
+            <h3 class="whycard__title">Clinical Knowledge Behind Every Order.</h3>
+            <p class="whycard__text">
+              Our founder worked inside clinical settings as a medical scribe. We
+              understand what providers need, what happens when supplies run out, and
+              how to prevent it.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <h3 class="whycard__title">Your Dedicated Miami Rep.</h3>
+            <p class="whycard__text">
+              Meet Isabella Lara — your local Miami rep. One direct contact who knows
+              your practice, your products, and your delivery schedule. Not a ticket.
+              Not a queue. A rep.
+            </p>
+          </article>
+
+          <article class="whycard">
+            <span class="whycard__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12l3 3 5-6"/></svg>
+            </span>
+            <h3 class="whycard__title">Competitive Pricing. Quality Products.</h3>
+            <p class="whycard__text">
+              Every product is sourced from vetted national distribution partners.
+              FDA-compliant, clinical-grade — delivered at pricing that works for
+              practices of every size.
+            </p>
+          </article>
+        </div>
+
+        {# Dedicated rep contact card #}
+        <div class="rep-card">
+          <div class="rep-card__avatar" aria-hidden="true">IL</div>
+          <div class="rep-card__info">
+            <p class="rep-card__eyebrow">Your Local Miami Rep</p>
+            <h3 class="rep-card__name">Isabella Lara</h3>
+            <p class="rep-card__text">
+              One direct contact for your account — phone, text, and email. She knows
+              your practice, your products, and your delivery schedule.
+            </p>
+          </div>
+          <div class="rep-card__contact">
+            <a href="tel:+13055196804" class="rep-card__line">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              (305) 519-6804
+            </a>
+            <a href="mailto:orders@sunnovamedical.com" class="rep-card__line">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg>
+              orders@sunnovamedical.com
+            </a>
+            <a href="#contact" class="btn btn--primary rep-card__btn">Contact Isabella</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       WHO WE SERVE — blue, icon cards + photo collage
+       Collage images are placeholders for a real practice-photo set.
+       ============================================================ #}
+    <section class="section section--blue serve-blue">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dash">Who We Serve</p>
+          <h2 class="section__title text-white">Built for the Practices We Serve</h2>
+          <p class="section__sub">
+            Med spas, aesthetic clinics, dermatology offices, private practices,
+            urgent care centers, and wellness centers across Miami-Dade. We're not
+            trying to be everything to everyone. We serve Miami's clinical community,
+            and we do it exceptionally well.
+          </p>
+        </div>
+
+        <div class="serve-blue__layout">
+          <div class="serve-blue__cards">
+            <article class="serve-card">
+              <span class="serve-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.9 1 1 1.7l.1.5h5l.1-.5c.1-.7.5-1.3 1-1.7A6 6 0 0 0 12 3z"/></svg></span>
+              <h3 class="serve-card__label">Med Spas</h3>
+            </article>
+            <article class="serve-card">
+              <span class="serve-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.6 12.4 7 21l5-2.6L17 21l-1.6-8.6"/></svg></span>
+              <h3 class="serve-card__label">Aesthetic Clinics</h3>
+            </article>
+            <article class="serve-card">
+              <span class="serve-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+              <h3 class="serve-card__label">Dermatology Offices</h3>
+            </article>
+            <article class="serve-card">
+              <span class="serve-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21h16"/><path d="M6 21V5l6-2 6 2v16"/><path d="M10 21v-5a2 2 0 0 1 4 0v5"/></svg></span>
+              <h3 class="serve-card__label">Private Practices</h3>
+            </article>
+            <article class="serve-card">
+              <span class="serve-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+              <h3 class="serve-card__label">Urgent Care</h3>
+            </article>
+            <article class="serve-card">
+              <span class="serve-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+              <h3 class="serve-card__label">Wellness Centers</h3>
+            </article>
+          </div>
+
+          <div class="serve-blue__media">
+            <img src="{{ url_for('static', filename='img/why-us/who-we-serve.webp') }}"
+                 alt="Clinical teams Sunnova serves across Miami-Dade" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {# ============================================================
+       FINAL CTA — orange banner (shared with the homepage).
+       Right half is reserved for a product-collage background image.
+       ============================================================ #}
+    <section class="section cta cta--banner" id="how-to-order">
+      <svg class="cta__sun" viewBox="0 0 200 200" fill="none" aria-hidden="true" focusable="false">
+        <path d="M44 150 A70 70 0 1 1 150 156" stroke="#ffffff" stroke-width="16" stroke-linecap="round" fill="none"/>
+        <g fill="#ffffff">
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(-45 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(-18 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(9 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(36 100 100)"/>
+          <rect x="92" y="-2" width="16" height="34" rx="8" transform="rotate(63 100 100)"/>
+        </g>
+      </svg>
+
+      <div class="container cta__grid">
+        <div class="cta__copy">
+          <h2 class="cta__title">Ready to Simplify Your Supply Ordering?</h2>
+          <p class="cta__text">
+            Request a catalog, get a quote, or open your account. We make it easy
+            to start and even easier to keep ordering.
+          </p>
+          <div class="cta__actions">
+            <a href="{{ url_for('services_and_catalog') }}" class="btn btn--light">
+              Shop Products
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#sign-in" class="btn btn--blue">Open an Account</a>
+            <a href="#how-to-order" class="btn btn--ghost">Request a Quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+/* ============================================================
+   Sunnova Medical Supplies — MOBILE STYLESHEET
+   Loads AFTER style.css, so rules here override the desktop
+   layer within their media range (later source wins on ties).
+
+   Built to the Figma mobile hand-off (375px iPhone anchor),
+   fluid across 320–600px phones. Desktop/tablet (>600px) is
+   untouched and still owned by style.css.
+
+   Sections:
+     0. Base / system (container, section rhythm)
+     1. Topbar         (phone + delivery note; drop Track/Sign-in)
+     2. Header + menu  (hamburger left · centered logo)
+     3. Trust bar      (2×2 feature grid)
+     4. Footer         (single-column stack)
+     ── per-page sections appended below ──
+   ============================================================ */
+
+/* Mobile-only controls (e.g. the catalog accordion chevron) stay hidden on desktop */
+.catcat__chevron { display: none; }
+
+@media (max-width: 600px) {
+
+  /* ---------- 0. Base / system ---------- */
+  body { overflow-x: hidden; }   /* belt-and-braces against any wide child */
+  .container { padding-inline: 20px; }
+
+  /* Tighter vertical rhythm than desktop's 92px / tablet's 64px */
+  .section { padding: 54px 0; }
+
+  /* ============================================================
+     1. TOPBAR — phone (left) + delivery note (right).
+     Figma drops "Track Order" + "Sign In" on mobile and KEEPS
+     the delivery note, which is the reverse of the desktop
+     ≤600 rule — so we re-show the note and hide the 2nd group.
+     ============================================================ */
+  .topbar { font-size: 0.72rem; }
+  .topbar__inner { min-height: 36px; }
+  .topbar__group:first-child {
+    flex: 1;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+  }
+  .topbar__group:last-child { display: none; }   /* Track Order + Sign In */
+  .topbar__divider { display: none; }
+  .topbar__item--muted { display: inline-flex; }  /* re-show delivery note */
+  .topbar__item { gap: 6px; }
+
+  /* ============================================================
+     2. HEADER — hamburger on the left, logo centered, nothing
+        else in the bar (search + account/cart/quote removed).
+        The dropdown menu (.mainnav.is-open) is driven by main.js.
+     ============================================================ */
+  .navbar__inner {
+    position: relative;
+    gap: 12px;
+    min-height: 60px;
+    padding-block: 10px;
+  }
+  .nav__toggle { display: flex; order: 0; }
+
+  /* True-center the wordmark regardless of the hamburger's width */
+  .navbar .brand {
+    order: 1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+  .navbar .brand__logo { height: 32px; }
+
+  /* Strip the desktop action cluster + search out of the bar */
+  .searchbar { display: none; }
+  .navbar__actions { display: none; }
+
+  /* Dropdown panel sits flush under the bar */
+  .mainnav { top: 100%; }
+  .mainnav__list { padding: 6px 20px 14px; }
+  .mainnav__link { font-size: 1rem; padding: 15px 0; }
+
+  /* ============================================================
+     3. TRUST BAR — 2×2 grid, icon stacked above label, with a
+        hairline divider between the two rows (matches Figma).
+        Overrides the desktop ≤520 single-column rule.
+     ============================================================ */
+  .trustbar__row {
+    grid-template-columns: 1fr 1fr;
+    gap: 26px 20px;
+    padding-block: 30px;
+  }
+  .trust-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0;
+  }
+  /* Hairline above the second row (3rd & 4th items) */
+  .trust-item:nth-child(3),
+  .trust-item:nth-child(4) {
+    padding-top: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
+  }
+  .trust-item__label { font-size: 0.9rem; }
+
+  /* ============================================================
+     4. FOOTER — single-column stack. Link lists + contact stay
+        left-aligned; social + newsletter + legal center up.
+     ============================================================ */
+  .footer__top { padding-block: 44px 26px; }
+  .footer__top .brand__logo { height: 34px; }
+  .footer__tagline { font-size: 0.9rem; }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-block: 32px 36px;
+  }
+  .footer__col--contact { grid-column: auto; }
+
+  /* Center the social + newsletter cluster inside the contact column */
+  .footer__col--contact .footer__social { justify-content: center; }
+  .footer__signup-label { text-align: center; }
+  .footer__signup { max-width: none; }
+
+  /* Bottom legal bar: stacked + centered, links as a wrapped pair */
+  .footer__bottom-inner {
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+    padding-block: 24px;
+  }
+  .footer__legal {
+    justify-content: center;
+    gap: 14px 28px;
+  }
+
+  /* ============================================================
+     5. MOBILE BACKGROUND IMAGES — swap the desktop section
+        artwork for the mobile-optimized versions. Shared across
+        pages (inner-page hero + the final CTA banner).
+     ============================================================ */
+  /* Inner-page hero (Why Us · Services · How to Order · Contact) — anchor to
+     the TOP so the orange sun motif at the top-right of the image stays visible. */
+  .whyhero { background: #143a8c url("../img/other-page-hero-section-mobile.webp") top center / cover no-repeat; }
+  /* Final CTA banner (all pages) — the mobile image already carries the
+     orange wash + the product-box artwork at the bottom, so we drop the
+     gradient overlay and give the band the image's aspect ratio so the WHOLE
+     image shows. Content flows from the top; the boxes fill the space below. */
+  .cta--banner {
+    aspect-ratio: 1500 / 3168;
+    background: #ef7d14 url("../img/near-footer-mobile-bg.webp") top center / cover no-repeat;
+  }
+  .cta--banner .cta__grid { align-items: start; }   /* content hugs the top */
+  /* Use the plain mobile image — drop the decorative SVG sun overlay */
+  .cta.cta--banner .cta__sun { display: none; }
+  /* CTA text — more breathing space + font sizing tuned to the reference (all pages) */
+  .cta.cta--banner .cta__copy .cta__title { font-size: 30px; line-height: 1.16; letter-spacing: -0.4px; margin: 0 0 18px; }
+  .cta.cta--banner .cta__copy .cta__text { font-size: 15px; line-height: 1.6; margin: 0 0 32px; }
+  .cta.cta--banner .cta__copy .cta__actions { gap: 12px; margin-top: 0; }
+  .cta.cta--banner .cta__copy .cta__actions .btn { height: 58px; }
+
+  /* ============================================================
+     PER-PAGE SECTIONS
+     (appended from the Figma section specs — see below)
+     ============================================================ */
+
+}
+
+/* Small-phone fine-tuning (≤360px) appended as needed */
+
+/* ============================================================
+   PER-PAGE SECTIONS — scoped under body.page-* to prevent
+   cross-page bleed (shared selectors carry different values).
+   Generated from the Figma mobile section specs.
+   ============================================================ */
+@media (max-width: 600px) {
+
+  /* ---------------- Sunnova Homepage (.page-home) ---------------- */
+  /* Hero [271:2127] */
+  .page-home .hero { background: #15418f url("../img/home/hero-section-mobile.webp") center / cover no-repeat; }
+  .page-home .hero__inner { display: block; padding-block: 40px; gap: 0; }
+  .page-home .hero__content { max-width: none; display: flex; flex-direction: column; }
+  .page-home .hero__badge { margin: 0 0 16px; padding: 4px 16px; background: var(--white); border: none; box-shadow: 0 2px 3px rgba(18,32,54,.05), 0 1px 1px rgba(18,32,54,.06); color: var(--blue-700); font-size: .72rem; letter-spacing: .04em; }
+  .page-home .hero__badge::before { background: var(--orange); box-shadow: 0 0 0 4px #fdeedd; }
+  .page-home .hero__title { margin: 0 0 16px; font-weight: 800; font-size: 40px; line-height: 1.08; letter-spacing: -1px; overflow-wrap: break-word; }
+  .page-home .hero__text { margin: 0 0 24px; max-width: none; font-size: 18px; line-height: 1.5; letter-spacing: -.4px; color: rgba(255,255,255,.88); }
+  .page-home .hero__media { margin: 0 0 24px; }
+  .page-home .hero__photo { height: 275px; border-radius: 10px; }
+  .page-home .hero__vehicle { right: -8px; bottom: -18px; width: 56%; z-index: 4; }
+  .page-home .hero-card { gap: 6px; padding: 8px; border-radius: 7px; box-shadow: 0 3px 7px rgba(18,32,54,.08), 0 8px 21px rgba(26,79,160,.16); }
+  .page-home .hero-card__icon { width: 24px; height: 24px; border-radius: 5px; }
+  .page-home .hero-card__icon svg { width: 13px; height: 13px; }
+  .page-home .hero-card__title { font-size: 11px; }
+  .page-home .hero-card__sub { font-size: 9px; }
+  .page-home .hero-card__stars { font-size: 8px; }
+  .page-home .hero-card--delivery { top: auto; bottom: -6px; left: 4px; transform: none; }
+  .page-home .hero-card--person { top: 36%; right: -10px; }
+  .page-home .hero-card--trust { top: -8px; left: 28px; bottom: auto; }
+  .page-home .hero__actions { flex-direction: column; flex-wrap: nowrap; gap: 8px; margin-bottom: 12px; width: 100%; }
+  .page-home .hero__actions .btn { width: 100%; height: 50px; padding: 0 32px; font-size: 16px; border-radius: 8px; }
+  .page-home .hero__actions .btn--primary { background: linear-gradient(90deg, #ee6a12 0%, #f9b23e 100%); box-shadow: 0 10px 13px rgba(244,129,30,.34); }
+  .page-home .hero__actions .btn--light { color: var(--blue-700); }
+  .page-home .hero__assurance { max-width: none; gap: 12px; font-size: 12px; line-height: 1.23; color: rgba(255,255,255,.9); }
+  .page-home .hero__assurance svg { color: var(--orange); }
+
+  /* Shop by Category [271:2199] */
+  .page-home .catsec { padding: 44px 0; }
+  .page-home .section__head { margin: 0 auto 28px; max-width: none; }
+  .page-home .section__head .section__title { font-size: 28px; line-height: 1.15; }
+  .page-home .catgrid { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 14px; }
+  /* Mobile-only order to match the Figma frame (Med Spa before Injectables);
+     desktop card order in index.html is left untouched. */
+  .page-home .catgrid > :nth-child(1) { order: 1; }
+  .page-home .catgrid > :nth-child(2) { order: 2; }
+  .page-home .catgrid > :nth-child(3) { order: 4; }
+  .page-home .catgrid > :nth-child(4) { order: 3; }
+  .page-home .catgrid > :nth-child(5) { order: 5; }
+  .page-home .catgrid > :nth-child(6) { order: 6; }
+  /* Category cards = horizontal row: square image left, copy right */
+  .page-home .catcard { flex-direction: row; align-items: stretch; }
+  .page-home .catcard__media { width: 38%; max-width: 140px; aspect-ratio: auto; flex-shrink: 0; align-self: stretch; }
+  .page-home .catcard__body { padding: 15px 16px; }
+  .page-home .catcard__tag { margin-bottom: 5px; }
+  .page-home .catcard__title { font-size: 1.05rem; line-height: 1.25; margin: 0 0 7px; }
+  .page-home .catcard__text { font-size: 0.82rem; line-height: 1.5; margin: 0 0 12px; }
+  .page-home .catcard__link { font-size: 0.85rem; }
+  /* The "Shop All Products" promo stays full-width below the row cards */
+  .page-home .catpromo { grid-column: auto; background: #1a4aa8 url("../img/home/shop-by-category/browse-mobile.webp") center / cover no-repeat; }
+  .page-home .catpromo__body { padding: 24px 22px 28px; }
+  .page-home .catpromo__title { font-size: 1.5rem; }
+  .page-home .catpromo__text { max-width: none; }
+  .page-home .catpromo__btn { align-self: stretch; width: 100%; }
+  .page-home .catsec__note { margin-top: 22px; font-size: .82rem; }
+
+  /* Why Sunnova [271:2292] */
+  .page-home .whysec { padding: 44px 0; }
+  .page-home .whysec__head { margin-bottom: 24px; text-align: center; }
+  .page-home .whysec__head .section__title--left { text-align: center; font-size: 27px; line-height: 1.18; }
+  .page-home .whysec__grid { grid-template-columns: 1fr; gap: 20px; }
+  .page-home .whycard { padding: 22px 22px; border-radius: 16px; }
+  .page-home .whycard__icon { width: 44px; height: 44px; margin-bottom: 16px; border-radius: 11px; }
+  .page-home .whycard__title { font-size: 1.18rem; }
+  .page-home .whycard__text { font-size: .92rem; }
+  .page-home .whycard--featured { border-width: 2px; }
+  .page-home .whycard--featured .whycard__icon { float: left; margin: 0 14px 0 0; }
+
+  /* How Ordering Works [271:2324] */
+  .page-home .howsec { padding: 44px 0; }
+  .page-home .howsec__head { margin: 0 auto 28px; }
+  .page-home .howsec__head .section__title { font-size: 28px; }
+  .page-home .steps { grid-template-columns: 1fr; gap: 28px; max-width: none; }
+  .page-home .step { text-align: left; display: grid; grid-template-columns: 48px 1fr; column-gap: 16px; align-items: start; }
+  .page-home .step__num { grid-row: span 2; width: 48px; height: 48px; margin: 0; font-size: 1.2rem; }
+  .page-home .step__title { margin: 4px 0 6px; font-size: 1.18rem; }
+  .page-home .step__text { margin: 0; max-width: none; font-size: .92rem; }
+
+  /* Local Delivery & Coverage [271:2353] */
+  .page-home .coverage { padding: 44px 0; }
+  .page-home .coverage__grid { grid-template-columns: 1fr; gap: 24px; }
+  .page-home .coverage__grid .section__title--left { font-size: 28px; line-height: 1.15; }
+  .page-home .coverage__lead { margin: 16px 0 22px; max-width: none; font-size: .95rem; }
+  .page-home .coverage__pills { gap: 7px; }
+  .page-home .pill { padding: 5px 11px; font-size: 0.7rem; }
+  .page-home .coverage__map { padding: 10px; border-radius: 16px; }
+
+  /* Who We Serve [271:2413] */
+  .page-home .serve { padding: 44px 0; }
+  .page-home .serve .section__head { text-align: left; margin: 0 0 28px; }
+  .page-home .serve .section__head .section__title { text-align: left; font-size: 28px; line-height: 1.15; }
+  .page-home .serve__cards { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .page-home .serve-card { min-height: 150px; padding: 26px 12px; gap: 14px; }
+  .page-home .serve-card__icon { width: 50px; height: 50px; }
+  .page-home .serve-card__label { font-size: 1rem; }
+
+  /* Testimonials [271:2458] */
+  .page-home .testi { padding: 44px 0; }
+  .page-home .testi__head { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+  .page-home .testi__head .section__title--left { font-size: 24px; line-height: 1.15; }
+  .page-home .testi__google { text-align: right; flex-shrink: 0; }
+  .page-home .gwordmark { font-size: 1.5rem; }
+  .page-home .testi__reviews { font-size: .8rem; }
+  .page-home .testi__grid { grid-template-columns: 1fr; gap: 22px; }
+  .page-home .review { padding: 22px 22px 22px; }
+  .page-home .review__text { font-size: .95rem; }
+
+  /* Final CTA [271:2553] */
+  .page-home .cta.cta--banner { padding: 40px 0 0; }
+  .page-home .cta__grid { grid-template-columns: 1fr; gap: 24px; }
+  .page-home .cta--banner .cta__title { font-size: 32px; line-height: 1.1; letter-spacing: -1px; margin: 0 0 16px; }
+  .page-home .cta--banner .cta__text { font-size: 16px; line-height: 1.5; letter-spacing: -.32px; max-width: none; margin: 0 0 8px; color: rgba(255,255,255,.92); }
+  .page-home .cta--banner .cta__actions { flex-direction: column; flex-wrap: nowrap; gap: 8px; width: 100%; }
+  .page-home .cta--banner .cta__actions .btn { width: 100%; height: 65px; padding: 0 32px; font-size: 16px; border-radius: 14px; }
+  .page-home .cta--banner .cta__actions .btn--light { color: var(--orange-dark); }
+  .page-home .cta--banner .cta__actions .btn--light svg { color: var(--orange-dark); }
+  .page-home .cta--banner .cta__actions .btn--blue { background: var(--blue-700); border-color: var(--blue-700); }
+  .page-home .cta--banner .cta__actions .btn--ghost { background: rgba(255,255,255,.08); border: none; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55); }
+  .page-home .cta__sun { opacity: .16; top: 18%; left: auto; right: -90px; transform: none; width: 220px; height: 220px; }
+
+  /* ---------------- Why Choose Us (.page-why) ---------------- */
+  /* Page hero — Why Us (blue, badge + title + copy + CTAs) [271:845] */
+  .page-why .whyhero__inner { grid-template-columns: 1fr; gap: 24px; padding-block: 40px; align-items: start; }
+  .page-why .whyhero__badge { margin: 0 0 0; padding: 6px 16px; font-size: 0.72rem; letter-spacing: 0.16em; }
+  .page-why .whyhero__title { font-size: 2.5rem; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; margin: 16px 0 0; }
+  .page-why .whyhero__text { margin: 16px 0 0; max-width: none; font-size: 1.15rem; line-height: 1.5; color: #fff; }
+  .page-why .whyhero__actions { flex-direction: column; flex-wrap: nowrap; gap: 7px; margin: 32px 0 0; width: 100%; }
+  .page-why .whyhero__actions .btn { width: 100%; height: 50px; padding: 16px 32px; font-size: 1rem; }
+  .page-why .whyhero__assurance { margin: 12px 0 0; gap: 12px; max-width: none; font-size: 0.75rem; line-height: 1.23; color: rgba(255,255,255,0.85); }
+  .page-why .whyhero__sun { opacity: 0.5; width: 200px; height: 200px; right: -40px; top: 8%; transform: none; }
+
+  /* Why Miami-Dade Clinics Choose Sunnova — 6 reason cards + rep card [271:894] */
+  .page-why .whysec { padding: 40px 0; }
+  .page-why .whysec .container { padding-inline: 20px; }
+  .page-why .whysec .section__head { margin: 0 auto 24px; max-width: none; }
+  .page-why .whysec .section__title { font-size: 1.6rem; line-height: 1.2; margin-bottom: 10px; }
+  .page-why .whysec .section__head .section__sub { display: none; }
+  .page-why .whygrid { grid-template-columns: 1fr; gap: 12px; }
+  .page-why .whycard { padding: 22px 20px; border-radius: 16px; }
+  .page-why .whycard__icon { width: 48px; height: 48px; margin-bottom: 14px; border-radius: 14px; }
+  .page-why .whycard__icon svg { width: 24px; height: 24px; }
+  .page-why .whycard__title { font-size: 1.12rem; line-height: 1.25; margin-bottom: 8px; }
+  .page-why .whycard__text { font-size: 0.9rem; line-height: 1.5; }
+  .page-why .whycard:hover { transform: none; }
+  .page-why .rep-card { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 16px; margin-top: 14px; padding: 28px 22px; border-radius: 16px; }
+  .page-why .rep-card__avatar { width: 64px; height: 64px; font-size: 1.2rem; }
+  .page-why .rep-card__eyebrow { font-size: 0.7rem; }
+  .page-why .rep-card__name { font-size: 1.35rem; margin-bottom: 6px; }
+  .page-why .rep-card__text { max-width: none; margin-inline: auto; font-size: 0.9rem; line-height: 1.5; }
+  .page-why .rep-card__contact { align-items: center; gap: 10px; width: 100%; }
+  .page-why .rep-card__line { font-size: 0.9rem; }
+  .page-why .rep-card__btn { width: 100%; margin-top: 8px; }
+
+  /* Who We Serve — blue band, 6 icon cards (2-col) + photo [271:968] */
+  .page-why .serve-blue.section { padding: 40px 0; }
+  .page-why .serve-blue .container { padding-inline: 20px; }
+  .page-why .serve-blue .section__head { margin: 0 0 20px; max-width: none; text-align: left; }
+  .page-why .serve-blue .section__head .section__title { text-align: left; }
+  .page-why .serve-blue .section__title { font-size: 1.35rem; line-height: 1.15; margin-bottom: 12px; }
+  .page-why .serve-blue .eyebrow--dash { margin-bottom: 10px; }
+  .page-why .serve-blue .section__sub { font-size: 0.95rem; line-height: 1.35; }
+  .page-why .serve-blue__layout { grid-template-columns: 1fr; gap: 20px; }
+  .page-why .serve-blue__cards { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .page-why .serve-blue__cards .serve-card { min-height: 0; padding: 16px 8px; gap: 14px; border-radius: 18px; }
+  .page-why .serve-card__icon { width: 56px; height: 56px; border-radius: 50%; }
+  .page-why .serve-card__icon svg { width: 26px; height: 26px; }
+  .page-why .serve-card__label { font-size: 0.95rem; line-height: 1.2; }
+  .page-why .serve-blue__media { aspect-ratio: 1 / 1; max-width: none; margin-inline: 0; border-radius: 18px; }
+  .page-why .serve-blue__media img { border-radius: 18px; }
+
+  /* Final CTA — orange banner (Ready to Simplify…) [271:1019] */
+  .page-why .cta.cta--banner { padding: 40px 0; }
+  .page-why .cta--banner .container { padding-inline: 20px; }
+  .page-why .cta__grid { grid-template-columns: 1fr; gap: 24px; }
+  .page-why .cta__copy { text-align: left; }
+  .page-why .cta--banner .cta__title { font-size: 2rem; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 14px; }
+  .page-why .cta--banner .cta__text { max-width: none; margin: 0 0 4px; font-size: 1rem; line-height: 1.5; color: rgba(255,255,255,0.92); }
+  .page-why .cta--banner .cta__actions { flex-direction: column; flex-wrap: nowrap; gap: 8px; justify-content: flex-start; }
+  .page-why .cta--banner .cta__actions .btn { width: 100%; padding: 16px 24px; font-size: 1rem; }
+  .page-why .cta--banner .cta__actions .btn svg { width: 18px; height: 18px; }
+  .page-why .cta__sun { opacity: 0.12; width: 220px; height: 220px; left: -80px; }
+
+  /* ---------------- Services and Catalog (.page-services) ---------------- */
+  /* Hero — Services & Catalog (.whyhero) [271:5720] */
+  .page-services .whyhero__inner { grid-template-columns: 1fr; gap: 24px; padding-block: 40px; }
+  .page-services .whyhero__left, .page-services .whyhero__right { padding: 0; }
+  .page-services .whyhero__badge { margin: 0 0 0; padding: 5px 14px; font-size: 0.7rem; letter-spacing: 0.18em; }
+  .page-services .whyhero__dot { box-shadow: 0 0 0 4px #fdeedd; }
+  .page-services .whyhero__title { font-size: 2.5rem; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; margin: 16px 0 0; }
+  .page-services .whyhero__text { margin: 16px 0 0; max-width: none; font-size: 1.15rem; line-height: 1.5; color: #fff; }
+  .page-services .whyhero__actions { flex-direction: column; flex-wrap: nowrap; gap: 7px; margin: 32px 0 0; width: 100%; }
+  .page-services .whyhero__actions .btn { width: 100%; height: 50px; padding: 16px 32px; font-size: 1rem; }
+  .page-services .whyhero__assurance { margin: 12px 0 0; gap: 12px; max-width: none; font-size: 0.75rem; line-height: 1.23; color: rgba(255,255,255,0.85); }
+  .page-services .whyhero__assurance svg { width: 20px; height: 20px; }
+  .page-services .whyhero__sun { right: -40px; top: -30px; transform: none; width: 200px; height: 200px; opacity: 1; }
+
+  /* Our Services — 6 stacked cards (.whysec / .whygrid / .whycard) [271:5769] */
+  .page-services .whysec { padding: 44px 0; }
+  .page-services .whysec .section__head { margin: 0 0 28px; text-align: center; }
+  .page-services .whysec .section__head .eyebrow--dash { justify-content: center; }
+  .page-services .whysec .section__title { font-size: 1.6rem; line-height: 1.25; }
+  .page-services .whygrid { grid-template-columns: 1fr; gap: 16px; }
+  .page-services .whycard { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; padding: 24px; border-radius: 16px; }
+  .page-services .whycard:hover { transform: none; }
+  .page-services .whycard__icon { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; margin: 0; }
+  .page-services .whycard__icon svg { width: 23px; height: 23px; }
+  .page-services .whycard__title { flex: 1; min-width: 0; margin: 0; font-size: 1.25rem; line-height: 1.15; font-weight: 700; }
+  .page-services .whycard__text { flex-basis: 100%; margin: 16px 0 0; font-size: 1rem; line-height: 1.5; }
+  .page-services .whycard--featured { border: 2px solid var(--orange); }
+
+  /* Product Catalog — accordion (.catalog2 / .catcat / .cattable) [271:5818] */
+  .page-services .catalog2 { padding: 40px 0; }
+  .page-services .catalog2__head { margin-bottom: 24px; }
+  .page-services .catalog2 .section__title { font-size: 1.75rem; line-height: 1.1; }
+  .page-services .catalog2__sub { font-size: 0.9rem; margin-top: 12px; }
+  /* Collapsed (default) — dark navy bar */
+  .page-services .catcat { margin-bottom: 8px; background: var(--navy); border: none; border-radius: 12px; box-shadow: none; }
+  .page-services .catcat__head { gap: 12px; padding: 16px 20px; align-items: center; border-bottom: none; cursor: pointer; }
+  .page-services .catcat__num,
+  .page-services .catcat__sub { display: none; }
+  .page-services .catcat__title { color: var(--white); font-size: 1rem; }
+  .page-services .catcat__chevron { display: block; width: 18px; height: 18px; margin-left: auto; flex-shrink: 0; color: rgba(255, 255, 255, 0.85); transition: transform 0.25s var(--ease); }
+  .page-services .catcat__tablewrap,
+  .page-services .catcat__notes { display: none; }
+
+  /* Open — white card with the 2-column table */
+  .page-services .catcat.is-open { margin-bottom: 16px; background: var(--white); border: 1px solid #e7ecf3; border-radius: 16px; box-shadow: 0 8px 24px rgba(8, 35, 80, 0.05); }
+  .page-services .catcat.is-open .catcat__head { padding: 20px; align-items: flex-start; }
+  .page-services .catcat.is-open .catcat__num { display: grid; width: 56px; height: 56px; border-radius: 12px; font-size: 1.6rem; flex-shrink: 0; }
+  .page-services .catcat.is-open .catcat__sub { display: block; font-size: 0.8rem; line-height: 1.25; }
+  .page-services .catcat.is-open .catcat__title { color: var(--ink); font-size: 1.25rem; }
+  .page-services .catcat.is-open .catcat__chevron { transform: rotate(90deg); color: var(--blue-700); }
+  .page-services .catcat.is-open .catcat__tablewrap { display: block; overflow-x: visible; }
+  .page-services .catcat.is-open .catcat__notes { display: flex; padding: 0 20px 20px; font-size: 0.8rem; }
+
+  /* Table inside an open card — 2 columns only (hide # and Delivery) */
+  .page-services .cattable { min-width: 0; width: 100%; }
+  .page-services .cattable th:first-child, .page-services .cattable td:first-child, .page-services .cattable th:last-child, .page-services .cattable td:last-child { display: none; }
+  .page-services .cattable th, .page-services .cattable td { padding: 14px 20px; font-size: 0.9rem; }
+  .page-services .cattable th { font-size: 0.78rem; }
+  .page-services .cattable__product { font-weight: 500; }
+  .page-services .delivery-pill { display: none; }
+
+  /* Order Terms — blue terms list (.terms) [present in template, absent from this Figma node range] [271:5818] */
+  .page-services .terms { padding: 44px 0; }
+  .page-services .terms__head { text-align: left; margin-bottom: 24px; }
+  .page-services .terms__title { font-size: 1.6rem; line-height: 1.15; }
+  .page-services .terms__sun { width: 160px; height: 160px; opacity: 0.4; }
+  .page-services .terms__list { gap: 12px; }
+  .page-services .term-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 18px 20px; }
+  .page-services .term-row__head { display: flex; align-items: center; gap: 10px; }
+  .page-services .term-row__icon { width: 36px; height: 36px; flex-shrink: 0; }
+  .page-services .term-row__label { font-size: 1rem; }
+  .page-services .term-row__desc { font-size: 0.9rem; line-height: 1.5; }
+
+  /* Final CTA — orange banner (.cta.cta--banner) [271:5876] */
+  .page-services .cta.cta--banner { padding: 40px 0; }
+  .page-services .cta__grid { grid-template-columns: 1fr; gap: 0; }
+  .page-services .cta__copy { width: 100%; }
+  .page-services .cta--banner .cta__title { font-size: 2rem; line-height: 1.1; }
+  .page-services .cta--banner .cta__text { margin: 16px 0 0; max-width: none; font-size: 0.95rem; line-height: 1.5; color: rgba(255,255,255,0.92); }
+  .page-services .cta__actions, .page-services .cta--banner .cta__actions { flex-direction: column; flex-wrap: nowrap; gap: 8px; margin-top: 28px; width: 100%; }
+  .page-services .cta__actions .btn, .page-services .cta--banner .cta__actions .btn { width: 100%; height: 52px; padding: 16px 24px; font-size: 1rem; }
+  .page-services .cta--banner .cta__actions .btn svg { width: 18px; height: 18px; }
+  .page-services .cta__sun { left: 50%; top: 30px; transform: translateX(-30%); width: 200px; height: 200px; opacity: 0.18; }
+
+  /* ---------------- How to Order (.page-order) ---------------- */
+  /* Hero — Ordering Takes Minutes (.whyhero) [271:1207] */
+  .page-order .whyhero__inner { grid-template-columns: 1fr;
+  gap: 24px;
+  padding-block: 40px;
+  padding-inline: 20px; }
+  .page-order .whyhero__badge { margin: 0 0 4px;
+  padding: 6px 16px;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em; }
+  .page-order .whyhero__title { font-size: 2.5rem;        
+  line-height: 1.1;
+  letter-spacing: -0.02em;  
+  margin: 0; }
+  .page-order .whyhero__text { margin: 0;
+  max-width: none;
+  font-size: 1.25rem;       
+  line-height: 1.5;
+  color: var(--white); }
+  .page-order .whyhero__actions { flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 7px;
+  width: 100%;
+  margin: 0; }
+  .page-order .whyhero__actions .btn { width: 100%;
+  padding: 14px 24px;
+  font-size: 1rem;          
+  height: 50px; }
+  .page-order .whyhero__assurance { max-width: none;
+  gap: 10px;
+  font-size: 0.75rem;       
+  line-height: 1.25;
+  color: rgba(255, 255, 255, 0.9); }
+
+  /* The Process — 3 numbered step cards (.steps3sec) [271:1256] */
+  .page-order .steps3sec .whysec__head { text-align: center; margin-bottom: 28px; }
+  .page-order .steps3sec .whysec__head .eyebrow--dash { justify-content: center; }
+  .page-order .steps3sec .section__title--left { text-align: center; }
+  .page-order .steps3 { grid-template-columns: 1fr;
+  gap: 12px; }
+  .page-order .step3 { padding: 22px 22px 24px; }
+  .page-order .step3__arrow { display: grid;          
+  transform: rotate(90deg); }
+  .page-order .step3__num { width: 44px;
+  height: 44px;
+  margin-bottom: 14px; }
+  .page-order .step3__title { font-size: 1.15rem; margin: 0 0 10px; }
+  .page-order .step3__text { font-size: 0.9rem; line-height: 1.55; }
+
+  /* After Your First Order — 4 benefit cards (.whysec / .whycard) [271:1289] */
+  .page-order .whysec .whysec__head { text-align: center; margin-bottom: 28px; }
+  .page-order .whysec .whysec__head .eyebrow--dash { justify-content: center; }
+  .page-order .whysec .section__title--left { text-align: center; }
+  .page-order .whysec__grid { grid-template-columns: 1fr;
+  gap: 16px; }
+  .page-order .whycard { padding: 22px 22px 24px; }
+  .page-order .whycard__icon { width: 44px;
+  height: 44px;
+  margin-bottom: 14px; }
+  .page-order .whycard__title { font-size: 1.12rem; }
+  .page-order .whycard__text { font-size: 0.9rem; line-height: 1.55; }
+
+  /* How to Reach Us — 3 contact cards (.reachus / .reach-card) [271:1343] */
+  .page-order .reachus .section__head { margin-bottom: 28px; }
+  .page-order .reachus .section__title { font-size: 1.75rem; line-height: 1.2; }
+  .page-order .reach-grid { grid-template-columns: 1fr;
+  max-width: none;
+  gap: 16px; }
+  .page-order .reach-card { flex-direction: row;
+  align-items: center;
+  text-align: left;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 22px 20px; }
+  .page-order .reach-card__icon { width: 46px;
+  height: 46px;
+  margin-bottom: 0;
+  flex-shrink: 0; }
+  .page-order .reach-card__title { flex: 1 1 auto;
+  width: calc(100% - 62px); 
+  font-size: 1.15rem; }
+  .page-order .reach-card__value, .page-order .reach-card__sub { width: 100%;
+  margin-left: 62px; }
+  .page-order .reach-card__value { font-size: 0.95rem; }
+  .page-order .reach-card__sub { font-size: 0.8rem; margin-top: 2px; }
+
+  /* FAQ accordion (.faqsec / .faq) [271:1389] */
+  .page-order .faqsec .section__head { margin-bottom: 24px; }
+  .page-order .faqsec .section__title { font-size: 1.75rem; line-height: 1.2; }
+  .page-order .faq { max-width: none;
+  gap: 12px; }
+  .page-order .faq__q { padding: 18px 16px;
+  gap: 12px;
+  font-size: 1rem;
+  line-height: 1.35; }
+  .page-order .faq__toggle { flex-shrink: 0; }
+  .page-order .faq__panel p { padding: 0 16px 18px;
+  font-size: 0.9rem;
+  line-height: 1.6; }
+
+  /* Final CTA — orange banner 'Set up Your Account Today!' (.cta--banner) [271:1466] */
+  .page-order .cta.cta--banner { padding: 40px 0; }
+  .page-order .cta--banner .cta__grid { grid-template-columns: 1fr;
+  gap: 20px;
+  padding-inline: 20px; }
+  .page-order .cta--banner .cta__title { font-size: 1.5rem;        
+  line-height: 1.2; }
+  .page-order .cta--banner .cta__text { margin: 12px 0 4px;
+  max-width: none;
+  font-size: 0.8rem;        
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.92); }
+  .page-order .cta--banner .cta__actions { flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 10px;
+  width: 100%;
+  justify-content: stretch; }
+  .page-order .cta--banner .cta__actions .btn { width: 100%;
+  padding: 14px 24px;
+  font-size: 1rem;
+  height: 50px; }
+  .page-order .cta__sun { opacity: 0.12; }
+
+  /* ---------------- Contact Us (.page-contact) ---------------- */
+  /* Hero — Let's Get Your Clinic Supplied (.whyhero) [271:1653] */
+  .page-contact .whyhero .container { padding-inline: 20px; }
+  .page-contact .whyhero__inner { grid-template-columns: 1fr; gap: 24px; padding-block: 40px; align-items: start; }
+  .page-contact .whyhero__badge { margin: 0 0 24px; padding: 6px 16px; font-size: 0.7rem; }
+  .page-contact .whyhero__title { font-size: 2.5rem; line-height: 1.1; letter-spacing: -0.02em; }
+  .page-contact .whyhero__text { margin: 0 0 0; max-width: none; font-size: 1.25rem; line-height: 1.5; letter-spacing: -0.01em; }
+  .page-contact .whyhero__pills { gap: 8px; margin: 17px 0 0; }
+  .page-contact .whyhero__pills li { font-size: 0.75rem; padding: 4px 16px; }
+  .page-contact .whyhero__actions { flex-direction: column; flex-wrap: nowrap; gap: 8px; margin: 28px 0 0; width: 100%; }
+  .page-contact .whyhero__actions .btn { width: 100%; padding: 15px 24px; font-size: 1rem; }
+  .page-contact .whyhero__assurance { max-width: none; margin-top: 18px; font-size: 0.75rem; line-height: 1.23; }
+
+  /* Rep card + 3 contact 'reach' cards (.contact-reach) [271:1688] */
+  .page-contact .contact-reach { padding: 40px 0; }
+  .page-contact .contact-reach .container { padding-inline: 20px; }
+  .page-contact .rep-card { grid-template-columns: 1fr; justify-items: start; text-align: left; gap: 18px; margin-top: 0; padding: 30px 26px; border-radius: 18px; }
+  .page-contact .rep-card__avatar { width: 84px; height: 84px; font-size: 1.6rem; }
+  .page-contact .rep-card__info { width: 100%; }
+  .page-contact .rep-card__name { font-size: 1.6rem; }
+  .page-contact .rep-card__text { margin-inline: 0; max-width: none; }
+  .page-contact .rep-card__contact { align-items: flex-start; width: 100%; gap: 14px; }
+  .page-contact .rep-card__btn { width: 100%; margin-top: 4px; }
+  .page-contact .contact-reach__grid { grid-template-columns: 1fr; max-width: none; margin-inline: 0; margin-top: 24px; gap: 16px; }
+  .page-contact .reach-card { flex-direction: row; align-items: center; text-align: left; flex-wrap: wrap; gap: 4px 16px; padding: 22px 20px; }
+  .page-contact .reach-card__icon { width: 46px; height: 46px; flex-shrink: 0; align-self: flex-start; margin-bottom: 0; }
+  .page-contact .reach-card__title { flex: 1 1 auto; min-width: 0; font-size: 1.3rem; margin: 0; }
+  .page-contact .reach-card__value,
+  .page-contact .reach-card__sub { flex-basis: 100%; min-width: 0; padding-left: 62px; overflow-wrap: anywhere; }
+  .page-contact .reach-card__value { font-size: 0.95rem; }
+  .page-contact .reach-card__sub { font-size: 0.85rem; }
+
+  /* What to Have Ready + What Happens Next + Request Form (.ready) — FORM MOVES TO TOP [271:1688] */
+  .page-contact .ready { padding: 40px 0; }
+  .page-contact .ready .container { padding-inline: 20px; }
+  .page-contact .ready__layout { display: flex; flex-direction: column; gap: 32px; }
+  .page-contact .reqform { order: 1; padding: 28px 22px; }
+  .page-contact .ready__col { order: 2; }
+  .page-contact .reqform__title { font-size: 1.85rem; line-height: 1.15; }
+  .page-contact .reqform__sub { margin-bottom: 20px; font-size: 0.95rem; }
+  .page-contact .reqform__row { grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+  .page-contact .reqform__input, .page-contact .reqform__select, .page-contact .reqform__textarea { padding: 12px 14px; font-size: 0.95rem; }
+  .page-contact .reqform__btn { width: 100%; }
+  .page-contact .ready__heading { font-size: 1.5rem; margin-bottom: 18px; }
+  .page-contact .ready__eyebrow2 { margin-top: 28px; }
+  .page-contact .checklist li { font-size: 0.95rem; }
+  .page-contact .nextsteps li { font-size: 0.95rem; align-items: flex-start; }
+  .page-contact .nextsteps__num { width: 32px; height: 32px; }
+
+  /* Order Terms at a Glance — table (.glance-sec) [271:1854] */
+  .page-contact .glance-sec { padding: 40px 0; }
+  .page-contact .glance-sec .container { padding-inline: 20px; }
+  .page-contact .glance-sec .section__head { margin-bottom: 28px; }
+  .page-contact .glance-sec .section__title { font-size: 1.55rem; line-height: 1.25; }
+  .page-contact .glance { max-width: none; }
+  .page-contact .glance th { width: 44%; padding: 11px 14px; font-size: 0.82rem; }
+  .page-contact .glance td { padding: 11px 14px; font-size: 0.82rem; }
+
+  /* Our Delivery Area — blue card + neighborhood pills (.delivery-sec) [LAST content band before footer] [271:1895] */
+  .page-contact .delivery-sec { padding: 40px 0; }
+  .page-contact .delivery-sec .container { padding-inline: 20px; }
+  .page-contact .delivery-card { padding: 40px 26px; border-radius: 16px; }
+  .page-contact .delivery-card .section__title { font-size: 1.55rem; line-height: 1.25; margin-bottom: 16px; }
+  .page-contact .delivery-card__lead { max-width: none; margin-bottom: 24px; font-size: 0.95rem; }
+  .page-contact .coverage__pills { gap: 8px; }
+  .page-contact .pill { font-size: 0.85rem; padding: 6px 16px; }
+  .page-contact .pill--accent { width: 100%; text-align: center; justify-content: center; margin-top: 6px; }
+  .page-contact .delivery-card__note { font-size: 0.85rem; align-items: flex-start; }
+
+}
+/* ============================================================
+   HOME HERO — reorder so the photo sits BETWEEN the body copy
+   and the CTAs (Figma order), without altering desktop markup.
+   display:contents hoists .hero__content's children into the
+   column flow so `order` can interleave them with .hero__media.
+   ============================================================ */
+@media (max-width: 600px) {
+  .page-home .hero__inner { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .page-home .hero__content { display: contents; }
+  .page-home .hero__badge { align-self: flex-start; order: 1; }
+  .page-home .hero__title { order: 2; }
+  .page-home .hero__text { order: 3; }
+  .page-home .hero__media { order: 4; }
+  .page-home .hero__actions { order: 5; }
+  .page-home .hero__assurance { order: 6; }
+}
+
+/* ============================================================
+   Tablet-range safety (≤900px): keep the Contact rep card
+   left-aligned there too, matching the mobile reference
+   (overrides the desktop ≤900 centered rule for this card only).
+   ============================================================ */
+@media (max-width: 900px) {
+  .page-contact .rep-card { justify-items: start; text-align: left; }
+  .page-contact .rep-card__contact { align-items: flex-start; }
+  .page-contact .rep-card__text { margin-inline: 0; }
+}
