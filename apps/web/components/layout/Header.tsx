@@ -58,7 +58,7 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 me-2" aria-label="Sunnova Medical Supplies home">
               <Image
-                src="/logo/logo.svg"
+                src="/logo/logo-dark.svg"
                 alt="Sunnova Medical Supplies"
                 width={168}
                 height={48}

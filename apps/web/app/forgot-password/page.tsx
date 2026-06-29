@@ -9,7 +9,7 @@ export default function ForgotPasswordPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f7f9fa', display: 'flex', flexDirection: 'column' }}>
       <div style={{ background: '#fff', borderBottom: '1px solid #e8eff9', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/"><Image src="/logo/logo.svg" alt="Sunnova Medical Supplies" width={140} height={40} style={{ height: '36px', width: 'auto' }} /></Link>
+        <Link href="/"><Image src="/logo/logo-dark.svg" alt="Sunnova Medical Supplies" width={140} height={40} style={{ height: '36px', width: 'auto' }} /></Link>
         <Link href="/sign-in" style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: '#6b7690', textDecoration: 'none' }}>← Back to sign in</Link>
       </div>
       <div className="d-flex align-items-center justify-content-center flex-grow-1 p-4">

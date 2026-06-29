@@ -1,3 +1,3 @@
 <p align="center">
-  <img src="public/logo/logo.svg" alt="Sunnova Medical Supplies" width="400"/>
+  <img src="apps/web/public/logo/logo-dark.svg" alt="Sunnova Medical Supplies" width="400"/>
 </p>
