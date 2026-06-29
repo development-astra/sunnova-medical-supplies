@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteLayout from '@/components/layout/SiteLayout';
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import {
+  ArrowRight,
+  Truck, UserCheck, ShieldCheck, Tag,
+  CalendarCheck, Package, Layers, Clock, Gift,
+  Ban, MapPin, CheckCircle2, CreditCard, RefreshCw,
+} from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Services & Product Catalog | Professional Supplies. Delivered Same-Day.',
@@ -9,188 +14,253 @@ export const metadata: Metadata = {
     '25 clinical-grade products across 5 categories — curated for med spas, aesthetic clinics, private practices, urgent care centers, and dermatology offices in Miami-Dade County.',
 };
 
-const CATALOG_SECTIONS = [
+/* ─── data ──────────────────────────────────────────────────── */
+
+const STAT_ITEMS = [
+  { Icon: Truck,       label: 'Fast local delivery' },
+  { Icon: UserCheck,   label: 'A real person, not a call center' },
+  { Icon: ShieldCheck, label: 'Vetted, clinic-grade products' },
+  { Icon: Tag,         label: 'Competitive pricing and flexible ordering' },
+];
+
+const SERVICES = [
+  {
+    Icon: Truck,
+    title: 'Same-Day Local Delivery',
+    body: 'Order by noon, receive same afternoon. We deliver directly to your clinic across all of Miami-Dade. Broward and Palm Beach available on request.',
+    featured: true,
+  },
+  {
+    Icon: CalendarCheck,
+    title: 'Standing Order Program',
+    body: 'Set-up monthly auto-delivery and never manually reorder again. Standing order clients receive priority same-day delivery.',
+    featured: false,
+  },
+  {
+    Icon: Package,
+    title: 'Flexible Ordering — No Minimums',
+    body: 'Order one box or one case. No fixed minimums. No contracts. No pressure.',
+    featured: false,
+  },
+  {
+    Icon: Layers,
+    title: 'Custom Bundles',
+    body: 'We build a monthly supply bundle based on your procedure mix and volume. One order. One invoice.',
+    featured: false,
+  },
+  {
+    Icon: Clock,
+    title: '1-Hour Order Confirmation',
+    body: 'Every order confirmed within 1 hour of receipt. You always know the status.',
+    featured: false,
+  },
+  {
+    Icon: UserCheck,
+    title: 'Dedicated Account Rep — Isabella Lara',
+    body: 'Your local Miami rep, reachable by phone, text, and email. One contact. Every order.',
+    featured: false,
+  },
+];
+
+type Product = { id: string; name: string; pack: string; delivery: 'Same Day' | 'Next Day' };
+type CatalogSection = {
+  num: string;
+  name: string;
+  subtitle: string;
+  products: Product[];
+  notes: string[];
+  accent: 'navy' | 'orange';
+  numColor: string;
+};
+
+const CATALOG: CatalogSection[] = [
   {
     num: '01',
     name: 'PPE & Protection',
     subtitle: 'Gloves · Masks · Gowns · Face Shields',
+    accent: 'navy',
+    numColor: '#2A6FD0',
     products: [
-      { id: 1, name: 'Nitrile Exam Gloves — Small', pack: '100/box', delivery: 'Same Day' },
-      { id: 2, name: 'Nitrile Exam Gloves — Medium', pack: '100/box', delivery: 'Same Day' },
-      { id: 3, name: 'Nitrile Exam Gloves — Large', pack: '100/box', delivery: 'Same Day' },
-      { id: 4, name: 'Level 3 Surgical Masks', pack: '50/box', delivery: 'Same Day' },
-      { id: 5, name: 'Disposable Isolation Gowns', pack: '10/pack', delivery: 'Next Day' },
+      { id: '01', name: 'Nitrile Exam Gloves — Small',  pack: '100/box',  delivery: 'Same Day' },
+      { id: '02', name: 'Nitrile Exam Gloves — Medium', pack: '100/box',  delivery: 'Same Day' },
+      { id: '03', name: 'Nitrile Exam Gloves — Large',  pack: '100/box',  delivery: 'Same Day' },
+      { id: '04', name: 'Level 2 Surgical Masks',        pack: '50/box',   delivery: 'Same Day' },
+      { id: '05', name: 'Disposable Isolation Gowns',    pack: '10/pack',  delivery: 'Same Day' },
     ],
-    note: 'Nitrile gloves are our most popular item. We carry small through XL and can accommodate bulk orders.',
-    gradient: false,
+    notes: [
+      'All nitrile gloves are powder-free, latex-free, and FDA exam-grade compliant.',
+      'Level 2 Surgical Masks are ASTM F2100 rated — BFE and PFE 98%+, the correct standard for injectable and laser procedures.',
+      'XL gloves and case pricing available — ask your rep.',
+    ],
   },
   {
     num: '02',
     name: 'Exam Room & Linen Supplies',
-    subtitle: 'Table Paper · Pillow Cases · Bed Sheets · Drapes',
+    subtitle: 'Table Paper · Pillow Covers · Bed Sheets · Drapes',
+    accent: 'orange',
+    numColor: '#E5550F',
     products: [
-      { id: 6, name: 'Exam Table Paper Roll — 18" × 225ft', pack: '12/case', delivery: 'Same Day' },
-      { id: 7, name: 'Disposable Pillow Cases', pack: '100/pack', delivery: 'Same Day' },
-      { id: 8, name: 'Disposable Bed Sheet Roll — 31" × 100ft', pack: 'Each roll', delivery: 'Next Day', badge: 'Low Stock' },
-      { id: 9, name: 'Disposable Paper Drapes', pack: '50/pack', delivery: 'Same Day' },
+      { id: '07', name: 'Exam Table Paper Roll — 18" × 225ft',  pack: '12/case',    delivery: 'Same Day' },
+      { id: '08', name: 'Disposable Pillow Covers',              pack: '100/pack',   delivery: 'Same Day' },
+      { id: '09', name: 'Disposable Bed Sheet Roll — 31" × 180ft', pack: 'Each roll', delivery: 'Next Day' },
+      { id: '10', name: 'Disposable Paper Drapes',               pack: '50/pack',    delivery: 'Same Day' },
     ],
-    note: 'All paper products are fluid-resistant and tearproof. Custom sizing available on request.',
-    gradient: false,
+    notes: [
+      'Set up a monthly standing order on exam room linens and never run out mid-treatment day.',
+      'Standing order clients receive priority same-day delivery.',
+    ],
   },
   {
     num: '03',
     name: 'Wound Care & Procedure Supplies',
     subtitle: 'Gauze · Bandages · Tape · Wound Closure · Antiseptics',
+    accent: 'navy',
+    numColor: '#000000',
     products: [
-      { id: 10, name: 'Sterile Gauze Pads 4×4"', pack: '100/box', delivery: 'Same Day' },
-      { id: 11, name: 'Adhesive Bandages — Assorted', pack: '100/box', delivery: 'Same Day' },
-      { id: 12, name: 'Medical Tape — 1" Paper', pack: '12/box', delivery: 'Same Day' },
-      { id: 13, name: 'Alcohol Prep Pads', pack: '200/box', delivery: 'Same Day' },
-      { id: 14, name: 'Wound Closure Strips 1/4 × 3"', pack: '50/box', delivery: 'Same Day' },
-      { id: 15, name: 'Povidone Iodine Swabsticks', pack: '50/box', delivery: 'Same Day' },
-      { id: 16, name: 'Saline Wound Wash Spray 7oz', pack: 'Each', delivery: 'Next Day' },
+      { id: '11', name: 'Sterile Gauze Pads 4×4"',            pack: '200/box',  delivery: 'Same Day' },
+      { id: '12', name: 'Adhesive Bandages — Assorted',        pack: '100/box',  delivery: 'Same Day' },
+      { id: '13', name: 'Medical Tape — 1" Paper',             pack: '12/box',   delivery: 'Same Day' },
+      { id: '14', name: 'Alcohol Prep Pads',                   pack: '200/box',  delivery: 'Same Day' },
+      { id: '15', name: 'Wound Closure Strips 1/4" × 3"',     pack: '50/box',   delivery: 'Same Day' },
+      { id: '16', name: 'Povidone-Iodine Swabsticks',          pack: '50/box',   delivery: 'Same Day' },
+      { id: '17', name: 'Saline Wound Wash Spray 7oz',         pack: '/pc',      delivery: 'Same Day' },
     ],
-    note: 'Wound care products are sourced from national distributors and meet ASTM clinical standards.',
-    gradient: false,
+    notes: [
+      'All single-use and individually packaged for hygiene compliance.',
+      'Alcohol prep pads and sterile gauze available in bulk case quantities — contact us for pricing.',
+    ],
   },
   {
     num: '04',
     name: 'General Clinical Disposables',
-    subtitle: 'Tongue Depressors · Specula · Spatulas',
+    subtitle: 'Tongue Depressors · Speculums · Spatulas',
+    accent: 'orange',
+    numColor: '#000000',
     products: [
-      { id: 17, name: 'Tongue Depressors — Wooden', pack: '12/case', delivery: 'Same Day' },
-      { id: 18, name: 'Disposable Specula — Vaginal', pack: 'Each roll', delivery: 'Next Day', badge: 'Low Stock' },
-      { id: 19, name: 'Disposable Spatulas — Wood', pack: '50/pack', delivery: 'Same Day' },
+      { id: '18', name: 'Tongue Depressors — Wooden',              pack: '12/case',    delivery: 'Same Day' },
+      { id: '19', name: 'Disposable Speculums — Vaginal, Asst. Sizes', pack: 'Each roll', delivery: 'Next Day' },
+      { id: '20', name: 'Disposable Spatulas — Wood',              pack: '50/pack',    delivery: 'Same Day' },
     ],
-    note: 'High-volume products available at bulk pricing. Available in case quantities.',
-    gradient: false,
+    notes: [
+      'High-volume packs designed for busy practices. Speculums available in assorted sizes.',
+    ],
   },
   {
     num: '05',
     name: 'Esthetic & Spa Supplies',
-    subtitle: 'Skin Prep · Face Pads · Headbands · Microneedling',
+    subtitle: 'Facial Rounds · Esthetic Wipes · Headbands · Eye Pads · Microneedling',
+    accent: 'navy',
+    numColor: '#000000',
     products: [
-      { id: 20, name: 'Non-Woven Esthetic Wipes 3×3"', pack: '200/pack', delivery: 'Same Day' },
-      { id: 21, name: 'Disposable Facial Rounds', pack: '100/bag', delivery: 'Same Day' },
-      { id: 22, name: 'Disposable Headbands', pack: '60/pack', delivery: 'Same Day' },
-      { id: 23, name: 'Linen Eye Gel Pads', pack: '50 pairs/pack', delivery: 'Same Day' },
-      { id: 24, name: 'Microneedling Cartridges — 36 Pin', pack: '10/box', delivery: 'Next Day' },
+      { id: '21', name: 'Non-Woven Esthetic Wipes 3×3"',       pack: '200/pack',        delivery: 'Same Day' },
+      { id: '22', name: 'Disposable Facial Rounds',             pack: '100/bag',         delivery: 'Same Day' },
+      { id: '23', name: 'Disposable Headbands',                 pack: '50/pack',         delivery: 'Same Day' },
+      { id: '24', name: 'Under-Eye Gel Pads',                   pack: '50 pairs/pack',   delivery: 'Same Day' },
+      { id: '25', name: 'Microneedling Cartridges — 36 Pin',    pack: '10/box',          delivery: 'Same Day' },
     ],
-    note: 'Med spa supplies sourced with aesthetic clinic workflows in mind. Custom bundles available.',
-    gradient: false,
+    notes: [
+      'Microneedling cartridges compatible with most standard RF and manual microneedling devices.',
+      'Contact us with your device brand and model to confirm compatibility before your first order.',
+    ],
   },
 ];
 
-const SERVICES = [
-  {
-    icon: '🚚',
-    title: 'Same-Day Local Delivery',
-    description: 'We deliver directly to your clinic. Same day across all of Miami-Dade. Broward and Palm Beach available to request.',
-    featured: true,
-  },
-  {
-    icon: '📦',
-    title: 'Flexible Ordering — No Minimums',
-    description: 'Order one box or one case. No minimums. No contracts. No surprises.',
-    featured: false,
-  },
-  {
-    icon: '✅',
-    title: '1-Hour Order Confirmation',
-    description: 'Place your order and get a confirmation in less than 1 hour — any time during business hours.',
-    featured: false,
-  },
-  {
-    icon: '🔄',
-    title: 'Standing Order Program',
-    description: 'Set up monthly auto-delivery so you never need to reorder again.',
-    featured: false,
-  },
-  {
-    icon: '🎁',
-    title: 'Custom Bundles',
-    description: 'We build a monthly supply bundle based on your needs. One order. One delivery.',
-    featured: false,
-  },
-  {
-    icon: '👤',
-    title: 'Dedicated Account Rep — Isabella',
-    description: 'Your rep is available by phone, text, and email. Direct. Reliable. Local.',
-    featured: false,
-  },
+const ORDER_TERMS = [
+  { Icon: Ban,          title: 'Minimums',        body: 'None. Order exactly what you need.' },
+  { Icon: MapPin,       title: 'Delivery Area',   body: 'Miami-Dade County — same-day or next-day. Broward and Palm Beach on request.' },
+  { Icon: CheckCircle2, title: 'Confirmation',    body: 'Within 1 hour of order receipt.' },
+  { Icon: Clock,        title: 'Payment Terms',   body: 'Net-15 for established accounts. First orders require payment prior to delivery.' },
+  { Icon: CreditCard,   title: 'Payment Methods', body: 'ACH, check, or credit card (Visa/MC/Amex). 2.9% processing fee applies to card transactions.' },
+  { Icon: RefreshCw,    title: 'Returns',         body: 'Unopened, damaged items accepted within 14 days of delivery with original packaging.' },
+  { Icon: Gift,         title: 'First Order',     body: 'First-time clients receive a complimentary products sample with their initial order.' },
 ];
 
-const GLOSSARY = [
-  { term: 'Minimums', def: 'None. Order one box or one case whenever you want.' },
-  { term: 'Contracts', def: 'None.' },
-  { term: 'Confirmation', def: 'Within 1 hour.' },
-  { term: 'Delivery', def: 'Same-day or next-day — Miami-Dade.' },
-  { term: 'Payment Terms', def: 'Net-15 established accounts. First order pre-pay.' },
-  { term: 'Payment Methods', def: 'ACH · Check · Visa/MC/Amex (2.9% card fee).' },
-  { term: 'Returns', def: 'Unopened items, within 14 days.' },
-  { term: 'First Order Bonus', def: 'Complimentary product sample included.' },
-];
+/* ─── sub-components ────────────────────────────────────────── */
+
+const Eyebrow = ({ children, light = false }: { children: React.ReactNode; light?: boolean }) => (
+  <div className="d-flex align-items-center gap-2" style={{ marginBottom: '14px' }}>
+    <span style={{ width: '22px', height: '2px', background: '#F4811E', borderRadius: '2px', flexShrink: 0 }} />
+    <span style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '12.8px', color: light ? '#FFFFFF' : '#2A6FD0', letterSpacing: '1.792px', textTransform: 'uppercase' }}>{children}</span>
+  </div>
+);
+
+/* ─── page ──────────────────────────────────────────────────── */
 
 export default function ShopPage() {
   return (
     <SiteLayout>
-      {/* Hero */}
-      <section style={{ backgroundColor: '#1a4fa0', position: 'relative', overflow: 'hidden' }}>
-        <div aria-hidden="true" style={{ position: 'absolute', right: '-60px', top: '-60px', width: '320px', height: '320px', borderRadius: '50%', border: '38px solid rgba(249,178,62,0.4)', pointerEvents: 'none', zIndex: 1 }} />
-        <div aria-hidden="true" style={{ position: 'absolute', right: '60px', top: '60px', width: '180px', height: '180px', borderRadius: '50%', border: '22px solid rgba(238,106,18,0.3)', pointerEvents: 'none', zIndex: 1 }} />
-        <div className="sn-container" style={{ paddingTop: '72px', paddingBottom: '72px', position: 'relative', zIndex: 2 }}>
+
+      {/* ── Hero ── */}
+      <section style={{ background: '#004296', position: 'relative', overflow: 'hidden' }}>
+        {/* Decorative sunburst */}
+        <div aria-hidden="true" style={{ position: 'absolute', right: '-60px', top: '-60px', width: '360px', height: '360px', borderRadius: '50%', background: 'linear-gradient(135deg, #E5550F, #EDD76A)', opacity: 0.18, pointerEvents: 'none' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', right: '80px', top: '40px', width: '200px', height: '200px', borderRadius: '50%', background: 'linear-gradient(135deg, #E5550F, #EDD76A)', opacity: 0.1, pointerEvents: 'none' }} />
+
+        <div className="sn-container" style={{ paddingTop: '88px', paddingBottom: '88px', position: 'relative', zIndex: 1 }}>
           <div className="row align-items-center gy-5">
+            {/* Left — badge + H1 */}
             <div className="col-12 col-lg-7">
-              <div className="sn-badge sn-badge-white mb-4">Services &amp; Catalog</div>
-              <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(32px,4vw,60px)', color: '#fff', lineHeight: 1.05, marginBottom: '20px' }}>
-                Professional Supplies. Delivered Same-Day.
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: '#FFFFFF', borderRadius: '999px', padding: '4px 16px', marginBottom: '24px', boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '4px', background: '#F4811E', flexShrink: 0, boxShadow: '0 0 0 4px #FDEEDD' }} />
+                <span style={{ fontFamily: 'var(--font-body)', fontWeight: 900, fontSize: '12px', color: '#1A4FA0', letterSpacing: '2.16px', textTransform: 'uppercase' }}>services &amp; catalog</span>
+              </div>
+              <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(36px, 5vw, 64px)', color: '#FFFFFF', lineHeight: '70px', letterSpacing: '-0.023em', marginBottom: 0 }}>
+                Professional Supplies.<br />Delivered Same-Day.
               </h1>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '17px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.65, marginBottom: '32px', maxWidth: '480px' }}>
+            </div>
+
+            {/* Right — body + CTAs */}
+            <div className="col-12 col-lg-5">
+              <p style={{ fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: '20.48px', color: '#FFFFFF', lineHeight: '33.8px', marginBottom: '28px' }}>
                 25 clinical-grade products across 5 categories — curated for med spas, aesthetic clinics, private practices, urgent care centers, and dermatology offices in Miami-Dade County.
               </p>
-              <div className="d-flex flex-wrap gap-3 mb-4">
-                <a href="#catalog" className="sn-btn sn-btn-primary sn-btn-primary-lg">
+              <div className="d-flex flex-wrap gap-3">
+                <Link href="/request-quote" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '17.6px', color: '#FFFFFF', background: 'linear-gradient(90deg, #EE6A12, #F9B23E)', padding: '17.5px 32px', borderRadius: '14px', textDecoration: 'none', boxShadow: '0 10px 26px rgba(244,129,30,0.34)' }}>
                   Request Pricing <ArrowRight size={18} />
-                </a>
-                <Link href="/how-it-works" className="sn-btn sn-btn-secondary sn-btn-secondary-lg">
+                </Link>
+                <Link href="/how-it-works" style={{ display: 'inline-flex', alignItems: 'center', fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '17.6px', color: '#1A4FA0', background: '#FFFFFF', padding: '18px 32px', borderRadius: '14px', textDecoration: 'none' }}>
                   How to Order
                 </Link>
               </div>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>
-                <span style={{ color: '#f9b23e' }}>✓</span> Founded by a medical professional. Serving med spas, clinics, and practices across Miami-Dade.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div style={{ background: 'linear-gradient(90deg, #ee6a12 0%, #f9b23e 100%)', padding: '20px 0' }}>
-          <div className="sn-container">
-            <div className="row gy-3 justify-content-center">
-              {['Fast local delivery', 'A real person, not a call center', 'Vetted, clinic-grade products', 'No order minimums'].map((f, i) => (
-                <div key={i} className="col-6 col-md-3 d-flex align-items-center gap-2">
-                  <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '14px', color: '#fff' }}>{f}</span>
-                </div>
-              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services */}
-      <section className="sn-section sn-bg-light" aria-labelledby="services-heading">
+      {/* ── Trust bar ── */}
+      <div style={{ background: '#FFFFFF', borderBottom: '1px solid #E1E7F0' }}>
+        <div className="sn-container" style={{ paddingTop: '26px', paddingBottom: '26px' }}>
+          <div className="row gy-3 align-items-center">
+            {STAT_ITEMS.map(({ Icon, label }, i) => (
+              <div key={label} className="col-6 col-md-3" style={{ borderLeft: i > 0 ? '1px solid #E1E7F0' : 'none' }}>
+                <div className="d-flex align-items-center gap-3 px-2">
+                  <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#1A4FA0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Icon size={22} color="#FFFFFF" strokeWidth={1.8} aria-hidden="true" />
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '15px', color: '#122036', lineHeight: 1.35 }}>{label}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Services ── */}
+      <section style={{ background: '#F4F6FB', padding: '104px 0' }} aria-labelledby="services-heading">
         <div className="sn-container">
-          <p className="sn-eyebrow">Our Services</p>
-          <h2 id="services-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(26px,3.5vw,40px)', color: '#122036', marginBottom: '48px' }}>
+          <Eyebrow>Our Services</Eyebrow>
+          <h2 id="services-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(28px, 3vw, 46.4px)', color: '#122036', lineHeight: '50.1px', letterSpacing: '-0.02em', marginBottom: '44px' }}>
             Built For How Busy Clinics Actually Order
           </h2>
           <div className="row g-4">
-            {SERVICES.map((s, i) => (
+            {SERVICES.map(({ Icon, title, body, featured }, i) => (
               <div key={i} className="col-12 col-md-6 col-lg-4">
-                <div className="h-100 p-4" style={{ background: s.featured ? '#1a4fa0' : '#fff', borderRadius: '16px', border: s.featured ? 'none' : '1px solid #e8eff9', boxShadow: s.featured ? '0 8px 32px rgba(26,79,160,0.25)' : 'var(--shadow-card)' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: s.featured ? 'rgba(255,255,255,0.15)' : 'linear-gradient(135deg,#ee6a12,#f9b23e)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', fontSize: '22px' }} aria-hidden="true">
-                    {s.icon}
+                <div style={{ background: featured ? '#1A4FA0' : '#FFFFFF', borderRadius: '22px', border: featured ? '4px solid #F4811E' : '1px solid #E1E7F0', boxShadow: '0 1px 2px rgba(18,32,54,0.06), 0 2px 6px rgba(18,32,54,0.05)', padding: '40px', height: '100%' }}>
+                  <div style={{ width: '54px', height: '54px', borderRadius: '14px', background: featured ? '#FFFFFF' : '#2A6FD0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                    <Icon size={26} color={featured ? '#1A4FA0' : '#FFFFFF'} strokeWidth={1.8} aria-hidden="true" />
                   </div>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '18px', color: s.featured ? '#fff' : '#122036', marginBottom: '8px' }}>{s.title}</h3>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', color: s.featured ? 'rgba(255,255,255,0.85)' : '#54585f', lineHeight: 1.6, margin: 0 }}>{s.description}</p>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '20.8px', color: featured ? '#FFFFFF' : '#122036', lineHeight: '22.5px', letterSpacing: '-0.02em', marginBottom: '10px' }}>{title}</h3>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '16.32px', color: featured ? 'rgba(255,255,255,0.88)' : '#6B7690', lineHeight: '26.9px', margin: 0 }}>{body}</p>
                 </div>
               </div>
             ))}
@@ -198,79 +268,67 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Product Catalog */}
-      <section id="catalog" className="sn-section sn-bg-white" aria-labelledby="catalog-heading">
+      {/* ── Product Catalog ── */}
+      <section id="catalog" style={{ background: '#F4F6FB', padding: '104px 0 104px' }} aria-labelledby="catalog-heading">
         <div className="sn-container">
-          <p className="sn-eyebrow">Product Catalog</p>
-          <h2 id="catalog-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(26px,3.5vw,40px)', color: '#122036', marginBottom: '8px' }}>
+          <Eyebrow>Product Catalog</Eyebrow>
+          <h2 id="catalog-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(28px, 3vw, 46.4px)', color: '#122036', lineHeight: '50.1px', letterSpacing: '-0.02em', marginBottom: '8px' }}>
             25 products. 5 categories. All clinical grade.
           </h2>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: '16px', color: '#6b7690', marginBottom: '48px' }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '15.2px', color: '#6B7690', lineHeight: '25.1px', marginBottom: '56px' }}>
             Contact us for pricing. All products available for same-day or next-day delivery across Miami-Dade.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            {CATALOG_SECTIONS.map((section) => (
-              <div key={section.num} style={{ border: '1px solid #e8eff9', borderRadius: '16px', overflow: 'hidden' }}>
-                {/* Section header */}
-                <div style={{ padding: '24px 28px', borderBottom: '1px solid #e8eff9', background: '#f7f9fa' }}>
-                  <div className="d-flex align-items-center gap-3">
-                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '28px', color: '#e8eff9', lineHeight: 1 }}>{section.num}</span>
-                    <div>
-                      <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '20px', color: '#122036', margin: 0 }}>{section.name}</h3>
-                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#6b7690', margin: 0 }}>{section.subtitle}</p>
-                    </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '56px' }}>
+            {CATALOG.map((cat) => (
+              <div key={cat.num} style={{ background: '#FFFFFF', borderRadius: '20px', border: '2px solid #F9F9F9', boxShadow: '0 0 9.1px rgba(0,0,0,0.25)', overflow: 'hidden' }}>
+
+                {/* Category header strip */}
+                <div style={{ background: '#F9F9F9', padding: '21px 48px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  {/* Number badge */}
+                  <div style={{ width: '60px', height: '56px', borderRadius: '15px', background: cat.accent === 'navy' ? 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.45) 0%, #004296 70%)' : '#E5550F', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 4px rgba(0,0,0,0.25)' }}>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '32px', color: '#FFFFFF', lineHeight: '29.6px' }}>{cat.num}</span>
                   </div>
+                  <div style={{ flex: 1 }}>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '32px', color: '#122036', lineHeight: '50.1px', letterSpacing: '-0.928px' }}>{cat.name}</span>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '16px', color: '#0E1822', lineHeight: '19.2px', flexShrink: 0 }}>{cat.subtitle}</span>
                 </div>
-                {/* Table */}
-                <div style={{ overflowX: 'auto' }}>
-                  <table className="sn-table" aria-label={`${section.name} products`}>
-                    <thead>
-                      <tr>
-                        <th style={{ width: '48px' }}>#</th>
-                        <th>Product</th>
-                        <th>Pack Size</th>
-                        <th>Delivery</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {section.products.map((p) => (
-                        <tr key={p.id}>
-                          <td style={{ color: '#a0aab4', fontSize: '13px' }}>{p.id}</td>
-                          <td>
-                            <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, color: '#122036' }}>{p.name}</span>
-                            {p.badge && (
-                              <span style={{ marginLeft: '8px', padding: '2px 8px', background: 'rgba(244,129,30,0.1)', color: '#f4811e', borderRadius: '20px', fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-body)' }}>
-                                {p.badge}
-                              </span>
-                            )}
-                          </td>
-                          <td>{p.pack}</td>
-                          <td>
-                            <span
-                              style={{
-                                padding: '4px 12px',
-                                borderRadius: '20px',
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                fontFamily: 'var(--font-body)',
-                                background: p.delivery === 'Same Day' ? 'linear-gradient(135deg,#ee6a12,#f9b23e)' : '#e8eff9',
-                                color: p.delivery === 'Same Day' ? '#fff' : '#3a4660',
-                              }}
-                            >
-                              {p.delivery}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+
+                {/* Table header */}
+                <div style={{ display: 'grid', gridTemplateColumns: '56px 1fr 180px 160px', padding: '10px 32px', gap: '8px', borderBottom: '1px solid #F0F3F8' }}>
+                  {['#', 'Product', 'Pack Size', 'Delivery'].map((h) => (
+                    <span key={h} style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '17.92px', color: '#54585F', lineHeight: '29.6px' }}>{h}</span>
+                  ))}
                 </div>
-                {section.note && (
-                  <div style={{ padding: '14px 28px', background: '#f7f9fa', borderTop: '1px solid #e8eff9' }}>
-                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#6b7690', margin: 0 }}>
-                      <span style={{ color: '#2a6fd0', fontWeight: 600 }}>Note: </span>{section.note}
-                    </p>
+
+                {/* Table rows */}
+                {cat.products.map((p, ri) => (
+                  <div key={p.id} style={{ display: 'grid', gridTemplateColumns: '56px 1fr 180px 160px', padding: '14px 32px', gap: '8px', borderBottom: ri < cat.products.length - 1 ? '1px solid #F0F3F8' : 'none', alignItems: 'center' }}>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '17.92px', color: cat.numColor, lineHeight: '29.6px' }}>{p.id}</span>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '17.92px', color: '#000000', lineHeight: '29.6px' }}>{p.name}</span>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '17.92px', color: '#000000', lineHeight: '29.6px' }}>{p.pack}</span>
+                    <DeliveryBadge type={p.delivery} />
+                  </div>
+                ))}
+
+                {/* Footer notes */}
+                {cat.notes.length > 0 && (
+                  <div style={{ background: '#F9F9F9', padding: '10px 32px 22px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {cat.notes.map((note, ni) => (
+                      <div key={ni} className="d-flex align-items-start gap-2" style={{ paddingTop: '6px' }}>
+                        <svg width="19" height="20" viewBox="0 0 19 20" fill="none" aria-hidden="true" style={{ flexShrink: 0, marginTop: '4px' }}>
+                          <path d="M9.5 2L11.8 7.2L17.5 7.9L13.5 11.7L14.6 17.4L9.5 14.6L4.4 17.4L5.5 11.7L1.5 7.9L7.2 7.2L9.5 2Z" fill="url(#noteGrad)" />
+                          <defs>
+                            <linearGradient id="noteGrad" x1="1.5" y1="2" x2="17.5" y2="17.4" gradientUnits="userSpaceOnUse">
+                              <stop stopColor="#E5550F" />
+                              <stop offset="1" stopColor="#EDD76A" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <span style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: '#54585F', lineHeight: '29.6px' }}>{note}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -279,53 +337,82 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Glossary */}
-      <section className="sn-section sn-bg-light" aria-labelledby="glossary-heading">
-        <div className="sn-container">
-          <p className="sn-eyebrow">Simpler Terms, Spelled Out</p>
-          <h2 id="glossary-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(24px,3vw,36px)', color: '#122036', marginBottom: '40px' }}>
-            No surprises — here&apos;s how we work
+      {/* ── Order Terms ── */}
+      <section style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0%, #004296 60%)', padding: '104px 0', position: 'relative', overflow: 'hidden' }} aria-labelledby="terms-heading">
+        {/* Decorative sunburst right */}
+        <div aria-hidden="true" style={{ position: 'absolute', right: '-80px', top: '50%', transform: 'translateY(-50%)', width: '460px', height: '460px', borderRadius: '50%', background: 'linear-gradient(135deg, #E5550F, #EDD76A)', opacity: 0.18, pointerEvents: 'none' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', right: '120px', top: '40%', width: '200px', height: '200px', borderRadius: '50%', background: 'linear-gradient(135deg, #E5550F, #EDD76A)', opacity: 0.1, pointerEvents: 'none' }} />
+
+        <div className="sn-container" style={{ position: 'relative', zIndex: 1 }}>
+          <Eyebrow light>Order Terms</Eyebrow>
+          <h2 id="terms-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(28px, 3vw, 46.4px)', color: '#FFFFFF', lineHeight: '50.1px', letterSpacing: '-0.02em', marginBottom: '44px' }}>
+            Simpler terms, spelled out
           </h2>
-          <div style={{ border: '1px solid #e8eff9', borderRadius: '16px', overflow: 'hidden', background: '#fff' }}>
-            {GLOSSARY.map((g, i) => (
-              <div
-                key={g.term}
-                className="d-flex align-items-start"
-                style={{ padding: '18px 28px', borderBottom: i < GLOSSARY.length - 1 ? '1px solid #f0f3f8' : 'none' }}
-              >
-                <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '15px', color: '#122036', minWidth: '160px', flexShrink: 0 }}>{g.term}</span>
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: '15px', color: '#3a4660' }}>{g.def}</span>
+          <div style={{ maxWidth: '790px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {ORDER_TERMS.map(({ Icon, title, body }, i) => (
+              <div key={i} style={{ background: '#FFFFFF', borderRadius: '22px', border: '1px solid #E1E7F0', boxShadow: '0 1px 2px rgba(18,32,54,0.06), 0 2px 6px rgba(18,32,54,0.05)', padding: '28px 40px', display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
+                <div style={{ width: '54px', height: '54px', borderRadius: '14px', background: '#1A4FA0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={26} color="#FFFFFF" strokeWidth={1.8} aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '20.8px', color: '#2A6FD0', lineHeight: '22.5px', letterSpacing: '-0.02em', marginBottom: '6px' }}>{title}</h3>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '16.32px', color: '#3A4660', lineHeight: '26.9px', margin: 0 }}>{body}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ background: 'linear-gradient(135deg, #ee6a12 0%, #f9b23e 100%)', padding: '80px 0', position: 'relative', overflow: 'hidden' }}>
-        <div aria-hidden="true" style={{ position: 'absolute', right: '-40px', top: '-40px', width: '200px', height: '200px', borderRadius: '50%', border: '30px solid rgba(255,255,255,0.15)' }} />
-        <div className="sn-container">
-          <div className="row align-items-center gy-5">
-            <div className="col-12 col-lg-6">
-              <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(26px,3.5vw,44px)', color: '#fff', marginBottom: '12px', lineHeight: 1.1 }}>
-                Request pricing or place an order
-              </h2>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '16px', color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>
-                Isabella Lara — your local Miami rep
-              </p>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', color: 'rgba(255,255,255,0.8)', marginBottom: '28px' }}>
-                (305) 519-6804 · orders@sunnovamedical.com
-              </p>
-              <div className="d-flex flex-wrap gap-3">
-                <Link href="/request-quote" className="sn-btn" style={{ background: '#fff', color: '#d85f0c', padding: '14px 24px', fontSize: '15px', fontFamily: 'var(--font-heading)', fontWeight: 600, borderRadius: '999px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                  Request Pricing <ArrowRight size={16} />
-                </Link>
-                <Link href="/contact" className="sn-btn sn-btn-ghost-white">Contact Us</Link>
-              </div>
-            </div>
+      {/* ── CTA ── */}
+      <section style={{ background: 'linear-gradient(90deg, #EE6A12, #F9B23E)', padding: '64px 0', position: 'relative', overflow: 'hidden' }} aria-labelledby="cta-heading">
+        {/* Decorative white sunburst */}
+        <div aria-hidden="true" style={{ position: 'absolute', right: '-40px', bottom: '-60px', width: '320px', height: '320px', borderRadius: '50%', background: '#FFFFFF', opacity: 0.08, pointerEvents: 'none' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', right: '160px', bottom: '-80px', width: '180px', height: '180px', borderRadius: '50%', background: '#FFFFFF', opacity: 0.06, pointerEvents: 'none' }} />
+
+        <div className="sn-container" style={{ position: 'relative', zIndex: 1 }}>
+          <h2 id="cta-heading" style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 'clamp(28px, 4vw, 51.2px)', color: '#FFFFFF', lineHeight: '55.3px', letterSpacing: '-0.02em', marginBottom: '12px' }}>
+            Request pricing or place an order
+          </h2>
+          <p style={{ fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: '19.2px', color: '#FFFFFF', lineHeight: '31.7px', marginBottom: '32px' }}>
+            Isabella Lara — your local Miami rep · (305) 519-6804 · orders@sunnovamedical.com
+          </p>
+          <div className="d-flex flex-wrap gap-3">
+            <Link href="/request-quote" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '17.6px', color: '#D85F0C', background: '#FFFFFF', padding: '17.5px 32px', borderRadius: '14px', textDecoration: 'none', lineHeight: '29px' }}>
+              Request Pricing <ArrowRight size={18} />
+            </Link>
+            <Link href="/how-it-works" style={{ display: 'inline-flex', alignItems: 'center', fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '17.6px', color: '#FFFFFF', background: 'rgba(255,255,255,0.08)', padding: '18px 32px', borderRadius: '14px', textDecoration: 'none', lineHeight: '29px' }}>
+              How to Order
+            </Link>
           </div>
         </div>
       </section>
+
     </SiteLayout>
+  );
+}
+
+/* ── Delivery badge ──────────────────────────────────────────── */
+function DeliveryBadge({ type }: { type: 'Same Day' | 'Next Day' }) {
+  const isSameDay = type === 'Same Day';
+  return (
+    <span style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '0 12px',
+      height: '30px',
+      borderRadius: '20px',
+      fontFamily: 'var(--font-body)',
+      fontSize: '14px',
+      color: '#FFFFFF',
+      background: isSameDay
+        ? 'radial-gradient(circle at 50% 30%, rgba(255,255,255,0.25) 0%, #004296 65%)'
+        : '#E5550F',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
+      whiteSpace: 'nowrap',
+    }}>
+      {type}
+    </span>
   );
 }
