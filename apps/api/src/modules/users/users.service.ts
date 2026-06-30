@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -43,5 +43,37 @@ export class UsersService {
 
   deleteAddress(id: string, userId: string) {
     return this.prisma.address.deleteMany({ where: { id, userId } });
+  }
+
+  async getDashboardSummary(userId: string) {
+    const [totalOrders, pendingOrders, completedOrders, wishlistCount, addressCount, rewardPoints, recentOrders] = await Promise.all([
+      this.prisma.order.count({ where: { userId } }),
+      this.prisma.order.count({ where: { userId, status: 'PENDING' } }),
+      this.prisma.order.count({ where: { userId, status: 'DELIVERED' } }),
+      this.prisma.wishlistItem.count({ where: { userId } }),
+      this.prisma.address.count({ where: { userId } }),
+      this.prisma.rewardTransaction.aggregate({ where: { userId }, _sum: { points: true } }),
+      this.prisma.order.findMany({
+        where: { userId },
+        include: {
+          items: {
+            include: {
+              product: { select: { name: true, imageUrl: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      }),
+    ]);
+    return {
+      totalOrders,
+      pendingOrders,
+      completedOrders,
+      wishlistCount,
+      addressCount,
+      rewardPoints: rewardPoints._sum.points ?? 0,
+      recentOrders,
+    };
   }
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { poppins, hankenGrotesk } from '@/lib/fonts';
 import { Toaster } from 'sonner';
+import { Providers } from '@/components/providers';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${hankenGrotesk.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${hankenGrotesk.variable}`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -49,16 +50,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
-        {children}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              fontFamily: 'var(--font-hanken-grotesk)',
-              borderRadius: '8px',
-            },
-          }}
-        />
+        <Providers>
+          {children}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: { fontFamily: 'var(--font-hanken-grotesk)', borderRadius: '8px' },
+            }}
+          />
+        </Providers>
       </body>
     </html>
   );

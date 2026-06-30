@@ -6,12 +6,12 @@ import { SearchService } from './search.service';
 @ApiTags('Search')
 @Controller('search')
 export class SearchController {
-  constructor(private search: SearchService) {}
+  constructor(private searchService: SearchService) {}
 
   @Get()
   @Public()
   @ApiQuery({ name: 'q', required: true })
   search(@Query('q') q: string, @Query('limit') limit?: number) {
-    return this.search.search(q, limit);
+    return this.searchService.search(q, limit);
   }
 }

@@ -6,7 +6,7 @@ export class CartService {
   constructor(private prisma: PrismaService) {}
 
   async getOrCreate(userId: string) {
-    let cart = await this.prisma.cart.findFirst({
+    let cart: any = await this.prisma.cart.findFirst({
       where: { userId, status: 'ACTIVE' },
       include: {
         items: {
@@ -24,7 +24,7 @@ export class CartService {
         include: { items: true },
       });
     }
-    return cart;
+    return cart as any;
   }
 
   async addItem(userId: string, productId: string, variantId: string | undefined, quantity: number) {

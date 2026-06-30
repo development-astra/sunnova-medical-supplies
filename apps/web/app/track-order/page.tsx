@@ -21,7 +21,7 @@ export default function TrackOrderPage() {
               Enter your order number and email to get the latest delivery status.
             </p>
             <div style={{ background: '#fff', borderRadius: '20px', padding: '36px', border: '1px solid #e8eff9', boxShadow: 'var(--shadow-card)', textAlign: 'left' }}>
-              <form onSubmit={(e) => e.preventDefault()} noValidate>
+              <form action="#">
                 <div className="mb-3">
                   <label className="sn-label" htmlFor="to-order">Order Number *</label>
                   <input id="to-order" type="text" className="sn-input" placeholder="e.g. SN-2026-0001" required />

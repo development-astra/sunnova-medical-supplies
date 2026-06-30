@@ -48,7 +48,7 @@ export class AdminService {
   }
 
   updateOrderStatus(id: string, status: string) {
-    return this.prisma.order.update({ where: { id }, data: { status } });
+    return this.prisma.order.update({ where: { id }, data: { status } as any });
   }
 
   listQuotes(status?: string) {
@@ -58,7 +58,7 @@ export class AdminService {
   }
 
   updateQuote(id: string, status: string, adminNotes?: string) {
-    return this.prisma.quote.update({ where: { id }, data: { status, adminNotes, respondedAt: new Date() } });
+    return this.prisma.quote.update({ where: { id }, data: { status, adminNotes, respondedAt: new Date() } as any });
   }
 
   listUsers(page = 1, limit = 50) {
@@ -68,5 +68,18 @@ export class AdminService {
       take: limit,
       skip: (page - 1) * limit,
     });
+  }
+
+  listCategories() {
+    return this.prisma.category.findMany({ orderBy: { sortOrder: 'asc' } });
+  }
+
+  async upsertCategory(data: any) {
+    if (data.id) return this.prisma.category.update({ where: { id: data.id }, data });
+    return this.prisma.category.create({ data });
+  }
+
+  deleteCategory(id: string) {
+    return this.prisma.category.update({ where: { id }, data: { active: false } });
   }
 }

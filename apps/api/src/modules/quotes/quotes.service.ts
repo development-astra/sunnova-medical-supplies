@@ -38,6 +38,7 @@ export class QuotesService {
   }
 
   async updateStatus(id: string, status: string, adminNotes?: string) {
-    return this.prisma.quote.update({ where: { id }, data: { status, adminNotes } });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.prisma.quote.update({ where: { id }, data: { status, adminNotes } as any });
   }
 }

@@ -21,4 +21,6 @@ export class UsersController {
   @Post('me/addresses') upsertAddress(@CurrentUser() user: any, @Body() body: any) { return this.users.upsertAddress(user.id, body); }
 
   @Delete('me/addresses/:id') deleteAddress(@CurrentUser() user: any, @Param('id') id: string) { return this.users.deleteAddress(id, user.id); }
+
+  @Get('me/dashboard') getDashboard(@CurrentUser() user: any) { return this.users.getDashboardSummary(user.id); }
 }

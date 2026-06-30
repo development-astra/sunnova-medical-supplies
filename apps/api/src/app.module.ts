@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import configuration from './config/configuration';
@@ -17,6 +19,11 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { SearchModule } from './modules/search/search.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { HealthModule } from './modules/health/health.module';
+import { WishlistModule } from './modules/wishlist/wishlist.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { SupportModule } from './modules/support/support.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { RewardsModule } from './modules/rewards/rewards.module';
 
 @Module({
   imports: [
@@ -40,6 +47,12 @@ import { HealthModule } from './modules/health/health.module';
     SearchModule,
     AdminModule,
     HealthModule,
+    WishlistModule,
+    NotificationsModule,
+    SupportModule,
+    ReviewsModule,
+    RewardsModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

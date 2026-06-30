@@ -28,7 +28,7 @@ export default function OpenAccountPage() {
               <div style={{ background: '#fff', borderRadius: '20px', padding: '40px', border: '1px solid #e8eff9', boxShadow: 'var(--shadow-card)' }}>
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '24px', color: '#122036', marginBottom: '8px' }}>Account Application</h2>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', color: '#6b7690', marginBottom: '28px' }}>Isabella reviews all applications within 1 business day.</p>
-                <form onSubmit={(e) => e.preventDefault()} noValidate>
+                <form action="#">
                   <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '16px', color: '#122036', marginBottom: '16px', paddingBottom: '8px', borderBottom: '1px solid #e8eff9' }}>Contact Information</h3>
                   <div className="row g-3 mb-4">
                     <div className="col-12 col-sm-6">

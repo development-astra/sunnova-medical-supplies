@@ -57,10 +57,16 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  addresses Address[]
-  carts     Cart[]
-  orders    Order[]
-  quotes    Quote[]
+  addresses      Address[]
+  carts          Cart[]
+  orders         Order[]
+  quotes         Quote[]
+  wishlistItems  WishlistItem[]
+  notifications  Notification[]
+  supportTickets SupportTicket[]
+  reviews        Review[]
+  rewardPoints   RewardTransaction[]
+  giftCardUses   GiftCardTransaction[]
 
   @@map("users")
 }
@@ -120,11 +126,13 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  category   Category         @relation(fields: [categoryId], references: [id])
-  variants   ProductVariant[]
-  images     ProductImage[]
-  cartItems  CartItem[]
-  orderItems OrderItem[]
+  category      Category         @relation(fields: [categoryId], references: [id])
+  variants      ProductVariant[]
+  images        ProductImage[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  wishlistItems WishlistItem[]
+  reviews       Review[]
 
   @@map("products")
 }
@@ -157,6 +165,136 @@ model ProductImage {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("product_images")
+}
+
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("wishlist_items")
+}
+
+// ─── Reviews ──────────────────────────────────────────────────────────────────
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  orderId   String?
+  rating    Int      // 1-5
+  title     String?
+  body      String?  @db.Text
+  status    String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // ORDER_UPDATE | SHIPPING | PROMO | PRICE_DROP | MESSAGE
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// ─── Support ──────────────────────────────────────────────────────────────────
+
+model SupportTicket {
+  id           String   @id @default(cuid())
+  userId       String
+  ticketNumber String   @unique
+  subject      String
+  category     String   // ORDER | SHIPPING | BILLING | PRODUCT | OTHER
+  priority     String   @default("MEDIUM") // LOW | MEDIUM | HIGH | URGENT
+  status       String   @default("OPEN")   // OPEN | IN_PROGRESS | RESOLVED | CLOSED
+  orderId      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+
+  @@map("support_tickets")
+}
+
+model SupportMessage {
+  id         String   @id @default(cuid())
+  ticketId   String
+  fromAdmin  Boolean  @default(false)
+  message    String   @db.Text
+  createdAt  DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("support_messages")
+}
+
+// ─── Rewards ──────────────────────────────────────────────────────────────────
+
+model RewardTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  points      Int      // positive = earned, negative = spent
+  type        String   // PURCHASE | REFERRAL | REVIEW | REDEMPTION | ADJUSTMENT
+  description String
+  orderId     String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reward_transactions")
+}
+
+// ─── Gift Cards ───────────────────────────────────────────────────────────────
+
+model GiftCard {
+  id             String   @id @default(cuid())
+  code           String   @unique
+  initialBalance Decimal  @db.Decimal(10, 2)
+  balance        Decimal  @db.Decimal(10, 2)
+  expiresAt      DateTime?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  transactions GiftCardTransaction[]
+
+  @@map("gift_cards")
+}
+
+model GiftCardTransaction {
+  id         String   @id @default(cuid())
+  giftCardId String
+  userId     String
+  amount     Decimal  @db.Decimal(10, 2)
+  orderId    String?
+  createdAt  DateTime @default(now())
+
+  giftCard GiftCard @relation(fields: [giftCardId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("gift_card_transactions")
 }
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────

@@ -36,7 +36,7 @@ export default function RequestQuotePage() {
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '24px', color: '#122036', marginBottom: '24px' }}>
                   Quote Request
                 </h2>
-                <form onSubmit={(e) => e.preventDefault()} noValidate>
+                <form action="#">
                   <div className="row g-3 mb-3">
                     <div className="col-12 col-sm-6">
                       <label className="sn-label" htmlFor="q-name">Full Name <span aria-hidden="true" style={{ color: '#e83026' }}>*</span></label>
