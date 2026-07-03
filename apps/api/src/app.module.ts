@@ -27,7 +27,11 @@ import { RewardsModule } from './modules/rewards/rewards.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      envFilePath: ['../../.env', '.env'],
+    }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: () => ([{ ttl: 60000, limit: 60 }]),

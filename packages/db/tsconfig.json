@@ -3,13 +3,11 @@
     "target": "ES2020",
     "module": "commonjs",
     "lib": ["ES2020", "DOM"],
-    "types": ["node"],
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": "."
+    "rootDir": "."
   },
   "include": ["src", "prisma"],
   "exclude": ["node_modules", "dist"]

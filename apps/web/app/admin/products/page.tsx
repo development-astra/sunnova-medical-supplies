@@ -109,7 +109,7 @@ export default function AdminProductsPage() {
                       <div style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 500, color: '#122036' }}>{p.name}</div>
                       {p.featured && <span style={{ fontSize: '11px', color: '#ee6a12', fontWeight: 600 }}>Featured</span>}
                     </td>
-                    <td style={{ padding: '13px 16px', fontFamily: 'var(--font-body)', fontSize: '12px', color: '#6b7690', fontFamily: 'monospace' }}>{p.sku}</td>
+                    <td style={{ padding: '13px 16px', fontFamily: 'monospace', fontSize: '12px', color: '#6b7690' }}>{p.sku}</td>
                     <td style={{ padding: '13px 16px', fontFamily: 'var(--font-body)', fontSize: '13px', color: '#6b7690' }}>{p.category?.name ?? '—'}</td>
                     <td style={{ padding: '13px 16px', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#122036', whiteSpace: 'nowrap' }}>{fmt(p.price)}</td>
                     <td style={{ padding: '13px 16px' }}><StockBadge qty={p.stockQty} /></td>

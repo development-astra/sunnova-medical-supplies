@@ -137,6 +137,25 @@ async function main() {
   });
   console.log('✓ Admin user created');
 
+  // Customer user — for developers to inspect the customer dashboard (/account).
+  // Matches the mock dashboard profile (Dr. Amanda Lee · Wellness Med Spa).
+  const customerEmail = process.env.CUSTOMER_SEED_EMAIL ?? 'customer@sunnovamedical.com';
+  const customerPass = process.env.CUSTOMER_SEED_PASSWORD ?? 'SunnovaCustomer2026!';
+  await prisma.user.upsert({
+    where: { email: customerEmail },
+    update: {},
+    create: {
+      email: customerEmail,
+      passwordHash: await bcrypt.hash(customerPass, 12),
+      firstName: 'Amanda',
+      lastName: 'Lee',
+      businessName: 'Wellness Med Spa',
+      role: 'CUSTOMER',
+      emailVerified: true,
+    },
+  });
+  console.log(`✓ Customer user created (${customerEmail})`);
+
   // Categories
   const categoryMap: Record<string, string> = {};
   for (const cat of CATEGORIES) {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, User, ShoppingCart, Menu, X, ChevronDown } from 'lucide-react';
 import MobileNav from './MobileNav';
+import { useCartStore, useCartHydrated } from '@/lib/cart-store';
 
 const NAV_LINKS = [
   {
@@ -27,7 +28,9 @@ const NAV_LINKS = [
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
-  const [cartCount] = useState(3); // TODO: wire to cart context
+  const items = useCartStore((s) => s.items);
+  const hydrated = useCartHydrated();
+  const cartCount = hydrated ? items.reduce((n, i) => n + i.qty, 0) : 0;
 
   useEffect(() => {
     if (mobileOpen) {

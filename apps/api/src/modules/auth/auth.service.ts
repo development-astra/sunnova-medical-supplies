@@ -65,7 +65,17 @@ export class AuthService {
       path: '/',
     });
 
-    return { accessToken, user: { id: user.id, email: user.email, role: user.role } };
+    return {
+      accessToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        businessName: user.businessName ?? null,
+      },
+    };
   }
 
   async refresh(refreshToken: string, res: Response) {
@@ -81,7 +91,7 @@ export class AuthService {
     const valid = await bcrypt.compare(refreshToken, user.refreshTokenHash);
     if (!valid) throw new UnauthorizedException();
 
-    return this.login({ id: user.id, email: user.email, role: user.role }, res);
+    return this.login(user, res);
   }
 
   async logout(userId: string, res: Response) {

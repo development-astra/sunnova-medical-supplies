@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Phone, Truck } from 'lucide-react';
+import AuthLink from './AuthLink';
 
 export default function TopBar() {
   return (
@@ -40,13 +41,7 @@ export default function TopBar() {
               Track Order
             </Link>
             <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>|</span>
-            <Link
-              href="/sign-in"
-              className="text-white text-decoration-none"
-              style={{ fontSize: '13px', fontFamily: 'var(--font-body)', opacity: 0.9 }}
-            >
-              Sign In
-            </Link>
+            <AuthLink />
           </div>
         </div>
       </div>
