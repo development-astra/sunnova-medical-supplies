@@ -1,0 +1,84 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, badge, avatar, pagination %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Audit Logs'}]) }}
+
+  {% call page_header('Audit Logs', 'A complete record of every admin action') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+  {% endcall %}
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search actions or targets…" aria-label="Search audit logs" />
+    </div>
+    <select class="select select--sm">
+      <option>All admins</option>
+      <option>Ana Reyes</option>
+      <option>Luis Ortega</option>
+      <option>Marco Silva</option>
+      <option>System</option>
+    </select>
+    <select class="select select--sm" name="action" onchange="this.form.submit()">
+      <option value="">All actions</option>
+      {% for a in actions %}<option value="{{ a }}"{% if filters.get('action')==a %} selected{% endif %}>{{ a }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="date" onchange="this.form.submit()">
+      <option value="">Any time</option>
+      <option value="today"{% if filters.get('date')=='today' %} selected{% endif %}>Today</option>
+      <option value="7"{% if filters.get('date')=='7' %} selected{% endif %}>Last 7 days</option>
+      <option value="30"{% if filters.get('date')=='30' %} selected{% endif %}>Last 30 days</option>
+    </select>
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Admin</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th>IP address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in logs %}
+            <tr>
+              <td class="nowrap text-soft text-sm">{{ l.time }}</td>
+              <td>
+                {% if l.actor == 'System' %}
+                  {{ badge('System', 'gray') }}
+                {% else %}
+                  {% set p = l.actor.split(' ') %}
+                  <div class="flex items-center gap-8">
+                    {{ avatar((p[0][0] ~ (p[1][0] if p|length > 1 else ''))|upper, 'avatar--sm') }}
+                    <span class="nowrap">{{ l.actor }}</span>
+                  </div>
+                {% endif %}
+              </td>
+              <td class="nowrap">{{ badge(l.action, l.tone) }}</td>
+              <td class="text-soft">{{ l.target }}</td>
+              <td class="nowrap {% if l.ip == '—' %}text-mute{% else %}num text-sm{% endif %}">{{ l.ip }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="5">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('activity') }}</div>
+                <div class="empty__title">No log entries match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+{% endblock %}

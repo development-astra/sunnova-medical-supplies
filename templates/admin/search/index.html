@@ -1,0 +1,159 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, badge %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Search'}]) }}
+
+  {{ page_header('Search Management', 'Popular searches, synonyms and promoted products') }}
+
+  {# ---------- Popular searches ---------- #}
+  <div class="card mb-24">
+    <div class="card__head">
+      <div>
+        <div class="card__title">Popular searches</div>
+        <div class="card__sub">Searches with no results are opportunities to add synonyms or new products.</div>
+      </div>
+    </div>
+    <div class="card__body card__body--flush">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th class="table__num">Searches</th>
+              <th class="table__num">Results</th>
+              <th>Conversion</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in popular %}
+              <tr>
+                <td class="cell-name">{{ s.term }}</td>
+                <td class="table__num num">{{ s.count }}</td>
+                <td class="table__num num">{{ s.results }}</td>
+                <td class="nowrap">{{ s.conversion }}</td>
+                <td>
+                  {% if s.no_results %}
+                    {{ badge('No results', 'red') }}
+                  {% else %}
+                    {{ badge('Indexed', 'green') }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5">
+                  <div class="empty">
+                    <div class="empty__icon">{{ icon('search') }}</div>
+                    <div class="empty__title">No popular searches yet</div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    {# ---------- Search synonyms ---------- #}
+    <div class="card">
+      <div class="card__head">
+        <div>
+          <div class="card__title">Search synonyms</div>
+          <div class="card__sub">If users search “gloves,” promote nitrile gloves first.</div>
+        </div>
+      </div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>Synonyms</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for syn in synonyms %}
+                <tr>
+                  <td class="cell-name nowrap">{{ syn.term }}</td>
+                  <td class="text-soft">{{ syn.synonyms }}</td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="2">
+                    <div class="empty">
+                      <div class="empty__icon">{{ icon('link') }}</div>
+                      <div class="empty__title">No synonyms yet</div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card__foot">
+        <form method="post" action="{{ url_for('admin.search_synonym') }}" class="flex gap-8 flex-wrap w-full">
+          <input class="input flex-1" type="text" name="term" placeholder="gloves" aria-label="Term" />
+          <input class="input flex-1" type="text" name="synonyms" placeholder="nitrile, latex, vinyl" aria-label="Synonyms" />
+          <button type="submit" class="btn btn--primary">{{ icon('plus') }} Add</button>
+        </form>
+      </div>
+    </div>
+
+    {# ---------- Promoted products ---------- #}
+    <div class="card">
+      <div class="card__head">
+        <div>
+          <div class="card__title">Promoted products</div>
+          <div class="card__sub">Pin a product to the top of results for a keyword.</div>
+        </div>
+      </div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Keyword</th>
+                <th>Product</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pr in promoted %}
+                <tr>
+                  <td class="cell-name nowrap">{{ pr.keyword }}</td>
+                  <td>
+                    <div class="cell-name">{{ pr.product_name }}</div>
+                    <div class="cell-sub">{{ pr.sku }}</div>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="2">
+                    <div class="empty">
+                      <div class="empty__icon">{{ icon('star') }}</div>
+                      <div class="empty__title">No promoted products yet</div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card__foot">
+        <form method="post" action="{{ url_for('admin.search_promote') }}" class="flex gap-8 flex-wrap w-full">
+          <input class="input flex-1" type="text" name="keyword" placeholder="gloves" aria-label="Keyword" />
+          <select class="select flex-1" name="sku" aria-label="Product">
+            {% for p in products %}<option value="{{ p.sku }}">{{ p.name }}</option>{% endfor %}
+          </select>
+          <button type="submit" class="btn btn--primary">{{ icon('star') }} Promote</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

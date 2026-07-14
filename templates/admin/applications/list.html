@@ -1,0 +1,158 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, info_row, pagination, tab_link %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Account Applications'}]) }}
+
+  {% call page_header('Account Applications', applications|length ~ ' applications to review') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+    {% if applications %}<button class="btn btn--primary" data-drawer-open="appDrawer-{{ applications[0].id }}">{{ icon('user-plus') }} Review Next</button>{% endif %}
+  {% endcall %}
+
+  {# Status segmented control — real links that filter server-side #}
+  {% set cur_status = filters.get('status', '') %}
+  <div class="segmented mb-16">
+    <a class="segmented__btn{% if not cur_status %} is-active{% endif %}" href="{{ tab_link('status','') }}">All <span class="count">{{ counts.all }}</span></a>
+    {% for s in application_statuses %}
+      <a class="segmented__btn{% if cur_status == s %} is-active{% endif %}" href="{{ tab_link('status', s) }}">{{ s }} <span class="count">{{ counts[s] }}</span></a>
+    {% endfor %}
+  </div>
+
+  {# Filter bar — a GET form; select auto-submits on change #}
+  <form method="get" class="filterbar">
+    {% if cur_status %}<input type="hidden" name="status" value="{{ cur_status }}" />{% endif %}
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search business or contact…" aria-label="Search applications" />
+    </div>
+    <select class="select select--sm" name="type" onchange="this.form.submit()">
+      <option value="">All types</option>
+      {% for t in customer_types %}<option value="{{ t }}"{% if filters.get('type')==t %} selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+    <div class="filterbar__spacer"></div>
+    <button type="submit" class="btn btn--subtle btn--sm">{{ icon('filter') }} Apply</button>
+    {% if filters %}<a class="btn btn--ghost btn--sm" href="{{ url_for('admin.applications') }}">Clear</a>{% endif %}
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Application #</th>
+            <th>Business</th>
+            <th>Contact</th>
+            <th>Type</th>
+            <th>Submitted</th>
+            <th>Documents</th>
+            <th>Status</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in applications %}
+            <tr>
+              <td class="nowrap">
+                <button type="button" class="link fw-600" data-drawer-open="appDrawer-{{ a.id }}" style="background:none;border:0;padding:0;font:inherit;cursor:pointer">{{ a.id }}</button>
+              </td>
+              <td>
+                <div class="cell-name">{{ a.business }}</div>
+              </td>
+              <td>
+                <div class="cell-name">{{ a.contact }}</div>
+                <div class="cell-sub">{{ a.email }}</div>
+              </td>
+              <td class="nowrap">{{ a.type }}</td>
+              <td class="nowrap text-mute text-sm">{{ a.submitted }}</td>
+              <td class="nowrap">
+                <span class="flex items-center gap-8">{{ icon('file') }} {{ a.docs }} files</span>
+              </td>
+              <td>{{ status_pill(a.status) }}</td>
+              <td class="table__actions">
+                <div class="flex items-center gap-8 justify-between">
+                  <button class="btn btn--subtle btn--sm" data-drawer-open="appDrawer-{{ a.id }}">{{ icon('eye') }} Review</button>
+                  {% call row_menu() %}
+                    <form method="post" action="{{ url_for('admin.application_action', app_id=a.id) }}">
+                      <input type="hidden" name="action" value="approve" />
+                      <button type="submit" class="menu__item w-full">{{ icon('check-circle') }} Approve</button>
+                    </form>
+                    <form method="post" action="{{ url_for('admin.application_action', app_id=a.id) }}">
+                      <input type="hidden" name="action" value="info" />
+                      <button type="submit" class="menu__item w-full">{{ icon('help-circle') }} Request more info</button>
+                    </form>
+                    <div class="menu__divider"></div>
+                    <form method="post" action="{{ url_for('admin.application_action', app_id=a.id) }}">
+                      <input type="hidden" name="action" value="reject" />
+                      <button type="submit" class="menu__item menu__item--danger w-full">{{ icon('x-circle') }} Reject</button>
+                    </form>
+                  {% endcall %}
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="8">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('user-plus') }}</div>
+                <div class="empty__title">No applications match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+
+  {# ---------- One review drawer per application (acts on that exact record) ---------- #}
+  {% for a in applications %}
+  <div class="drawer" id="appDrawer-{{ a.id }}" aria-hidden="true">
+    <div class="drawer__head">
+      <div>
+        <h2 class="card__title">Review Application</h2>
+        <div class="card__sub">{{ a.id }}</div>
+      </div>
+      <button class="drawer__close" data-drawer-close aria-label="Close">{{ icon('x') }}</button>
+    </div>
+
+    <div class="drawer__body">
+      <div class="flex items-center justify-between mb-16">
+        <div class="fw-700">{{ a.business }}</div>
+        {{ status_pill(a.status) }}
+      </div>
+
+      <div class="dl mb-24">
+        {{ info_row('Contact person', a.contact) }}
+        {{ info_row('Email', a.email) }}
+        {{ info_row('Phone', a.phone) }}
+        {{ info_row('Business type', a.type) }}
+        {{ info_row('Submitted', a.submitted) }}
+      </div>
+
+      <div class="section-title">Delivery address</div>
+      <p class="text-soft mb-24">{{ a.address or 'Not provided' }}</p>
+
+      <div class="section-title">Uploaded documents <span class="text-mute">({{ a.docs }} files)</span></div>
+      <p class="text-soft mb-24">
+        {% if a.docs %}{{ a.docs }} document{{ '' if a.docs == 1 else 's' }} submitted with this application.{% else %}No documents were uploaded.{% endif %}
+      </p>
+
+      <form method="post" id="appForm-{{ a.id }}" action="{{ url_for('admin.application_action', app_id=a.id) }}">
+        <div class="field">
+          <label class="field__label" for="appNotes-{{ a.id }}">Review notes</label>
+          <textarea class="textarea" id="appNotes-{{ a.id }}" name="note" rows="3" placeholder="Add an internal note about this application…">{{ a.notes }}</textarea>
+        </div>
+      </form>
+    </div>
+
+    <div class="drawer__foot">
+      <button type="submit" form="appForm-{{ a.id }}" name="action" value="info" class="btn btn--ghost">{{ icon('help-circle') }} More info</button>
+      <button type="submit" form="appForm-{{ a.id }}" name="action" value="reject" class="btn btn--danger">{{ icon('x-circle') }} Reject</button>
+      <button type="submit" form="appForm-{{ a.id }}" name="action" value="approve" class="btn btn--primary flex-1">{{ icon('check-circle') }} Approve account</button>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}

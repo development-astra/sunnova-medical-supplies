@@ -1,0 +1,67 @@
+{% extends 'account/_dash.html' %}
+{% from 'account/_macros.html' import status_pill %}
+{% block title %}My Account{% endblock %}
+{% block dash %}
+
+<div class="account-head">
+  <div>
+    <h1 class="account-head__title">Hi, {{ customer.name.split(' ')[0] }} 👋</h1>
+    <p class="account-head__sub">Here's what's happening with your account.</p>
+  </div>
+  <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">Shop supplies</a>
+</div>
+
+<div class="stat-row">
+  <div class="stat-tile">
+    <span class="stat-tile__n">{{ stats.orders }}</span>
+    <span class="stat-tile__l">Total orders</span>
+  </div>
+  <div class="stat-tile">
+    <span class="stat-tile__n">${{ '%.2f'|format(stats.spent) }}</span>
+    <span class="stat-tile__l">Total spent</span>
+  </div>
+  <div class="stat-tile">
+    <span class="stat-tile__n">{{ stats.in_progress }}</span>
+    <span class="stat-tile__l">In progress</span>
+  </div>
+  <div class="stat-tile">
+    <span class="stat-tile__n">{{ stats.open_quotes }}</span>
+    <span class="stat-tile__l">Open quotes</span>
+  </div>
+</div>
+
+<div class="account-card">
+  <div class="account-card__head">
+    <h2 class="account-card__title">Recent orders</h2>
+    {% if recent %}<a href="{{ url_for('account_orders') }}" class="account-card__link">View all</a>{% endif %}
+  </div>
+
+  {% if recent %}
+    <div class="order-table" role="table">
+      <div class="order-table__head" role="row">
+        <span role="columnheader">Order</span>
+        <span role="columnheader">Date</span>
+        <span role="columnheader">Status</span>
+        <span role="columnheader" class="ta-right">Total</span>
+        <span role="columnheader"></span>
+      </div>
+      {% for o in recent %}
+      <a class="order-table__row" role="row" href="{{ url_for('account_order_detail', order_id=o.id) }}">
+        <span role="cell" class="order-table__id">{{ o.id }}</span>
+        <span role="cell" class="order-table__muted">{{ o.date }}</span>
+        <span role="cell">{{ status_pill(o.status) }}</span>
+        <span role="cell" class="ta-right order-table__total">${{ '%.2f'|format(o.total) }}</span>
+        <span role="cell" class="ta-right order-table__chev" aria-hidden="true">›</span>
+      </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="account-empty">
+      <p class="account-empty__title">No orders yet</p>
+      <p class="account-empty__sub">When you place an order, it'll show up here.</p>
+      <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">Browse the catalog</a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, pagination %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Coupons'}]) }}
+
+  {% call page_header('Coupons', coupons|length ~ ' coupons') %}
+    <button class="btn btn--primary" data-drawer-open="couponDrawer">{{ icon('plus') }} Create Coupon</button>
+  {% endcall %}
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search code…" aria-label="Search coupons" />
+    </div>
+    <select class="select select--sm" name="type" onchange="this.form.submit()">
+      <option value="">All types</option>
+      {% for t in coupon_types %}<option value="{{ t }}"{% if filters.get('type')==t %} selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="active" onchange="this.form.submit()">
+      <option value="">All</option>
+      <option value="1"{% if filters.get('active')=='1' %} selected{% endif %}>Active</option>
+      <option value="0"{% if filters.get('active')=='0' %} selected{% endif %}>Disabled</option>
+    </select>
+    <div class="filterbar__spacer"></div>
+    <button type="submit" class="btn btn--subtle btn--sm">{{ icon('filter') }} Apply</button>
+    {% if filters %}<a class="btn btn--ghost btn--sm" href="{{ url_for('admin.coupons') }}">Clear</a>{% endif %}
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Type</th>
+            <th>Value</th>
+            <th class="table__num">Min order</th>
+            <th class="table__num">Usage</th>
+            <th>Scope</th>
+            <th>Expires</th>
+            <th>Status</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in coupons %}
+            <tr>
+              <td class="fw-700 nowrap">{{ c.code }}</td>
+              <td class="nowrap text-soft">{{ c.type }}</td>
+              <td class="nowrap">{{ c.value }}</td>
+              <td class="table__num num nowrap">${{ '%.2f'|format(c.min_order) }}</td>
+              <td class="table__num num nowrap">{{ c.used }} / {{ c.usage_limit if c.usage_limit else '&#8734;'|safe }}</td>
+              <td class="nowrap text-soft">{{ c.scope }}</td>
+              <td class="nowrap text-mute text-sm">{{ c.expires or '—' }}</td>
+              <td>{{ status_pill(c.status) }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <form method="post" action="{{ url_for('admin.coupon_toggle', coupon_id=c.id) }}">
+                    <button type="submit" class="menu__item w-full">{{ icon('x-circle') if c.active else icon('check-circle') }} {{ 'Disable' if c.active else 'Enable' }}</button>
+                  </form>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="9">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('percent') }}</div>
+                <div class="empty__title">No coupons match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+
+  {# ---------------------------------------------------------------
+     Create coupon drawer. Opened via data-drawer-open="couponDrawer".
+     --------------------------------------------------------------- #}
+  <div class="drawer" id="couponDrawer" aria-labelledby="couponDrawerTitle">
+    <div class="drawer__head">
+      <h2 id="couponDrawerTitle" class="section-title" style="margin:0">Create Coupon</h2>
+      <button class="drawer__close" data-drawer-close aria-label="Close">{{ icon('x') }}</button>
+    </div>
+
+    <div class="drawer__body">
+      <form class="form-grid" id="couponForm" method="post" action="{{ url_for('admin.coupon_new') }}">
+        <div class="field">
+          <label class="field__label" for="couponCode">Coupon code <span class="req">*</span></label>
+          <input class="input" id="couponCode" name="code" type="text" placeholder="WELCOME10" style="text-transform:uppercase" required />
+          <span class="field__hint">Case-insensitive — automatically stored in uppercase. e.g. WELCOME10 · CLINICFIRST · LOCALDELIVERY.</span>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="couponType">Discount type</label>
+          <select class="select" id="couponType" name="type">
+            {% for t in coupon_types %}<option>{{ t }}</option>{% endfor %}
+          </select>
+        </div>
+
+        <div class="field__row">
+          <div class="field">
+            <label class="field__label" for="couponAmount">Amount</label>
+            <div class="input-group"><span class="input-group__addon">#</span><input class="input" id="couponAmount" name="amount" type="text" placeholder="10" /></div>
+            <span class="field__hint">Percent or dollar amount depending on type.</span>
+          </div>
+          <div class="field">
+            <label class="field__label" for="couponMin">Minimum order</label>
+            <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="couponMin" name="min_order" type="text" placeholder="0.00" /></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="couponUsage">Usage limit</label>
+          <input class="input" id="couponUsage" name="usage_limit" type="number" min="0" value="0" />
+          <span class="field__hint">0 = unlimited.</span>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="couponScope">Scope</label>
+          <input class="input" id="couponScope" name="scope" type="text" placeholder="All products" value="All products" />
+          <span class="field__hint">Limit to a category, or leave as All products.</span>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="couponExpires">Expires</label>
+          <input class="input" id="couponExpires" name="expires" type="text" placeholder="Dec 31, 2026" />
+        </div>
+      </form>
+    </div>
+
+    <div class="drawer__foot">
+      <button class="btn btn--subtle" data-drawer-close>Cancel</button>
+      <button class="btn btn--primary" type="submit" form="couponForm">{{ icon('save') }} Save Coupon</button>
+    </div>
+  </div>
+{% endblock %}

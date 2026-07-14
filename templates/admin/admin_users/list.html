@@ -1,0 +1,117 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, badge, avatar, row_menu %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Admin Users'}]) }}
+
+  {% call page_header('Admin Users & Roles', 'Manage team access and permissions') %}
+    <button class="btn btn--primary" data-modal-open="inviteAdmin">{{ icon('user-plus') }} Invite admin</button>
+  {% endcall %}
+
+  {# ---------- Roles overview ---------- #}
+  <div class="section-title">Roles</div>
+  <div class="grid grid-3 mb-16">
+    {% for role in roles %}
+      <div class="card">
+        <div class="card__body">
+          {{ badge(role.name, role.tone) }}
+          <p class="text-soft text-sm mt-16">{{ role.access }}</p>
+          <p class="text-mute text-xs mt-16">{{ role.users }} user{{ '' if role.users == 1 else 's' }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {# ---------- Team members ---------- #}
+  <div class="section-title mt-24">Team members</div>
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Last active</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td>
+                <div class="cell-product">
+                  {{ avatar(u.initials, 'avatar--sm') }}
+                  <div>
+                    <div class="cell-name">{{ u.name }}</div>
+                    <div class="cell-sub">{{ u.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="nowrap">{{ badge(u.role, 'gray') }}</td>
+              <td>{{ status_pill(u.status) }}</td>
+              <td class="nowrap text-sm {{ 'text-green fw-600' if u.last_active == 'Online now' else 'text-mute' }}">{{ u.last_active }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <form method="post" action="{{ url_for('admin.admin_user_role', user_id=u.id) }}" style="padding:6px 10px">
+                    <label class="field__label text-xs" style="display:block;margin-bottom:5px">Change role</label>
+                    <div class="flex gap-6">
+                      <select class="select select--sm flex-1" name="role">{% for role in roles %}<option {% if role.name == u.role %}selected{% endif %}>{{ role.name }}</option>{% endfor %}</select>
+                      <button type="submit" class="btn btn--subtle btn--sm">Save</button>
+                    </div>
+                  </form>
+                  <a class="menu__item" href="{{ url_for('admin.audit_logs') }}">{{ icon('activity') }} View activity</a>
+                  <div class="menu__divider"></div>
+                  <form method="post" action="{{ url_for('admin.admin_user_toggle', user_id=u.id) }}">
+                    {% if u.status == 'Disabled' %}
+                      <button type="submit" class="menu__item w-full">{{ icon('check-circle') }} Enable</button>
+                    {% else %}
+                      <button type="submit" class="menu__item menu__item--danger w-full">{{ icon('x-circle') }} Disable</button>
+                    {% endif %}
+                  </form>
+                {% endcall %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {# ---------- Invite admin modal ---------- #}
+  <div class="modal" id="inviteAdmin">
+    <div class="modal__body">
+      <div class="modal__icon tone-brand">{{ icon('user-plus') }}</div>
+      <div class="modal__title">Invite admin user</div>
+      <p class="modal__text mb-16">Grant a teammate access to the admin dashboard with a specific role.</p>
+
+      <form id="inviteForm" method="post" action="{{ url_for('admin.admin_user_invite') }}" class="form-grid">
+        <div class="field">
+          <label class="field__label" for="inviteName">Full name</label>
+          <input class="input" id="inviteName" name="name" type="text" placeholder="Jane Doe" />
+        </div>
+        <div class="field">
+          <label class="field__label" for="inviteEmail">Email address <span class="req">*</span></label>
+          <input class="input" id="inviteEmail" name="email" type="email" placeholder="name@sunnovamedical.com" required />
+        </div>
+        <div class="field">
+          <label class="field__label" for="inviteRole">Role <span class="req">*</span></label>
+          <select class="select" id="inviteRole" name="role">
+            {% for role in roles %}<option>{{ role.name }}</option>{% endfor %}
+          </select>
+          <p class="field__hint">An invitation email will be sent.</p>
+        </div>
+        <label class="checkbox">
+          <input type="checkbox" name="require_secure" checked />
+          <span class="checkbox__box">{{ icon('check') }}</span>
+          <span>Require secure password</span>
+        </label>
+      </form>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" data-modal-close>Cancel</button>
+      <button type="submit" form="inviteForm" class="btn btn--primary">{{ icon('send') }} Send invite</button>
+    </div>
+  </div>
+{% endblock %}

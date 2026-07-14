@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Your Order — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="Track your Sunnova Medical Supplies order. Enter your order number and email or phone to get the latest delivery status across Miami-Dade." />
+
+  {# Same font + stylesheet as the rest of the site #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-track">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  <main>
+    {# ============================================================
+       TRACK ORDER — centered badge + title + lookup card
+       ============================================================ #}
+    <section class="section track">
+      <div class="container track__inner">
+
+        <p class="track__badge">Track Order</p>
+        <h1 class="track__title">Track Your Order</h1>
+        <p class="track__sub">Enter your order number and email to get the latest delivery status.</p>
+
+        {# Lookup form — GET so the order number/email travel in the query string (no CSRF needed) #}
+        <form class="track-card" method="get" action="{{ url_for('track_order') }}">
+          <div class="reqform__field track-card__field">
+            <label class="reqform__label" for="order-number">Order Number <span class="req">*</span></label>
+            <input class="reqform__input" id="order-number" name="order" type="text"
+                   placeholder="e.g. SN-10428" autocomplete="off"
+                   value="{{ request.args.get('order', '') }}" required />
+          </div>
+
+          <div class="reqform__field track-card__field">
+            <label class="reqform__label" for="order-contact">Email <span style="color:#9aa6b6; font-weight:500;">(optional)</span></label>
+            <input class="reqform__input" id="order-contact" name="email" type="email"
+                   placeholder="Email used at checkout" autocomplete="off"
+                   value="{{ request.args.get('email', '') }}" />
+          </div>
+
+          <button type="submit" class="reqform__btn track-card__btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            Track order
+          </button>
+        </form>
+
+        {# ---- Results area ---- #}
+        {% if order %}
+          <div class="track-card track__result" style="text-align:left; margin-top:24px;">
+
+            {# Status header #}
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px; padding-bottom:20px; border-bottom:1px solid #eef1f6;">
+              <div>
+                <p style="margin:0 0 5px; font-size:0.72rem; letter-spacing:0.05em; text-transform:uppercase; color:#9aa6b6;">Order {{ order.id }}</p>
+                <h2 style="margin:0; font-size:1.45rem; font-weight:800; color:var(--ink);">{{ order.status }}</h2>
+              </div>
+              <span style="display:inline-block; padding:7px 16px; border-radius:999px; background:rgba(247,148,29,0.1); border:1px solid rgba(247,148,29,0.32); color:var(--orange-dark); font-size:0.82rem; font-weight:600;">{{ order.delivery_status or order.status }}</span>
+            </div>
+
+            {# Summary #}
+            <dl class="cart-summary__lines" style="margin:0 0 24px;">
+              <div class="cart-summary__row"><dt>Placed</dt><dd>{{ order.date }}</dd></div>
+              <div class="cart-summary__row"><dt>Delivery address</dt><dd style="text-align:right;">{{ order.delivery_address }}</dd></div>
+              {% if order.delivery %}<div class="cart-summary__row"><dt>Delivery</dt><dd>{{ order.delivery }}</dd></div>{% endif %}
+              <div class="cart-summary__row"><dt>Total</dt><dd>${{ '%.2f'|format(order.total) }}</dd></div>
+            </dl>
+
+            {# Line items #}
+            {% if order.lines %}
+            <h3 style="margin:0 0 6px; font-size:1rem; font-weight:700; color:var(--ink);">Items</h3>
+            <ul style="list-style:none; margin:0 0 24px; padding:0;">
+              {% for line in order.lines %}
+              <li style="display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:12px 0; border-bottom:1px solid #f1f4f8;">
+                <span style="color:var(--ink); font-weight:600;">{{ line.name }} <span style="color:#9aa6b6; font-weight:500;">&times; {{ line.qty }}</span></span>
+                <span style="color:var(--blue-700); font-weight:700; white-space:nowrap;">${{ '%.2f'|format(line.subtotal) }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+
+            {# Timeline #}
+            {% if order.timeline %}
+            <h3 style="margin:0 0 16px; font-size:1rem; font-weight:700; color:var(--ink);">Delivery timeline</h3>
+            <ol style="list-style:none; margin:0; padding:0;">
+              {% for t in order.timeline %}
+              {% set dot = '#2bb673' if t.state == 'done' else ('var(--orange)' if t.state == 'current' else '#d0d8e2') %}
+              <li style="display:flex; gap:14px;">
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                  <span style="width:14px; height:14px; flex-shrink:0; border-radius:50%; background:{{ dot }}; box-shadow:0 0 0 3px {{ 'rgba(247,148,29,0.18)' if t.state == 'current' else 'transparent' }};"></span>
+                  {% if not loop.last %}<span style="flex:1; width:2px; background:#e7ecf3; margin:4px 0;"></span>{% endif %}
+                </div>
+                <div style="padding-bottom:{{ '0' if loop.last else '18px' }};">
+                  <p style="margin:0; font-weight:{{ '700' if t.state == 'current' else '600' }}; color:{{ '#9aa6b6' if t.state == 'todo' else 'var(--ink)' }};">{{ t.label }}</p>
+                  {% if t.time or t.who %}
+                  <p style="margin:3px 0 0; font-size:0.82rem; color:#9aa6b6;">{{ t.time }}{% if t.time and t.who %} &middot; {% endif %}{{ t.who }}</p>
+                  {% endif %}
+                </div>
+              </li>
+              {% endfor %}
+            </ol>
+            {% endif %}
+
+          </div>
+        {% elif searched %}
+          {# Not found — header.html already flashes the error; keep a gentle nudge here #}
+          <p class="track__sub" style="margin-top:28px;">Enter your order number above to track a delivery.</p>
+        {% else %}
+          <p class="track__sub" style="margin-top:28px;">Have an order with us? Enter your order number above to see the latest delivery status across Miami-Dade.</p>
+        {% endif %}
+
+        <p class="track__help">
+          Need help? <a href="tel:+13055196804">(305) 519-6804</a> or
+          <a href="mailto:orders@sunnovamedical.com">orders@sunnovamedical.com</a>
+        </p>
+
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

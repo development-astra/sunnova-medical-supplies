@@ -1,0 +1,42 @@
+{# Dashboard shell: sidebar + main column. Logged-in pages extend this. #}
+{% extends 'account/_layout.html' %}
+{% block content %}
+<div class="account-grid">
+
+  <aside class="account-side">
+    <div class="account-side__user">
+      <span class="account-side__avatar">{{ customer.initials }}</span>
+      <div class="account-side__id">
+        <p class="account-side__name">{{ customer.name }}</p>
+        <p class="account-side__email">{{ customer.email }}</p>
+      </div>
+    </div>
+    <nav class="account-nav" aria-label="Account">
+      <a href="{{ url_for('account_dashboard') }}"
+         class="account-nav__link {{ 'is-active' if request.endpoint == 'account_dashboard' }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Overview
+      </a>
+      <a href="{{ url_for('account_orders') }}"
+         class="account-nav__link {{ 'is-active' if request.endpoint in ['account_orders', 'account_order_detail'] }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+        My Orders
+      </a>
+      <a href="{{ url_for('account_profile') }}"
+         class="account-nav__link {{ 'is-active' if request.endpoint == 'account_profile' }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </a>
+      <a href="{{ url_for('account_logout') }}" class="account-nav__link account-nav__link--out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        Sign Out
+      </a>
+    </nav>
+  </aside>
+
+  <div class="account-main">
+    {% block dash %}{% endblock %}
+  </div>
+
+</div>
+{% endblock %}

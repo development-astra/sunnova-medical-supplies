@@ -1,0 +1,77 @@
+{% extends 'account/_dash.html' %}
+{% block title %}Profile{% endblock %}
+{% block dash %}
+
+<div class="account-head">
+  <div>
+    <h1 class="account-head__title">Profile</h1>
+    <p class="account-head__sub">Manage your details and password.</p>
+  </div>
+</div>
+
+<div class="account-card">
+  <h2 class="account-card__title">Your details</h2>
+  <form class="auth-form" method="post" action="{{ url_for('account_profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="_action" value="profile" />
+
+    <div class="auth-form__row">
+      <div class="reqform__field">
+        <label class="reqform__label" for="name">Full name</label>
+        <input class="reqform__input" id="name" name="name" type="text" value="{{ customer.name }}" required />
+      </div>
+      <div class="reqform__field">
+        <label class="reqform__label" for="email">Email</label>
+        <input class="reqform__input" id="email" type="email" value="{{ customer.email }}" disabled />
+      </div>
+    </div>
+
+    <div class="auth-form__row">
+      <div class="reqform__field">
+        <label class="reqform__label" for="phone">Phone</label>
+        <input class="reqform__input" id="phone" name="phone" type="tel" value="{{ customer.phone or '' }}" placeholder="(786) 000-0000" />
+      </div>
+      <div class="reqform__field">
+        <label class="reqform__label" for="business">Practice / business</label>
+        <input class="reqform__input" id="business" name="business" type="text" value="{{ customer.business or '' }}" placeholder="Bayview Clinic" />
+      </div>
+    </div>
+
+    <div class="reqform__field">
+      <label class="reqform__label" for="address">Default delivery address</label>
+      <input class="reqform__input" id="address" name="address" type="text" value="{{ customer.address or '' }}" placeholder="Street, city, ZIP — Miami-Dade County, FL" />
+    </div>
+
+    <button type="submit" class="btn btn--primary auth-form__btn auth-form__btn--inline">Save changes</button>
+  </form>
+</div>
+
+<div class="account-card">
+  <h2 class="account-card__title">Change password</h2>
+  <form class="auth-form" method="post" action="{{ url_for('account_profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="_action" value="password" />
+
+    <div class="reqform__field">
+      <label class="reqform__label" for="current_password">Current password</label>
+      <input class="reqform__input" id="current_password" name="current_password" type="password"
+             autocomplete="current-password" required />
+    </div>
+    <div class="auth-form__row">
+      <div class="reqform__field">
+        <label class="reqform__label" for="password">New password</label>
+        <input class="reqform__input" id="password" name="password" type="password"
+               autocomplete="new-password" placeholder="At least 8 characters" required />
+      </div>
+      <div class="reqform__field">
+        <label class="reqform__label" for="confirm">Confirm new password</label>
+        <input class="reqform__input" id="confirm" name="confirm" type="password"
+               autocomplete="new-password" required />
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn--primary auth-form__btn auth-form__btn--inline">Update password</button>
+  </form>
+</div>
+
+{% endblock %}

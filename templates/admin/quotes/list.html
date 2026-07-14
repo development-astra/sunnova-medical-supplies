@@ -1,0 +1,98 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, pagination, tab_link %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Quotes'}]) }}
+
+  {% call page_header('Quote Requests', quotes|length ~ ' quotes') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+  {% endcall %}
+
+  {# Status segmented control — real links that filter server-side #}
+  {% set cur_status = filters.get('status', '') %}
+  <div class="segmented mb-16">
+    <a class="segmented__btn{% if not cur_status %} is-active{% endif %}" href="{{ tab_link('status','') }}">All <span class="count">{{ counts.all }}</span></a>
+    {% for s in quote_statuses %}
+      <a class="segmented__btn{% if cur_status == s %} is-active{% endif %}" href="{{ tab_link('status', s) }}">{{ s }} <span class="count">{{ counts[s] }}</span></a>
+    {% endfor %}
+  </div>
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    {% if cur_status %}<input type="hidden" name="status" value="{{ cur_status }}" />{% endif %}
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search quote # or customer…" aria-label="Search quotes" />
+    </div>
+    <select class="select select--sm" name="assigned" onchange="this.form.submit()">
+      <option value="">All assignees</option>
+      {% for a in assignees %}<option value="{{ a }}"{% if filters.get('assigned')==a %} selected{% endif %}>{{ a }}</option>{% endfor %}
+    </select>
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Quote #</th>
+            <th>Customer</th>
+            <th>Products requested</th>
+            <th>Submitted</th>
+            <th class="table__num">Value</th>
+            <th>Status</th>
+            <th>Assigned</th>
+            <th>Updated</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for q in quotes %}
+            <tr>
+              <td class="nowrap">
+                <a href="{{ url_for('admin.quote_detail', quote_id=q.id) }}" class="link fw-600">{{ q.id }}</a>
+              </td>
+              <td>
+                <div class="cell-name">{{ q.customer }}</div>
+                <div class="cell-sub">{{ q.business }}</div>
+              </td>
+              <td class="text-soft">{{ q.products }}</td>
+              <td class="nowrap">{{ q.date }}</td>
+              <td class="table__num num nowrap fw-600">{{ q.value }}</td>
+              <td>{{ status_pill(q.status) }}</td>
+              <td class="nowrap">
+                {% if q.assigned == 'Unassigned' %}
+                  <span class="text-mute">{{ q.assigned }}</span>
+                {% else %}
+                  {{ q.assigned }}
+                {% endif %}
+              </td>
+              <td class="nowrap text-mute text-sm">{{ q.updated }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <a class="menu__item" href="{{ url_for('admin.quote_detail', quote_id=q.id) }}">{{ icon('eye') }} View / Respond</a>
+                  <button class="menu__item">{{ icon('user-plus') }} Assign to me</button>
+                  <button class="menu__item">{{ icon('cart') }} Convert to order</button>
+                  <div class="menu__divider"></div>
+                  <button class="menu__item menu__item--danger">{{ icon('x-circle') }} Decline</button>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="9">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('file-text') }}</div>
+                <div class="empty__title">No quotes match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+{% endblock %}

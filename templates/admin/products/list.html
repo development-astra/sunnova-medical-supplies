@@ -1,0 +1,138 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, thumb, row_menu, pagination, tab_link %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Products'}]) }}
+
+  {% call page_header('Products', counts.all ~ ' products · manage catalog, pricing and stock') %}
+    <a href="{{ url_for('admin.reports_export') }}" class="btn btn--ghost">{{ icon('download') }} Export</a>
+    <a href="{{ url_for('admin.product_new') }}" class="btn btn--primary">{{ icon('plus') }} Add Product</a>
+  {% endcall %}
+
+  {# Status segmented control — real links that filter server-side #}
+  {% set cur_status = filters.get('status', '') %}
+  <div class="segmented mb-16">
+    <a class="segmented__btn{% if not cur_status %} is-active{% endif %}" href="{{ tab_link('status','') }}">All <span class="count">{{ counts.all }}</span></a>
+    <a class="segmented__btn{% if cur_status == 'Published' %} is-active{% endif %}" href="{{ tab_link('status','Published') }}">Published <span class="count">{{ counts.Published }}</span></a>
+    <a class="segmented__btn{% if cur_status == 'Draft' %} is-active{% endif %}" href="{{ tab_link('status','Draft') }}">Draft <span class="count">{{ counts.Draft }}</span></a>
+    <a class="segmented__btn{% if cur_status == 'Archived' %} is-active{% endif %}" href="{{ tab_link('status','Archived') }}">Archived <span class="count">{{ counts.Archived }}</span></a>
+  </div>
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    {% if cur_status %}<input type="hidden" name="status" value="{{ cur_status }}" />{% endif %}
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search by name or SKU…" aria-label="Search products" />
+    </div>
+    <select class="select select--sm" name="category" onchange="this.form.submit()">
+      <option value="">All categories</option>
+      {% for c in categories %}<option value="{{ c.name }}"{% if filters.get('category')==c.name %} selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="brand" onchange="this.form.submit()">
+      <option value="">All brands</option>
+      {% for b in brands %}<option value="{{ b }}"{% if filters.get('brand')==b %} selected{% endif %}>{{ b }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="stock" onchange="this.form.submit()">
+      <option value="">Any stock</option>
+      {% for a in stock_options %}<option value="{{ a }}"{% if filters.get('stock')==a %} selected{% endif %}>{{ a }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="sale_mode" onchange="this.form.submit()">
+      <option value="">Any sale mode</option>
+      {% for s in sale_modes %}<option value="{{ s }}"{% if filters.get('sale_mode')==s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="featured" onchange="this.form.submit()">
+      <option value="">All products</option>
+      <option value="1"{% if filters.get('featured')=='1' %} selected{% endif %}>Featured only</option>
+    </select>
+    <div class="filterbar__spacer"></div>
+    <button type="submit" class="btn btn--subtle btn--sm">{{ icon('filter') }} Apply</button>
+    {% if filters %}<a class="btn btn--ghost btn--sm" href="{{ url_for('admin.products') }}">Clear</a>{% endif %}
+  </form>
+
+  <form method="post" action="{{ url_for('admin.products_bulk') }}" class="card" data-table-group>
+    {# Bulk action bar (revealed when rows are checked) — submits selected ids #}
+    <div class="bulkbar">
+      <span class="bulkbar__count">0 selected</span>
+      <div class="bulkbar__actions">
+        <button type="submit" name="action" value="feature" class="btn btn--subtle btn--sm">{{ icon('star') }} Feature</button>
+        <button type="submit" name="action" value="unfeature" class="btn btn--subtle btn--sm">{{ icon('star') }} Unfeature</button>
+        <button type="submit" name="action" value="archive" class="btn btn--subtle btn--sm">{{ icon('archive') }} Archive</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <label class="checkbox"><input type="checkbox" data-select-all /><span class="checkbox__box">{{ icon('check') }}</span></label>
+            </th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Brand</th>
+            <th class="table__num">Price</th>
+            <th class="table__num">Stock</th>
+            <th>Availability</th>
+            <th>Sale Mode</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+            <tr>
+              <td><label class="checkbox"><input type="checkbox" data-row-check name="ids" value="{{ p.id }}" /><span class="checkbox__box">{{ icon('check') }}</span></label></td>
+              <td>
+                <div class="cell-product">
+                  {{ thumb(p.img_tone, 'box') }}
+                  <div>
+                    <a href="{{ url_for('admin.product_edit', product_id=p.id) }}" class="cell-name link">{{ p.name }}</a>
+                    <div class="cell-sub">{{ p.sku }}{% if p.featured %} · <span class="text-brand fw-600">★ Featured</span>{% endif %}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="nowrap">{{ p.category }}</td>
+              <td class="nowrap">{{ p.brand }}</td>
+              <td class="table__num num nowrap">
+                {% if p.sale_price %}
+                  <span class="fw-700 text-brand">${{ '%.2f'|format(p.sale_price) }}</span>
+                  <div class="text-xs text-mute" style="text-decoration:line-through">${{ '%.2f'|format(p.price) }}</div>
+                {% else %}
+                  <span class="fw-600">${{ '%.2f'|format(p.price) }}</span>
+                {% endif %}
+              </td>
+              <td class="table__num num">{{ p.stock }}</td>
+              <td>{{ status_pill(p.availability) }}</td>
+              <td class="nowrap">{{ status_pill(p.sale_mode, dot=False) }}</td>
+              <td>{{ status_pill(p.status) }}</td>
+              <td class="nowrap text-mute text-sm">{{ p.updated }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <a class="menu__item" href="{{ url_for('admin.product_edit', product_id=p.id) }}">{{ icon('eye') }} View</a>
+                  <a class="menu__item" href="{{ url_for('admin.product_edit', product_id=p.id) }}">{{ icon('edit') }} Edit</a>
+                  <button type="submit" class="menu__item" formaction="{{ url_for('admin.product_duplicate', product_id=p.id) }}">{{ icon('copy') }} Duplicate</button>
+                  <div class="menu__divider"></div>
+                  <button type="submit" class="menu__item menu__item--danger" formaction="{{ url_for('admin.product_archive', product_id=p.id) }}">{{ icon('archive') }} Archive</button>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="11">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('box') }}</div>
+                <div class="empty__title">No products match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </form>
+{% endblock %}

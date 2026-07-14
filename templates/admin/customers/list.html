@@ -1,0 +1,109 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, badge, avatar, row_menu, pagination, tab_link %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Customers'}]) }}
+
+  {% call page_header('Customers', customers|length ~ ' customers') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+    <button class="btn btn--primary">{{ icon('plus') }} Add Customer</button>
+  {% endcall %}
+
+  {# Type segmented control — real links that filter server-side #}
+  {% set cur_type = filters.get('type', '') %}
+  <div class="segmented mb-16">
+    <a class="segmented__btn{% if not cur_type %} is-active{% endif %}" href="{{ tab_link('type','') }}">All <span class="count">{{ counts.all }}</span></a>
+    {% for t in customer_types %}
+      <a class="segmented__btn{% if cur_type == t %} is-active{% endif %}" href="{{ tab_link('type', t) }}">{{ t }} <span class="count">{{ counts[t] }}</span></a>
+    {% endfor %}
+  </div>
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    {% if cur_type %}<input type="hidden" name="type" value="{{ cur_type }}" />{% endif %}
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search name, email or business…" aria-label="Search customers" />
+    </div>
+    <select class="select select--sm" name="account" onchange="this.form.submit()">
+      <option value="">All accounts</option>
+      {% for a in account_statuses %}<option value="{{ a }}"{% if filters.get('account')==a %} selected{% endif %}>{{ a }}</option>{% endfor %}
+    </select>
+  </form>
+
+  <div class="card" data-table-group>
+    {# Bulk action bar (revealed when rows are checked) #}
+    <div class="bulkbar">
+      <span class="bulkbar__count">0 selected</span>
+      <div class="bulkbar__actions">
+        <button class="btn btn--subtle btn--sm">{{ icon('mail') }} Email</button>
+        <button class="btn btn--subtle btn--sm">{{ icon('tag') }} Change type</button>
+        <button class="btn btn--subtle btn--sm">{{ icon('x-circle') }} Suspend</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <label class="checkbox"><input type="checkbox" data-select-all /><span class="checkbox__box">{{ icon('check') }}</span></label>
+            </th>
+            <th>Customer</th>
+            <th>Business</th>
+            <th>Type</th>
+            <th>Account</th>
+            <th class="table__num">Orders</th>
+            <th class="table__num">Total spent</th>
+            <th>Last order</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in customers %}
+            {% set parts = c.name.split(' ') %}
+            <tr>
+              <td><label class="checkbox"><input type="checkbox" data-row-check /><span class="checkbox__box">{{ icon('check') }}</span></label></td>
+              <td>
+                <div class="cell-product">
+                  {{ avatar((parts[0][0] ~ (parts[1][0] if parts|length > 1 else ''))|upper, 'avatar--sm') }}
+                  <div>
+                    <a href="{{ url_for('admin.customer_detail', customer_id=c.id) }}" class="cell-name link">{{ c.name }}</a>
+                    <div class="cell-sub">{{ c.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="nowrap">{{ c.business }}</td>
+              <td class="nowrap">{{ badge(c.type, 'blue') }}</td>
+              <td>{{ status_pill(c.account) }}</td>
+              <td class="table__num num">{{ c.orders }}</td>
+              <td class="table__num num nowrap"><span class="fw-600">${{ '%.2f'|format(c.spent) }}</span></td>
+              <td class="nowrap text-mute text-sm">{{ c.last_order }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <a class="menu__item" href="{{ url_for('admin.customer_detail', customer_id=c.id) }}">{{ icon('eye') }} View</a>
+                  <button class="menu__item">{{ icon('cart') }} Create order</button>
+                  <button class="menu__item">{{ icon('mail') }} Email</button>
+                  <div class="menu__divider"></div>
+                  <button class="menu__item menu__item--danger">{{ icon('x-circle') }} Suspend</button>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="9">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('users') }}</div>
+                <div class="empty__title">No customers match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+{% endblock %}

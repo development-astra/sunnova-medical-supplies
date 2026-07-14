@@ -1,0 +1,147 @@
+{# ============================================================
+   Admin base layout — sidebar + topbar shell.
+   Every admin screen does:  {% extends 'admin/base.html' %}
+   and fills:  {% block content %} … {% endblock %}
+   Optional blocks: page_title (browser tab), extra_head, extra_scripts.
+   ============================================================ #}
+{% from 'admin/_icons.html' import icon %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <title>{% block page_title %}{{ page_title|default('Dashboard') }}{% endblock %} · Sunnova Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="admin">
+
+  <div class="shell">
+
+    {# ---------- Sidebar ---------- #}
+    <aside class="sidebar" id="adminSidebar">
+      <a href="{{ url_for('admin.dashboard') }}" class="sidebar__brand">
+        <span class="sidebar__logo">{{ icon('sun') }}</span>
+        <span class="sidebar__brand-text">
+          <span class="sidebar__brand-name">Sunnova</span>
+          <span class="sidebar__brand-sub">Admin</span>
+        </span>
+      </a>
+
+      <nav class="sidebar__nav" aria-label="Admin">
+        {% for section in nav_sections %}
+          {% if section.heading %}<div class="nav-heading">{{ section.heading }}</div>{% endif %}
+          {% for item in section['items'] %}
+            {% set base = url_for(item.endpoint) %}
+            {% set is_active = (request.path == base) or (item.endpoint != 'admin.dashboard' and request.path.startswith(base ~ '/')) %}
+            <a href="{{ base }}" class="nav-link{% if is_active %} is-active{% endif %}">
+              {{ icon(item.icon) }}
+              <span class="nav-link__label">{{ item.label }}</span>
+              {% if item.badge %}<span class="nav-link__badge">{{ item.badge }}</span>{% endif %}
+            </a>
+          {% endfor %}
+        {% endfor %}
+      </nav>
+
+      <div class="sidebar__foot">
+        <div class="sidebar__user">
+          <span class="avatar avatar--sm">{{ current_admin.initials }}</span>
+          <span class="sidebar__user-text">
+            <span class="sidebar__user-name">{{ current_admin.name }}</span>
+            <span class="sidebar__user-role">{{ current_admin.role }}</span>
+          </span>
+          <a href="{{ url_for('admin.logout') }}" class="icon-button" style="width:32px;height:32px;margin-left:auto;background:transparent;border-color:rgba(255,255,255,.14);color:rgba(255,255,255,.7)" aria-label="Sign out">{{ icon('log-out') }}</a>
+        </div>
+      </div>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    {# ---------- Main column ---------- #}
+    <div class="main">
+
+      <header class="topbar-admin">
+        <button class="topbar-admin__menu" data-sidebar-toggle aria-label="Toggle menu">{{ icon('menu') }}</button>
+
+        <label class="topbar-search">
+          {{ icon('search') }}
+          <input type="search" placeholder="Search orders, products, customers…" aria-label="Search" />
+        </label>
+
+        <div class="topbar-admin__spacer"></div>
+
+        <div class="topbar-admin__actions">
+          <a href="{{ url_for('admin.product_new') }}" class="btn btn--primary btn--sm">{{ icon('plus') }} New Product</a>
+
+          <div class="menu">
+            <button class="icon-button" data-menu-toggle aria-label="Notifications">
+              {{ icon('bell') }}{% if topbar_notification_count %}<span class="icon-button__dot"></span>{% endif %}
+            </button>
+            <div class="menu__pop" style="min-width:280px">
+              <div class="menu__item" style="cursor:default">
+                <strong>Notifications</strong>
+                {% if topbar_notification_count %}<span class="badge badge--red" style="margin-left:auto">{{ topbar_notification_count }}</span>{% endif %}
+              </div>
+              <div class="menu__divider"></div>
+              {% for n in topbar_notifications %}
+                <a class="menu__item" href="{{ n.url }}">{{ icon(n.icon) }} {{ n.title }}</a>
+              {% else %}
+                <div class="menu__item" style="cursor:default;color:var(--muted)">{{ icon('check-circle') }} You're all caught up</div>
+              {% endfor %}
+              <div class="menu__divider"></div>
+              <a class="menu__item" href="{{ url_for('admin.notifications') }}">{{ icon('bell') }} View all notifications</a>
+            </div>
+          </div>
+
+          <div class="menu">
+            <button class="topbar-profile" data-menu-toggle>
+              <span class="avatar avatar--sm">{{ current_admin.initials }}</span>
+              <span class="topbar-profile__meta">
+                <span class="topbar-profile__name">{{ current_admin.name }}</span>
+                <span class="topbar-profile__role">{{ current_admin.role }}</span>
+              </span>
+              {{ icon('chevron-down') }}
+            </button>
+            <div class="menu__pop">
+              <a class="menu__item" href="{{ url_for('admin.admin_users') }}">{{ icon('user') }} My profile</a>
+              <a class="menu__item" href="{{ url_for('admin.settings') }}">{{ icon('settings') }} Settings</a>
+              <div class="menu__divider"></div>
+              <a class="menu__item menu__item--danger" href="{{ url_for('admin.logout') }}">{{ icon('log-out') }} Sign out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flashes">
+              {% for category, msg in messages %}
+                {% set cat = 'error' if category == 'error' else ('warning' if category == 'warning' else ('info' if category == 'message' else category)) %}
+                <div class="flash flash--{{ cat }}">
+                  {{ icon('check-circle' if cat == 'success' else ('alert' if cat in ['error','warning'] else 'help-circle')) }}
+                  <span>{{ msg }}</span>
+                  <button class="flash__close" onclick="this.parentElement.remove()" aria-label="Dismiss">{{ icon('x') }}</button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  {# Shared overlay backdrops (drawers/modals live inside page content) #}
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+
+  <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

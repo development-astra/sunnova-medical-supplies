@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nitrile Exam Gloves – Small — Sunnova Medical Supplies</title>
+  <title>{{ product.name }} — Sunnova Medical Supplies</title>
   <meta name="description"
-        content="Powder-free nitrile exam gloves, size small. Latex-free, FDA-compliant, same-day delivery across Miami-Dade." />
+        content="{{ product.short }}" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,9 +28,9 @@
       <nav class="container breadcrumb" aria-label="Breadcrumb">
         <a href="{{ url_for('index') }}">Home</a>
         <span class="breadcrumb__sep" aria-hidden="true">›</span>
-        <a href="{{ url_for('services_and_catalog') }}">PPE &amp; Protection</a>
+        <a href="{{ url_for('services_and_catalog') }}">{{ product.category or 'Catalog' }}</a>
         <span class="breadcrumb__sep" aria-hidden="true">›</span>
-        <span class="breadcrumb__current" aria-current="page">Nitrile Exam Gloves – Small</span>
+        <span class="breadcrumb__current" aria-current="page">{{ product.name }}</span>
       </nav>
     </div>
 
@@ -44,47 +44,68 @@
         <div class="product-gallery" data-gallery>
           <div class="product-gallery__main">
             <div class="product-gallery__badges">
-              <span class="badge badge--blue">FDA-Compliant</span>
-              <span class="badge badge--orange">Latex-Free</span>
+              {% if product.availability %}
+              <span class="badge {{ 'badge--blue' if product.availability == 'In Stock' else 'badge--orange' }}">{{ product.availability }}</span>
+              {% endif %}
             </div>
+            {% if product.image_url %}
             <img class="product-gallery__img" data-main-image
-                 src="https://loremflickr.com/720/520/nitrile,gloves?lock=31"
-                 alt="Nitrile exam gloves, size small" />
+                 src="{{ product.image_url }}"
+                 alt="{{ product.name }}" />
+            {% else %}
+            {# ---- Gradient placeholder when no image is set ---- #}
+            <div class="product-gallery__img product-gallery__placeholder" data-main-image
+                 role="img" aria-label="{{ product.name }}"
+                 style="background:linear-gradient(135deg,#1b74d8,#f6871f);display:flex;align-items:center;justify-content:center;min-height:520px;color:#fff;font-weight:700;font-size:1.25rem;text-align:center;padding:1.5rem;">
+              {{ product.name }}
+            </div>
+            {% endif %}
           </div>
 
+          {% if product.gallery %}
           <div class="product-gallery__thumbs">
-            <button class="thumb is-active" type="button"
-                    data-full="https://loremflickr.com/720/520/nitrile,gloves?lock=31">
-              <img src="https://loremflickr.com/160/160/nitrile,gloves?lock=31" alt="View 1" loading="lazy" />
+            {% for im in product.gallery %}
+            <button class="thumb{% if loop.first %} is-active{% endif %}" type="button"
+                    data-full="{{ im.url }}">
+              <img src="{{ im.url }}" alt="{{ product.name }} view {{ loop.index }}" loading="lazy" />
             </button>
-            <button class="thumb" type="button"
-                    data-full="https://loremflickr.com/720/520/medical,gloves?lock=32">
-              <img src="https://loremflickr.com/160/160/medical,gloves?lock=32" alt="View 2" loading="lazy" />
-            </button>
-            <button class="thumb" type="button"
-                    data-full="https://loremflickr.com/720/520/exam,gloves?lock=33">
-              <img src="https://loremflickr.com/160/160/exam,gloves?lock=33" alt="View 3" loading="lazy" />
-            </button>
-            <button class="thumb" type="button"
-                    data-full="https://loremflickr.com/720/520/glove,box?lock=34">
-              <img src="https://loremflickr.com/160/160/glove,box?lock=34" alt="View 4" loading="lazy" />
-            </button>
+            {% endfor %}
           </div>
+          {% endif %}
         </div>
 
         {# ---- Buy panel ---- #}
         <div class="product-info">
-          <h1 class="product-info__title">Nitrile Exam Gloves – Small</h1>
+          <h1 class="product-info__title">{{ product.name }}</h1>
 
           <p class="product-info__meta">
-            <span>SKU: GLV-NIT-SM-100</span>
+            <span>SKU: {{ product.sku }}</span>
+            {% if product.brand %}
             <span class="dot" aria-hidden="true">•</span>
-            <span>100/BOX</span>
+            <span>{{ product.brand }}</span>
+            {% endif %}
+            {% if product.category %}
             <span class="dot" aria-hidden="true">•</span>
-            <a href="{{ url_for('services_and_catalog') }}" class="product-info__cat">PPE &amp; PROTECTION</a>
+            <a href="{{ url_for('services_and_catalog') }}" class="product-info__cat">{{ product.category }}</a>
+            {% endif %}
           </p>
 
-          <p class="product-info__price">$18.50 <span>/box</span></p>
+          {% if product.availability %}
+          <p><span class="badge {{ 'badge--blue' if product.availability == 'In Stock' else 'badge--orange' }}">{{ product.availability }}</span></p>
+          {% endif %}
+
+          <p class="product-info__price">
+            {% if product.sale_price %}
+            ${{ '%.2f'|format(product.sale_price) }}
+            <s class="product-info__was">${{ '%.2f'|format(product.price) }}</s>
+            {% else %}
+            ${{ '%.2f'|format(product.price) }}
+            {% endif %}
+          </p>
+
+          {% if product.short %}
+          <p class="product-info__short">{{ product.short }}</p>
+          {% endif %}
 
           {# Delivery note #}
           <div class="delivery-note">
@@ -101,14 +122,17 @@
           </div>
 
           {# Quantity + add to cart #}
-          <div class="buy-row">
+          {% if product.buyable %}
+          <form class="buy-row" method="post" action="{{ url_for('cart_add') }}">
+            <input type="hidden" name="sku" value="{{ product.sku }}">
             <div class="qty" data-qty>
               <button class="qty__btn" type="button" data-action="dec" aria-label="Decrease quantity">−</button>
-              <input class="qty__input" type="text" inputmode="numeric" value="1" aria-label="Quantity" />
+              <input class="qty__input" type="text" inputmode="numeric" name="qty" value="1" aria-label="Quantity" />
               <button class="qty__btn" type="button" data-action="inc" aria-label="Increase quantity">+</button>
             </div>
-            <button class="btn btn--primary btn--lg buy-row__cart" type="button">Add to Cart</button>
-          </div>
+            <button class="btn btn--primary btn--lg buy-row__cart" type="submit">Add to cart</button>
+          </form>
+          {% endif %}
 
           {# Trust badges #}
           <ul class="trust-row">
@@ -123,18 +147,11 @@
               <img src="{{ url_for('static', filename='img/svg-icons/product-desc.svg') }}" alt="" aria-hidden="true" /> Product Description
             </div>
             <div class="product-desc__body">
-              <p>
-                Powder-free nitrile exam gloves in size small, engineered for maximum
-                tactile sensitivity during injectable treatments, aesthetic procedures,
-                and clinical exams. Latex-free and hypoallergenic, making them safe for
-                providers and patients with latex sensitivities.
-              </p>
-              <p>
-                The textured fingertip design ensures a confident, non-slip grip on
-                syringes, cannulas, and delicate instruments. Used daily in med spas,
-                dermatology offices, aesthetic clinics, and private practices across
-                Miami-Dade County.
-              </p>
+              {% if product.description %}
+              <p style="white-space:pre-line;">{{ product.description }}</p>
+              {% elif product.short %}
+              <p>{{ product.short }}</p>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -217,6 +234,7 @@
     {# ============================================================
        PRODUCT DETAILS — spec table
        ============================================================ #}
+    {% if product.specs %}
     <section class="section prodspecs">
       <div class="container">
         <div class="section__head">
@@ -225,47 +243,92 @@
         </div>
 
         <div class="prodspecs__wrap">
-          <table class="specs-table">
-            <tbody>
-              <tr><th scope="row">Quantity</th><td>100 gloves per box</td></tr>
-              <tr><th scope="row">Material</th><td>Nitrile (Latex-free)</td></tr>
-              <tr>
-                <th scope="row">Powder-free</th>
-                <td><span class="specs-yes">{% include 'check.svg' ignore missing %}Yes</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Fingertip Texture</th>
-                <td><span class="specs-yes">{% include 'check.svg' ignore missing %}Yes</span></td>
-              </tr>
-              <tr>
-                <th scope="row">FDA-compliant</th>
-                <td><span class="specs-yes">{% include 'check.svg' ignore missing %}Yes</span></td>
-              </tr>
-              <tr><th scope="row">Size</th><td>Small</td></tr>
-              <tr><th scope="row">Delivery Availability</th><td>Same-day across Miami-Dade</td></tr>
-            </tbody>
-          </table>
+          <pre class="specs-pre" style="white-space:pre-wrap;font-family:inherit;margin:0;">{{ product.specs }}</pre>
         </div>
       </div>
     </section>
+    {% endif %}
 
     {# ============================================================
-       RELATED SEARCHES — pill tag cluster
+       REQUEST A QUOTE — visible form (quotable products only)
        ============================================================ #}
-    <section class="section related">
+    {% if product.quotable %}
+    <section class="section quote-req">
       <div class="container">
-        <p class="related__title">Related Searches</p>
-        <ul class="related__tags">
-          <li><a href="#" class="tag">Nitrile gloves small Miami</a></li>
-          <li><a href="#" class="tag">Powder-free exam gloves med spa</a></li>
-          <li><a href="#" class="tag">Latex-free gloves aesthetic clinic</a></li>
-          <li><a href="#" class="tag">Nitrile gloves 100 box Miami-Dade</a></li>
-          <li><a href="#" class="tag">Medical gloves same-day delivery Miami</a></li>
-          <li><a href="#" class="tag">Exam gloves for injections</a></li>
-          <li><a href="#" class="tag">Gloves for Botox clinic Miami</a></li>
-        </ul>
+        <form class="reqform" method="post" action="{{ url_for('request_quote') }}">
+          <h2 class="reqform__title">Request a quote</h2>
+          <p class="reqform__sub">Need volume or account pricing for {{ product.name }}? Send us the details and we'll follow up.</p>
+
+          <input type="hidden" name="sku" value="{{ product.sku }}">
+
+          <div class="reqform__row">
+            <div class="reqform__field">
+              <label class="reqform__label" for="q-name">Name <span class="req">*</span></label>
+              <input class="reqform__input" id="q-name" name="name" type="text" placeholder="Jordan Rivera" required />
+            </div>
+            <div class="reqform__field">
+              <label class="reqform__label" for="q-email">Email <span class="req">*</span></label>
+              <input class="reqform__input" id="q-email" name="email" type="email" placeholder="you@clinic.com" required />
+            </div>
+          </div>
+
+          <div class="reqform__row">
+            <div class="reqform__field">
+              <label class="reqform__label" for="q-phone">Phone</label>
+              <input class="reqform__input" id="q-phone" name="phone" type="tel" placeholder="(305) 555-0123" />
+            </div>
+            <div class="reqform__field">
+              <label class="reqform__label" for="q-qty">Quantity</label>
+              <input class="reqform__input" id="q-qty" name="qty" type="number" min="1" value="1" />
+            </div>
+          </div>
+
+          <div class="reqform__row">
+            <div class="reqform__field reqform__field--full">
+              <label class="reqform__label" for="q-message">Message</label>
+              <textarea class="reqform__textarea" id="q-message" name="message" placeholder="Tell us about your practice and what you need."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="reqform__btn">Request quote</button>
+        </form>
       </div>
     </section>
+    {% endif %}
+
+    {# ============================================================
+       RELATED PRODUCTS — cards linking to sibling products
+       ============================================================ #}
+    {% if related %}
+    <section class="section related">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--orange">Keep Stocked</p>
+          <h2 class="section__title">Related <span class="text-blue">products</span></h2>
+        </div>
+        <div class="related__grid">
+          {% for r in related %}
+          <a class="related-card" href="{{ url_for('product', slug=r.slug) }}">
+            {% if r.image_url %}
+            <img class="related-card__img" src="{{ r.image_url }}" alt="{{ r.name }}" loading="lazy" />
+            {% else %}
+            <span class="related-card__img related-card__ph"
+                  style="display:block;min-height:160px;border-radius:12px;background:linear-gradient(135deg,#1b74d8,#f6871f);" aria-hidden="true"></span>
+            {% endif %}
+            <span class="related-card__name">{{ r.name }}</span>
+            <span class="related-card__price">
+              {% if r.sale_price %}
+              ${{ '%.2f'|format(r.sale_price) }} <s>${{ '%.2f'|format(r.price) }}</s>
+              {% else %}
+              ${{ '%.2f'|format(r.price) }}
+              {% endif %}
+            </span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
 
     {# ============================================================
        FINAL CTA — running low on gloves

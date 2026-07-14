@@ -1,0 +1,89 @@
+{# Printable packing slip / invoice. Opens in a new tab; print-to-PDF from the browser. #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ 'Invoice' if doc == 'invoice' else 'Packing Slip' }} · {{ order.id }}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; max-width: 720px; margin: 32px auto; padding: 0 24px; }
+    .head { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0b3d91; padding-bottom: 16px; }
+    .brand { font-size: 22px; font-weight: 800; color: #0b3d91; }
+    .brand small { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #64748b; font-weight: 600; }
+    .doc-title { text-align: right; }
+    .doc-title h1 { margin: 0; font-size: 20px; color: #0b3d91; }
+    .doc-title .muted { color: #64748b; font-size: 13px; }
+    .cols { display: flex; gap: 40px; margin: 24px 0; }
+    .cols h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #94a3b8; margin: 0 0 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    th { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    td.num, th.num { text-align: right; }
+    .totals { margin-left: auto; max-width: 280px; margin-top: 16px; }
+    .totals .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+    .totals .grand { border-top: 2px solid #0b3d91; margin-top: 6px; padding-top: 8px; font-weight: 700; font-size: 16px; }
+    .foot { margin-top: 40px; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 14px; }
+    .print-btn { background: #f7941d; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    @media print { .no-print { display: none; } body { margin: 0; } }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="text-align:right;margin-bottom:16px">
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+  <div class="head">
+    <div class="brand">☀ Sunnova <small>Medical Supplies</small></div>
+    <div class="doc-title">
+      <h1>{{ 'Invoice' if doc == 'invoice' else 'Packing Slip' }}</h1>
+      <div class="muted">{{ order.id }}</div>
+      <div class="muted">{{ order.date }}</div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Bill / Ship to</h3>
+      <div><strong>{{ order.customer.name }}</strong></div>
+      {% if order.customer.business %}<div>{{ order.customer.business }}</div>{% endif %}
+      <div>{{ order.delivery_address }}</div>
+      <div>{{ order.customer.email }} · {{ order.customer.phone }}</div>
+    </div>
+    <div>
+      <h3>From</h3>
+      <div><strong>{{ store.get('name', 'Sunnova Medical Supplies') }}</strong></div>
+      <div>{{ store.get('address', 'Miami-Dade County, FL') }}</div>
+      <div>{{ store.get('phone', '') }}</div>
+      <div>{{ store.get('support_email', '') }}</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Product</th><th>SKU</th><th class="num">Qty</th>{% if doc == 'invoice' %}<th class="num">Price</th><th class="num">Subtotal</th>{% endif %}</tr>
+    </thead>
+    <tbody>
+      {% for line in order.lines %}
+        <tr>
+          <td>{{ line.name }}</td>
+          <td>{{ line.sku }}</td>
+          <td class="num">{{ line.qty }}</td>
+          {% if doc == 'invoice' %}<td class="num">${{ '%.2f'|format(line.price) }}</td><td class="num">${{ '%.2f'|format(line.subtotal) }}</td>{% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if doc == 'invoice' %}
+  <div class="totals">
+    <div class="row"><span>Subtotal</span><span>${{ '%.2f'|format(order.subtotal) }}</span></div>
+    <div class="row"><span>Tax</span><span>${{ '%.2f'|format(order.tax) }}</span></div>
+    <div class="row"><span>Delivery</span><span>${{ '%.2f'|format(order.delivery_fee) }}</span></div>
+    {% if order.discount %}<div class="row"><span>Discount</span><span>${{ '%.2f'|format(order.discount) }}</span></div>{% endif %}
+    <div class="row grand"><span>Total</span><span>${{ '%.2f'|format(order.total) }}</span></div>
+    <div class="row"><span>Payment</span><span>{{ order.payment }}</span></div>
+  </div>
+  {% endif %}
+
+  <div class="foot">Thank you for your business · Sunnova Medical Supplies · Fast, reliable Miami-Dade delivery</div>
+</body>
+</html>

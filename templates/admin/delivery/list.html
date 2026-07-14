@@ -1,0 +1,174 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, pagination, tab_link %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Delivery'}]) }}
+
+  {% call page_header('Delivery', 'Local Miami-Dade delivery operations') %}
+    <button class="btn btn--ghost">{{ icon('printer') }} Print manifest</button>
+    <button class="btn btn--primary" data-modal-open="scheduleDelivery">{{ icon('calendar') }} Schedule delivery</button>
+  {% endcall %}
+
+  {# ---------- Quick delivery snapshot ---------- #}
+  <div class="grid grid-3 mb-24">
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Out for delivery</div>
+          <div class="stat__value">{{ deliveries|selectattr('status','equalto','Out for Delivery')|list|length }}</div>
+        </div>
+        <div class="stat__icon tone-brand">{{ icon('truck') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">On route across Miami-Dade</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Scheduled</div>
+          <div class="stat__value">{{ deliveries|selectattr('status','equalto','Scheduled')|list|length }}</div>
+        </div>
+        <div class="stat__icon tone-blue">{{ icon('calendar') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Booked for an upcoming run</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Awaiting scheduling</div>
+          <div class="stat__value">{{ deliveries|selectattr('status','equalto','Awaiting Scheduling')|list|length }}</div>
+        </div>
+        <div class="stat__icon tone-amber">{{ icon('clock') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Need a delivery date assigned</span></div>
+    </div>
+  </div>
+
+  {# Status segmented control — real links that filter server-side #}
+  {% set cur_status = filters.get('status', '') %}
+  <div class="segmented mb-16">
+    <a class="segmented__btn{% if not cur_status %} is-active{% endif %}" href="{{ tab_link('status','') }}">All <span class="count">{{ counts.all }}</span></a>
+    {% for s in delivery_statuses %}
+      <a class="segmented__btn{% if cur_status == s %} is-active{% endif %}" href="{{ tab_link('status', s) }}">{{ s }} <span class="count">{{ counts[s] }}</span></a>
+    {% endfor %}
+  </div>
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    {% if cur_status %}<input type="hidden" name="status" value="{{ cur_status }}" />{% endif %}
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search order or customer…" aria-label="Search deliveries" />
+    </div>
+    <select class="select select--sm" name="area" onchange="this.form.submit()" aria-label="Filter by area">
+      <option value="">All areas</option>
+      {% for a in ['33131 · Brickell','33134 · Coral Gables','33137 · Edgewater','33161 · North Miami','33165 · Westchester','33157 · Palmetto Bay'] %}
+        <option value="{{ a }}"{% if filters.get('area')==a %} selected{% endif %}>{{ a }}</option>
+      {% endfor %}
+    </select>
+    <select class="select select--sm" name="date" onchange="this.form.submit()" aria-label="Filter by date">
+      <option value="">Any date</option>
+      {% for dt in ['Today','Tomorrow','This week','Unscheduled'] %}
+        <option value="{{ dt }}"{% if filters.get('date')==dt %} selected{% endif %}>{{ dt }}</option>
+      {% endfor %}
+    </select>
+    <div class="filterbar__spacer"></div>
+    <button type="submit" class="btn btn--subtle btn--sm">{{ icon('filter') }} More filters</button>
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Address</th>
+            <th>ZIP</th>
+            <th>Phone</th>
+            <th>Delivery date</th>
+            <th>Driver / Route</th>
+            <th>Status</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in deliveries %}
+            <tr>
+              <td class="nowrap">
+                <a href="{{ url_for('admin.order_detail', order_id=d.order) }}" class="link fw-600">{{ d.order }}</a>
+              </td>
+              <td>{{ d.customer }}</td>
+              <td>
+                <span class="cell-sub text-soft"><span class="flex items-center gap-8">{{ icon('map-pin') }}<span>{{ d.address }}</span></span></span>
+              </td>
+              <td class="nowrap num">{{ d.zip }}</td>
+              <td class="nowrap">{{ d.phone }}</td>
+              <td class="nowrap">
+                {% if d.date == '-' or d.date == '—' %}
+                  <span class="text-mute">Unscheduled</span>
+                {% else %}
+                  {{ d.date }}
+                {% endif %}
+              </td>
+              <td class="nowrap">
+                {% if d.driver == 'Unassigned' %}
+                  <span class="text-mute">Unassigned</span>
+                {% else %}
+                  {{ d.driver }}
+                {% endif %}
+              </td>
+              <td>{{ status_pill(d.status) }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <button class="menu__item" data-modal-open="scheduleDelivery">{{ icon('calendar') }} Assign date</button>
+                  <form method="post" action="{{ url_for('admin.delivery_action', delivery_id=d.id) }}"><input type="hidden" name="action" value="out"/><button type="submit" class="menu__item w-full">{{ icon('truck') }} Mark out for delivery</button></form>
+                  <form method="post" action="{{ url_for('admin.delivery_action', delivery_id=d.id) }}"><input type="hidden" name="action" value="delivered"/><button type="submit" class="menu__item w-full">{{ icon('check-circle') }} Mark delivered</button></form>
+                  <form method="post" action="{{ url_for('admin.delivery_action', delivery_id=d.id) }}"><input type="hidden" name="action" value="notify"/><button type="submit" class="menu__item w-full">{{ icon('send') }} Send delivery update</button></form>
+                  <div class="menu__divider"></div>
+                  <form method="post" action="{{ url_for('admin.delivery_action', delivery_id=d.id) }}"><input type="hidden" name="action" value="reschedule"/><button type="submit" class="menu__item w-full">{{ icon('refresh') }} Reschedule</button></form>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="9">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('truck') }}</div>
+                <div class="empty__title">No deliveries match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+
+  {# ---------- Schedule delivery modal ---------- #}
+  <div class="modal" id="scheduleDelivery">
+    <div class="modal__body">
+      <div class="modal__icon tone-blue">{{ icon('calendar') }}</div>
+      <div class="modal__title">Schedule delivery</div>
+      <p class="modal__text mb-16">Assign a delivery date and route to an order.</p>
+      <form id="scheduleForm" method="post" action="{{ url_for('admin.delivery_schedule') }}" class="form-grid">
+        <div class="field">
+          <label class="field__label">Order</label>
+          <select class="select" name="delivery_id">
+            {% for d in deliveries %}<option value="{{ d.id }}">{{ d.order }} · {{ d.customer }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field__row">
+          <div class="field"><label class="field__label">Delivery date</label><input class="input" name="date" type="text" placeholder="Jul 12, 2026" /></div>
+          <div class="field"><label class="field__label">Driver / route</label><input class="input" name="driver" placeholder="Route A · Luis" /></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" data-modal-close>Cancel</button>
+      <button type="submit" form="scheduleForm" class="btn btn--primary">{{ icon('calendar') }} Schedule</button>
+    </div>
+  </div>
+{% endblock %}

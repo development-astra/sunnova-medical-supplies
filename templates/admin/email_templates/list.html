@@ -1,0 +1,57 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill %}
+
+{% block content %}
+  {{ breadcrumbs([
+      {'label':'Dashboard','url':url_for('admin.dashboard')},
+      {'label':'Email Templates'}
+  ]) }}
+
+  {{ page_header('Email Templates', 'Manage transactional emails') }}
+
+  <div class="flex items-center gap-8 text-sm text-soft mb-24">
+    {{ icon('mail') }}
+    <span>All emails use Sunnova branding — logo, blue header, orange/gold CTA, on a clean white card.</span>
+  </div>
+
+  <div class="flex flex-col gap-20">
+    {% for t in templates %}
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">{{ t.name }}</div>
+          <div class="flex items-center gap-12">
+            {{ status_pill(t.status) }}
+            <form method="post" action="{{ url_for('admin.email_template_save', key=t.key) }}">
+              <input type="hidden" name="toggle" value="1" />
+              <button type="submit" class="btn btn--subtle btn--sm">{{ 'Disable' if t.enabled else 'Enable' }}</button>
+            </form>
+          </div>
+        </div>
+        <div class="card__body">
+          <form method="post" action="{{ url_for('admin.email_template_save', key=t.key) }}" class="form-grid">
+            <div class="field">
+              <label class="field__label" for="subject-{{ t.key }}">Subject line</label>
+              <input class="input" id="subject-{{ t.key }}" name="subject" value="{{ t.subject }}" placeholder="Email subject" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="body-{{ t.key }}">Body</label>
+              <textarea class="textarea" id="body-{{ t.key }}" name="body" rows="3" placeholder="Email body">{{ t.body }}</textarea>
+              <span class="field__hint">Plain text preview. Rendered inside the branded Sunnova card at send time.</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-mute nowrap">{{ icon('mail') }} {{ t.key }}</span>
+              <button type="submit" class="btn btn--primary btn--sm">{{ icon('save') }} Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="empty">
+        <div class="empty__icon">{{ icon('mail') }}</div>
+        <div class="empty__title">No email templates</div>
+        <p class="text-soft">Transactional email templates will appear here once configured.</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

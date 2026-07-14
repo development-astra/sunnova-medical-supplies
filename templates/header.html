@@ -4,6 +4,10 @@
    · Main navbar      : logo · nav · search · account/cart · Quote CTA
    Gains a soft shadow once scrolled (see .is-scrolled in main.js).
    ============================================================ #}
+<meta name="csrf-token" content="{{ csrf_token() }}" />
+{% if content.get('announcement.bar') %}
+<div style="background:linear-gradient(135deg,#0b3d91,#072a63);color:#fff;text-align:center;font-size:.85rem;font-weight:600;padding:7px 12px">{{ content.get('announcement.bar') }}</div>
+{% endif %}
 <header class="site-header" id="siteHeader">
 
   {# ---------- Utility top bar ---------- #}
@@ -22,14 +26,23 @@
       </div>
 
       <div class="topbar__group">
-        <a href="#track-order" class="topbar__item">
+        <a href="{{ url_for('track_order') }}" class="topbar__item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
           Track Order
         </a>
-        <a href="#sign-in" class="topbar__item">
+        {% if current_customer %}
+        <a href="{{ url_for('account_dashboard') }}" class="topbar__item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {{ current_customer.name.split(' ')[0] }}
+        </a>
+        <span class="topbar__divider" aria-hidden="true"></span>
+        <a href="{{ url_for('account_logout') }}" class="topbar__item">Sign Out</a>
+        {% else %}
+        <a href="{{ url_for('account_login') }}" class="topbar__item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Sign In
         </a>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -58,28 +71,28 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </a>
           </li>
-          <li><a href="#how-to-order" class="mainnav__link">How It Works</a></li>
-          <li><a href="#how-to-order" class="mainnav__link">Order</a></li>
-          <li><a href="#contact" class="mainnav__link">Contact</a></li>
+          <li><a href="{{ url_for('how_to_order') }}" class="mainnav__link">How It Works</a></li>
+          <li><a href="{{ url_for('why_us') }}" class="mainnav__link">Why Us</a></li>
+          <li><a href="{{ url_for('contact') }}" class="mainnav__link">Contact</a></li>
         </ul>
       </nav>
 
       {# Search #}
-      <form class="searchbar" role="search" action="#" method="get">
+      <form class="searchbar" role="search" action="{{ url_for('services_and_catalog') }}" method="get">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <input class="searchbar__input" type="search" name="q" placeholder="Search supplies..." aria-label="Search supplies" />
       </form>
 
       {# Account · Cart · Quote #}
       <div class="navbar__actions">
-        <a href="#sign-in" class="icon-btn" aria-label="Your account">
+        <a href="{{ url_for('account_dashboard') if current_customer else url_for('account_login') }}" class="icon-btn" aria-label="Your account">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </a>
-        <a href="#cart" class="icon-btn icon-btn--cart" aria-label="Cart, 4 items">
+        <a href="{{ url_for('cart') }}" class="icon-btn icon-btn--cart" aria-label="Cart, {{ cart_count }} items">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1.6"/><circle cx="18" cy="21" r="1.6"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
-          <span class="icon-btn__badge">4</span>
+          {% if cart_count %}<span class="icon-btn__badge">{{ cart_count }}</span>{% endif %}
         </a>
-        <a href="#how-to-order" class="btn btn--primary navbar__quote">
+        <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary navbar__quote">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
           Request a Quote
         </a>
@@ -88,3 +101,15 @@
     </div>
   </div>
 </header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container" style="margin-top:16px">
+      {% for category, msg in messages %}
+        <div role="status" style="padding:12px 16px;border-radius:10px;margin-bottom:8px;font-weight:600;font-size:.95rem;
+             background:{{ '#fdecea' if category=='error' else ('#fff4e5' if category=='warning' else '#e7f6ec') }};
+             color:{{ '#b3261e' if category=='error' else ('#7a4f01' if category=='warning' else '#1b5e20') }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

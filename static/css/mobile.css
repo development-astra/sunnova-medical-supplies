@@ -664,3 +664,47 @@
   .page-contact .rep-card__contact { align-items: flex-start; }
   .page-contact .rep-card__text { margin-inline: 0; }
 }
+
+/* ============================================================
+   CART PAGE
+   ≤900px: stack the summary below the items and un-stick it.
+   ≤600px: reflow each line item to media + content, with the
+   price/remove on their own row beneath.
+   ============================================================ */
+@media (max-width: 900px) {
+  .page-cart .cart__layout { grid-template-columns: 1fr; gap: 22px; }
+  .page-cart .cart-summary { position: static; }
+}
+
+@media (max-width: 600px) {
+  .page-cart .cart__head { margin-bottom: 22px; }
+
+  .page-cart .cart-item {
+    grid-template-columns: 72px 1fr;
+    grid-template-areas:
+      "media main"
+      "side  side";
+    gap: 14px 16px;
+    padding: 16px;
+  }
+  .page-cart .cart-item__media { grid-area: media; width: 72px; height: 72px; align-self: start; }
+  .page-cart .cart-item__main  { grid-area: main; }
+  .page-cart .cart-item__side  {
+    grid-area: side;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 14px;
+    border-top: 1px solid #eef1f6;
+  }
+
+  .page-cart .cart-summary { padding: 22px 20px; }
+}
+
+/* ============================================================
+   TRACK ORDER PAGE — tighten the card padding on phones.
+   ============================================================ */
+@media (max-width: 600px) {
+  .page-track .track-card { padding: 26px 22px; }
+}

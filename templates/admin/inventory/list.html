@@ -1,0 +1,201 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, pagination %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Inventory'}]) }}
+
+  {% call page_header('Inventory', 'Stock levels, thresholds & adjustment history') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export report</button>
+    <button class="btn btn--primary" data-modal-open="adjustStock">{{ icon('plus') }} Adjust stock</button>
+  {% endcall %}
+
+  {# ---------- Stock health at a glance ---------- #}
+  <div class="grid grid-3 mb-24">
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Low stock</div>
+          <div class="stat__value">{{ stock_counts['Low Stock'] }}</div>
+        </div>
+        <div class="stat__icon tone-amber">{{ icon('alert') }}</div>
+      </div>
+      <div class="stat__foot">
+        <span class="stat__note">at or below threshold</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Out of stock</div>
+          <div class="stat__value">{{ stock_counts['Out of Stock'] }}</div>
+        </div>
+        <div class="stat__icon tone-red">{{ icon('x-circle') }}</div>
+      </div>
+      <div class="stat__foot">
+        <span class="stat__note">needs reordering</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">In stock</div>
+          <div class="stat__value">{{ stock_counts['In Stock'] }}</div>
+        </div>
+        <div class="stat__icon tone-green">{{ icon('check-circle') }}</div>
+      </div>
+      <div class="stat__foot">
+        <span class="stat__note">healthy levels</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-main-side">
+    {# ---------- Stock levels ---------- #}
+    <div class="card">
+      <div class="card__head">
+        <div>
+          <div class="card__title">Stock levels</div>
+          <div class="card__sub">{{ inventory|length }} tracked SKUs</div>
+        </div>
+      </div>
+
+      {# Filter bar — a GET form; select auto-submits on change #}
+      <form method="get" class="filterbar">
+        <div class="filterbar__search">
+          {{ icon('search') }}
+          <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search by name or SKU…" aria-label="Search inventory" />
+        </div>
+        <div class="filterbar__spacer"></div>
+        <select class="select select--sm" name="stock" onchange="this.form.submit()">
+          <option value="">Any stock</option>
+          {% for s in stock_options %}<option value="{{ s }}"{% if filters.get('stock')==s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+        </select>
+      </form>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th class="table__num">On hand</th>
+              <th class="table__num">Committed</th>
+              <th class="table__num">Available</th>
+              <th class="table__num">Threshold</th>
+              <th>Status</th>
+              <th>Updated</th>
+              <th class="table__actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in inventory %}
+              <tr>
+                <td>
+                  <div class="cell-name">{{ item.name }}</div>
+                  <div class="cell-sub">{{ item.sku }}</div>
+                </td>
+                <td class="table__num num">{{ item.stock }}</td>
+                <td class="table__num num text-mute">{{ item.committed }}</td>
+                <td class="table__num num fw-600">{{ item.available }}</td>
+                <td class="table__num num text-mute">{{ item.threshold }}</td>
+                <td>{{ status_pill(item.status) }}</td>
+                <td class="nowrap text-mute text-sm">{{ item.updated }}</td>
+                <td class="table__actions">
+                  {% call row_menu() %}
+                    <button class="menu__item" data-modal-open="adjustStock">{{ icon('plus') }} Add stock</button>
+                    <button class="menu__item" data-modal-open="adjustStock">{{ icon('minus') }} Reduce stock</button>
+                    <button class="menu__item" data-modal-open="adjustStock">{{ icon('alert') }} Mark damaged</button>
+                    <div class="menu__divider"></div>
+                    <button class="menu__item" data-modal-open="adjustStock">{{ icon('edit') }} Correct count</button>
+                  {% endcall %}
+                </td>
+              </tr>
+            {% else %}
+              <tr><td colspan="8">
+                <div class="empty">
+                  <div class="empty__icon">{{ icon('layers') }}</div>
+                  <div class="empty__title">No products match these filters</div>
+                </div>
+              </td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card__foot">
+        {{ pagination(pg) }}
+      </div>
+    </div>
+
+    {# ---------- Adjustment history ---------- #}
+    <div class="card">
+      <div class="card__head">
+        <div>
+          <div class="card__title">Adjustment history</div>
+          <div class="card__sub">Every change is logged</div>
+        </div>
+      </div>
+      <div class="card__body card__body--flush">
+        <div class="feed">
+          {% for h in history %}
+            <div class="feed__item">
+              <div class="feed__icon {{ 'tone-green' if h.change > 0 else 'tone-amber' }}">
+                {{ icon('plus') if h.change > 0 else icon('minus') }}
+              </div>
+              <div>
+                <div class="feed__text">
+                  <strong>{{ h.name }}</strong>
+                  <span class="{{ 'text-green' if h.change > 0 else 'text-red' }} fw-600">{{ '+' if h.change > 0 else '' }}{{ h.change }}</span>
+                  · {{ h.reason }}
+                </div>
+                <div class="feed__time">{{ h.time }} · {{ h.by }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ---------- Adjust stock modal ---------- #}
+  <div class="modal" id="adjustStock">
+    <div class="modal__body">
+      <div class="modal__title">Adjust stock</div>
+      <p class="modal__text">Record a stock change against a product. Adjustments update available quantities immediately.</p>
+
+      <form id="adjustForm" method="post" action="{{ url_for('admin.inventory_adjust') }}" class="form-grid mt-16">
+        <div class="field">
+          <label class="field__label" for="adj-product">Product <span class="req">*</span></label>
+          <select class="select" id="adj-product" name="sku">
+            {% for item in inventory %}
+              <option value="{{ item.sku }}">{{ item.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field__row">
+          <div class="field">
+            <label class="field__label" for="adj-reason">Reason <span class="req">*</span></label>
+            <select class="select" id="adj-reason" name="reason">
+              {% for r in reasons %}
+                <option>{{ r }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="adj-qty">Quantity <span class="req">*</span></label>
+            <input class="input" id="adj-qty" name="quantity" type="number" value="0" placeholder="0" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="adj-note">Note</label>
+          <textarea class="textarea" id="adj-note" name="note" rows="3" placeholder="Reference a PO number, order ID, or reason detail…"></textarea>
+          <div class="field__hint">Every adjustment is recorded in the audit log. For “Correct stock count”, enter the new absolute total.</div>
+        </div>
+      </form>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" data-modal-close>Cancel</button>
+      <button type="submit" form="adjustForm" class="btn btn--primary">{{ icon('check') }} Apply adjustment</button>
+    </div>
+  </div>
+{% endblock %}

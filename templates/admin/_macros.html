@@ -1,0 +1,119 @@
+{# ============================================================
+   Admin reusable component macros.
+   Usage:  {% from 'admin/_macros.html' import status_pill, page_header,
+                                              breadcrumbs, avatar, thumb, badge %}
+   These keep every list/detail screen visually identical. Prefer composing
+   these + the admin.css classes over hand-rolling markup.
+   ============================================================ #}
+{% from 'admin/_icons.html' import icon %}
+
+{# Master status → tone map. Any status string used across the app resolves to
+   a consistent badge colour. Unknown values fall back to a neutral grey. #}
+{% set _STATUS_TONE = {
+  'In Stock': 'green', 'Paid': 'green', 'Active': 'green', 'Verified': 'green',
+  'Approved': 'green', 'Delivered': 'green', 'Accepted': 'green', 'Published': 'green',
+  'Online now': 'green', 'Completed': 'green', 'Enabled': 'green',
+  'Low Stock': 'amber', 'Pending': 'amber', 'Reviewing': 'amber', 'Under Review': 'amber',
+  'More Info Needed': 'amber', 'Awaiting Scheduling': 'amber', 'Invited': 'amber',
+  'Authorized': 'amber', 'Draft': 'amber', 'Preparing': 'amber', 'Scheduled': 'amber',
+  'Rescheduled': 'amber', 'Partially Refunded': 'amber',
+  'Out of Stock': 'red', 'Failed': 'red', 'Rejected': 'red', 'Cancelled': 'red',
+  'Declined': 'red', 'Failed Delivery': 'red', 'Disabled': 'red', 'Suspended': 'red',
+  'Refunded': 'red',
+  'New': 'blue', 'Confirmed': 'blue', 'Responded': 'blue',
+  'Out for Delivery': 'brand', 'Special Order': 'brand', 'Processing': 'brand',
+  'Quote Required': 'teal', 'Quote Only': 'teal', 'Converted to Order': 'teal',
+  'Direct Purchase': 'blue', 'Direct Purchase or Quote': 'teal', 'Account Only': 'purple'
+} %}
+
+{# A coloured status pill with a leading dot. Colour is looked up automatically. #}
+{% macro status_pill(value, dot=True) -%}
+  {%- set tone = _STATUS_TONE.get(value, 'gray') -%}
+  <span class="badge badge--{{ tone }}">{% if dot %}<span class="badge__dot"></span>{% endif %}{{ value }}</span>
+{%- endmacro %}
+
+{# A plain badge with an explicit tone (green/amber/red/blue/teal/purple/brand/gray). #}
+{% macro badge(text, tone='gray', dot=False) -%}
+  <span class="badge badge--{{ tone }}">{% if dot %}<span class="badge__dot"></span>{% endif %}{{ text }}</span>
+{%- endmacro %}
+
+{# Page header with title, optional subtitle, and a caller() block for actions. #}
+{% macro page_header(title, subtitle=None) -%}
+  <div class="page-head">
+    <div>
+      <h1 class="page-head__title">{{ title }}</h1>
+      {% if subtitle %}<p class="page-head__sub">{{ subtitle }}</p>{% endif %}
+    </div>
+    {% if caller %}<div class="page-head__actions">{{ caller() }}</div>{% endif %}
+  </div>
+{%- endmacro %}
+
+{# Breadcrumb trail. Pass a list of {label, url} dicts; the last is the current. #}
+{% macro breadcrumbs(items) -%}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    {% for item in items %}
+      {% if not loop.last and item.url %}
+        <a href="{{ item.url }}">{{ item.label }}</a>
+        {{ icon('chevron-right') }}
+      {% else %}
+        <span class="breadcrumbs__current">{{ item.label }}</span>
+      {% endif %}
+    {% endfor %}
+  </nav>
+{%- endmacro %}
+
+{# Initials avatar. #}
+{% macro avatar(initials, cls='') -%}
+  <span class="avatar {{ cls }}">{{ initials }}</span>
+{%- endmacro %}
+
+{# Square product/category thumbnail placeholder (gradient tile with icon). #}
+{% macro thumb(tone='blue', icon_name='box') -%}
+  <span class="thumb-sq thumb--{{ tone }}">{{ icon(icon_name) }}</span>
+{%- endmacro %}
+
+{# Row-actions dropdown menu. Pass a caller() with .menu__item buttons/links. #}
+{% macro row_menu() -%}
+  <div class="menu" style="display:inline-block">
+    <button class="btn btn--ghost btn--icon" data-menu-toggle aria-label="Row actions">{{ icon('more-vertical') }}</button>
+    <div class="menu__pop">{{ caller() }}</div>
+  </div>
+{%- endmacro %}
+
+{# A key/value info row used on detail panels. #}
+{% macro info_row(label, value) -%}
+  <div class="info-row"><span class="info-row__label">{{ label }}</span><span class="info-row__value">{{ value }}</span></div>
+{%- endmacro %}
+
+{# Pagination bar. Preserves the current filter query-string across page links. #}
+{% macro pagination(pg) -%}
+  {%- set base = request.args.to_dict() -%}
+  {%- set _ = base.pop('page', None) -%}
+  {%- set qs = base|urlencode -%}
+  <div class="pagination">
+    <div class="pagination__info">
+      {% if pg.total %}Showing {{ pg.start }}–{{ pg.end }} of {{ pg.total }}{% else %}No results{% endif %}
+    </div>
+    <div class="pagination__controls">
+      {% if pg.has_prev %}
+        <a class="btn btn--ghost btn--sm" href="?{{ qs }}{% if qs %}&{% endif %}page={{ pg.prev }}">{{ icon('chevron-left') }} Prev</a>
+      {% else %}
+        <span class="btn btn--ghost btn--sm" aria-disabled="true" style="opacity:.45;pointer-events:none">{{ icon('chevron-left') }} Prev</span>
+      {% endif %}
+      <span class="pagination__page">Page {{ pg.page }} of {{ pg.pages }}</span>
+      {% if pg.has_next %}
+        <a class="btn btn--ghost btn--sm" href="?{{ qs }}{% if qs %}&{% endif %}page={{ pg.next }}">Next {{ icon('chevron-right') }}</a>
+      {% else %}
+        <span class="btn btn--ghost btn--sm" aria-disabled="true" style="opacity:.45;pointer-events:none">Next {{ icon('chevron-right') }}</span>
+      {% endif %}
+    </div>
+  </div>
+{%- endmacro %}
+
+{# Build a status-tab link that preserves other active filters but resets page. #}
+{% macro tab_link(param, value) -%}
+  {%- set base = request.args.to_dict() -%}
+  {%- set _ = base.pop('page', None) -%}
+  {%- if value -%}{%- set _ = base.update({param: value}) -%}{%- else -%}{%- set _ = base.pop(param, None) -%}{%- endif -%}
+  ?{{ base|urlencode }}
+{%- endmacro %}

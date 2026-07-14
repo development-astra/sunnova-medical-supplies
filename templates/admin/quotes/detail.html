@@ -1,0 +1,195 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import breadcrumbs, status_pill, info_row %}
+
+{% block content %}
+  {{ breadcrumbs([
+      {'label':'Dashboard','url':url_for('admin.dashboard')},
+      {'label':'Quotes','url':url_for('admin.quotes')},
+      {'label':'Quote ' ~ quote.id}
+  ]) }}
+
+  <div class="page-head">
+    <div>
+      <div class="flex items-center gap-12">
+        <h1 class="page-head__title">Quote {{ quote.id }}</h1>
+        {{ status_pill(quote.status) }}
+      </div>
+      <p class="page-head__sub">Submitted {{ quote.date }}</p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--ghost" href="mailto:{{ quote.customer.email }}">{{ icon('mail') }} Email customer</a>
+      <form method="post" action="{{ url_for('admin.quote_status', quote_id=quote.id) }}" style="display:inline">
+        <input type="hidden" name="status" value="Declined" />
+        <button class="btn btn--ghost">{{ icon('x-circle') }} Decline</button>
+      </form>
+      <form method="post" action="{{ url_for('admin.quote_convert', quote_id=quote.id) }}" style="display:inline">
+        <button class="btn btn--primary">{{ icon('check-circle') }} Convert to Order</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="grid grid-main-side">
+    {# ---------- Main column ---------- #}
+    <div class="flex-col gap-20">
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">Requested products</div>
+          <span class="tag">{{ quote.lines|length }} products · {{ quote.lines|sum(attribute='qty') }} units</span>
+        </div>
+        <form id="quoteForm" method="post" action="{{ url_for('admin.quote_price', quote_id=quote.id) }}">
+          <div class="card__body card__body--flush">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr><th>Product</th><th class="table__num">Qty</th><th class="table__num">Quoted price</th></tr>
+                </thead>
+                <tbody>
+                  {% for line in quote.lines %}
+                    <tr>
+                      <td><div class="cell-name">{{ line.name }}</div><div class="cell-sub">{{ line.sku }}</div></td>
+                      <td class="table__num num">{{ line.qty }}</td>
+                      <td class="table__num" style="width:150px">
+                        <div class="input-group">
+                          <span class="input-group__addon">$</span>
+                          <input class="input" name="quoted_{{ line.sku }}" type="text" value="{{ '%.2f'|format(line.quoted) if line.quoted else '' }}" placeholder="0.00" inputmode="decimal" aria-label="Quoted price for {{ line.name }}" />
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card__foot flex justify-between items-center">
+            <p class="text-xs text-mute" style="margin:0">Enter amounts, then save to send the quote (marks it Responded).</p>
+            <button type="submit" class="btn btn--primary btn--sm">{{ icon('dollar') }} Save quoted prices</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Customer note</div></div>
+        <div class="card__body"><p class="text-sm text-soft" style="margin:0">{{ quote.notes }}</p></div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Internal notes</div><span class="tag">Staff only</span></div>
+        <div class="card__body">
+          <form method="post" action="{{ url_for('admin.quote_note', quote_id=quote.id) }}" class="flex-col gap-8">
+            <textarea class="textarea" name="internal_notes" rows="3" placeholder="Notes visible to staff only…">{{ quote.internal_notes }}</textarea>
+            <button type="submit" class="btn btn--subtle btn--sm" style="align-self:flex-start">{{ icon('save') }} Save note</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">Attachments</div>
+          <span class="tag">{{ quote.attachments|length }}</span>
+        </div>
+        <div class="card__body flex-col gap-12">
+          {% for att in quote.attachments %}
+            <div class="flex items-center gap-12">
+              {{ icon('file', 'text-mute') }}
+              <div class="flex-1">
+                <div class="text-sm fw-600 text-ink">{{ att.name }}</div>
+                <div class="text-xs text-mute">{{ att.size }}</div>
+              </div>
+              <button class="btn btn--subtle btn--sm">{{ icon('download') }} Download</button>
+            </div>
+          {% endfor %}
+          <hr class="divider" />
+          <label class="dropzone">
+            <span class="dropzone__icon">{{ icon('upload-cloud') }}</span>
+            <span class="dropzone__title">Upload quote document</span>
+            <span class="dropzone__hint">Drag a PDF here or click to browse</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">History</div></div>
+        <div class="card__body">
+          <div class="timeline">
+            {% for h in quote.history %}
+              <div class="timeline__item timeline__item--done">
+                <span class="timeline__dot">{{ icon('check') }}</span>
+                <div class="timeline__label">{{ h.label }}</div>
+                <div class="timeline__meta">{{ h.time }} · {{ h.who }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ---------- Side column ---------- #}
+    <div class="flex-col gap-20">
+      <div class="card">
+        <div class="card__head"><div class="card__title">Quote actions</div></div>
+        <div class="card__body flex-col gap-12">
+          <form method="post" action="{{ url_for('admin.quote_status', quote_id=quote.id) }}" class="flex-col gap-12">
+            <select class="select" name="status">
+              {% for s in quote_statuses %}<option {% if s == quote.status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+            </select>
+            <button type="submit" class="btn btn--primary btn--block">{{ icon('check') }} Update status</button>
+          </form>
+          <hr class="divider" />
+          <button type="submit" form="quoteForm" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('dollar') }} Save quoted prices</button>
+          <form method="post" action="{{ url_for('admin.quote_status', quote_id=quote.id) }}">
+            <input type="hidden" name="status" value="Responded" />
+            <button type="submit" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('send') }} Mark as responded</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.quote_convert', quote_id=quote.id) }}">
+            <button type="submit" class="btn btn--blue btn--block" style="justify-content:flex-start">{{ icon('check-circle') }} Convert to order</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.quote_status', quote_id=quote.id) }}">
+            <input type="hidden" name="status" value="Declined" />
+            <button type="submit" class="btn btn--danger btn--block" style="justify-content:flex-start">{{ icon('x-circle') }} Decline quote</button>
+          </form>
+          <hr class="divider" />
+          <form method="post" action="{{ url_for('admin.quote_assign', quote_id=quote.id) }}" class="field">
+            <label class="field__label">Assign to</label>
+            <div class="flex gap-8">
+              <select class="select flex-1" name="assigned">
+                {% for who in ['Unassigned', 'Ana Reyes', 'Luis Ortega', 'Marco Silva'] %}
+                  <option {% if quote.assigned == who %}selected{% endif %}>{{ who }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn--subtle btn--sm">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">Customer</div>
+          {% if quote.customer_id %}<a href="{{ url_for('admin.customer_detail', customer_id=quote.customer_id) }}" class="btn btn--subtle btn--sm">View customer</a>{% endif %}
+        </div>
+        <div class="card__body">
+          <div class="flex items-center gap-12 mb-16">
+            <span class="avatar avatar--lg">{{ quote.customer.name.split(' ')|map('first')|join|upper }}</span>
+            <div>
+              <div class="fw-600 text-ink">{{ quote.customer.name }}</div>
+              <div class="text-sm text-mute">{{ quote.customer.business }}</div>
+            </div>
+          </div>
+          {{ info_row('Type', quote.customer.type) }}
+          {{ info_row('Email', quote.customer.email) }}
+          {{ info_row('Phone', quote.customer.phone) }}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Preferred delivery</div></div>
+        <div class="card__body">
+          <div class="flex items-center gap-10 text-sm">{{ icon('calendar', 'text-mute') }}<span class="text-soft fw-600">{{ quote.preferred_delivery }}</span></div>
+          <hr class="divider" />
+          <p class="text-xs text-mute" style="margin:0">Miami-Dade local delivery available — confirm the window with the customer when responding.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

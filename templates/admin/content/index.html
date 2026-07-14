@@ -1,0 +1,41 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs %}
+
+{% block content %}
+  {{ breadcrumbs([
+      {'label':'Dashboard','url':url_for('admin.dashboard')},
+      {'label':'Content'}
+  ]) }}
+
+  {{ page_header('Content', 'Edit website copy without a developer') }}
+
+  <form id="contentForm" method="post" action="{{ url_for('admin.content') }}">
+    {% for group_name, blocks in groups.items() %}
+      <div class="card mb-16">
+        <div class="card__head"><div class="card__title">{{ group_name }}</div></div>
+        <div class="card__body form-grid">
+          {% for block in blocks %}
+            <div class="field">
+              <label class="field__label" for="{{ block.field }}">{{ block.label }}</label>
+              {% if block.multiline %}
+                <textarea class="textarea" id="{{ block.field }}" name="{{ block.field }}" rows="3">{{ block.value }}</textarea>
+              {% else %}
+                <input class="input" id="{{ block.field }}" name="{{ block.field }}" value="{{ block.value }}" />
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </form>
+
+  {# Sticky action bar — lets the owner update copy without a developer. #}
+  <div class="actionbar">
+    <div></div>
+    <div class="flex gap-10">
+      <a href="{{ url_for('admin.dashboard') }}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" form="contentForm" class="btn btn--primary">{{ icon('save') }} Save content</button>
+    </div>
+  </div>
+{% endblock %}

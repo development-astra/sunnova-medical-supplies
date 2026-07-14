@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart — Sunnova Medical Supplies</title>
+  <meta name="description"
+        content="Review your Sunnova Medical Supplies cart and check out, or request a quote. Same-day delivery across Miami-Dade." />
+
+  {# Same font + stylesheet as the rest of the site #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-cart">
+
+  {# ---- Shared header partial ---- #}
+  {% include 'header.html' %}
+
+  {% set items = cart.get('items', []) %}
+  {% set subtotal = cart.get('subtotal', 0) %}
+
+  <main>
+    <section class="section cart">
+      <div class="container">
+
+        {# ---------- Page heading ---------- #}
+        <div class="cart__head">
+          <h1 class="cart__title">Your Cart</h1>
+          <p class="cart__count">{{ cart.get('count', 0) }} item{{ '' if cart.get('count', 0) == 1 else 's' }}</p>
+        </div>
+
+        {% if items %}
+        <div class="cart__layout">
+
+          {# ---------- Line items ---------- #}
+          <div class="cart__items">
+
+            {% for item in items %}
+            <article class="cart-item">
+              <span class="cart-item__media">
+                <span class="thumb-tile" style="display:grid;place-items:center;width:96px;height:96px;border-radius:12px;background:linear-gradient(135deg,#e8f0fe,#f4f7fb);color:#0b3d91">
+                  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L4 7"/><path d="M4 7l1.5 12a2 2 0 002 2h9a2 2 0 002-2L20 7"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
+                </span>
+              </span>
+
+              <div class="cart-item__main">
+                <div class="cart-item__info">
+                  <h2 class="cart-item__name">{{ item.name }}</h2>
+                  <p class="cart-item__sku">SKU: {{ item.sku }}</p>
+                </div>
+
+                <form method="post" action="{{ url_for('cart_update') }}" class="qty cart-item__qty">
+                  <input type="hidden" name="item_id" value="{{ item.id }}" />
+                  <input class="qty__input" type="number" min="0" name="qty" value="{{ item.qty }}" aria-label="Quantity" style="width:70px" />
+                  <button class="qty__btn" type="submit" aria-label="Update quantity" title="Update">✓</button>
+                </form>
+              </div>
+
+              <div class="cart-item__side">
+                <p class="cart-item__price">${{ "%.2f"|format(item.subtotal) }}</p>
+                <form method="post" action="{{ url_for('cart_remove') }}">
+                  <input type="hidden" name="item_id" value="{{ item.id }}" />
+                  <button class="cart-item__remove" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                    Remove
+                  </button>
+                </form>
+              </div>
+            </article>
+            {% endfor %}
+
+            <a href="{{ url_for('services_and_catalog') }}" class="cart__continue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              Continue shopping
+            </a>
+          </div>
+
+          {# ---------- Order summary ---------- #}
+          <aside class="cart-summary" aria-label="Order summary">
+            <h2 class="cart-summary__title">Order Summary</h2>
+
+            <dl class="cart-summary__lines">
+              <div class="cart-summary__row">
+                <dt>Subtotal ({{ cart.get('count', 0) }} item{{ '' if cart.get('count', 0) == 1 else 's' }})</dt>
+                <dd>${{ "%.2f"|format(subtotal) }}</dd>
+              </div>
+              <div class="cart-summary__row">
+                <dt>Delivery</dt>
+                <dd class="cart-summary__ok">Calculated at checkout</dd>
+              </div>
+              <div class="cart-summary__row">
+                <dt>Tax</dt>
+                <dd class="cart-summary__muted">Calculated at checkout</dd>
+              </div>
+            </dl>
+
+            <div class="cart-summary__total">
+              <span>Estimated Total</span>
+              <span class="cart-summary__total-val">${{ "%.2f"|format(subtotal) }}</span>
+            </div>
+
+            <a href="{{ url_for('checkout') }}" class="btn btn--primary cart-summary__checkout">
+              Proceed to Checkout
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+
+            <a href="{{ url_for('services_and_catalog') }}" class="cart-summary__quote">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+              Request a Quote Instead
+            </a>
+
+            <p class="cart-summary__note">Account pricing applied at checkout</p>
+          </aside>
+
+        </div>
+
+        {% else %}
+        {# ---------- Empty state ---------- #}
+        <div class="cart-empty">
+          <span class="cart-empty__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1.6"/><circle cx="18" cy="21" r="1.6"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+          </span>
+          <h2 class="cart-empty__title">Your cart is empty</h2>
+          <p class="cart-empty__text">Browse the catalog and add the supplies your practice needs.</p>
+          <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">
+            Shop Products
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        {% endif %}
+
+      </div>
+    </section>
+  </main>
+
+  {# ---- Shared footer partial ---- #}
+  {% include 'footer.html' %}
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

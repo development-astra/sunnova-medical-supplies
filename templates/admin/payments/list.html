@@ -1,0 +1,102 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, pagination %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Payments'}]) }}
+
+  {% call page_header('Payments', 'View and manage payment activity') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+  {% endcall %}
+
+  {# Status segmented control #}
+  <div class="segmented mb-16">
+    <button class="segmented__btn is-active" data-segment>All <span class="count">{{ payments|length }}</span></button>
+    {% for s in payment_statuses %}
+      <button class="segmented__btn" data-segment>{{ s }} <span class="count">{{ payments|selectattr('status','equalto',s)|list|length }}</span></button>
+    {% endfor %}
+  </div>
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search order, customer or txn…" aria-label="Search payments" />
+    </div>
+    <select class="select select--sm" name="provider" onchange="this.form.submit()">
+      <option value="">All providers</option>
+      {% for pr in providers %}<option value="{{ pr }}"{% if filters.get('provider')==pr %} selected{% endif %}>{{ pr }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="status" onchange="this.form.submit()">
+      <option value="">All statuses</option>
+      {% for s in payment_statuses %}<option value="{{ s }}"{% if filters.get('status')==s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+    </select>
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th class="table__num">Amount</th>
+            <th>Provider</th>
+            <th>Transaction ID</th>
+            <th>Status</th>
+            <th>Refund</th>
+            <th>Date</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in payments %}
+            <tr>
+              <td class="nowrap"><a href="{{ url_for('admin.order_detail', order_id=p.order) }}" class="link">{{ p.order }}</a></td>
+              <td class="nowrap">{{ p.customer }}</td>
+              <td class="table__num num nowrap fw-600">${{ '%.2f'|format(p.amount) }}</td>
+              <td class="nowrap">{{ p.provider }}</td>
+              <td class="text-mute text-xs nowrap">{{ p.txn_id }}</td>
+              <td>
+                {{ status_pill(p.status) }}
+                {% if p.status == 'Failed' and p.failed_reason %}<div class="cell-sub text-red">{{ p.failed_reason }}</div>{% endif %}
+              </td>
+              <td class="text-mute nowrap">{{ p.refund_status }}</td>
+              <td class="nowrap text-mute text-sm">{{ p.date }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <a class="menu__item" href="{{ url_for('admin.order_detail', order_id=p.order) }}">{{ icon('eye') }} View order</a>
+                  <div class="menu__divider"></div>
+                  <form method="post" action="{{ url_for('admin.payment_action', payment_id=p.id) }}">
+                    <input type="hidden" name="action" value="mark_paid" />
+                    <button type="submit" class="menu__item w-full">{{ icon('check-circle') }} Mark manual payment received</button>
+                  </form>
+                  <form method="post" action="{{ url_for('admin.payment_action', payment_id=p.id) }}">
+                    <input type="hidden" name="action" value="retry" />
+                    <button type="submit" class="menu__item w-full">{{ icon('refresh') }} Retry payment notification</button>
+                  </form>
+                  <div class="menu__divider"></div>
+                  <form method="post" action="{{ url_for('admin.payment_action', payment_id=p.id) }}">
+                    <input type="hidden" name="action" value="refund" />
+                    <button type="submit" class="menu__item menu__item--danger w-full">{{ icon('dollar') }} Issue refund</button>
+                  </form>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="9">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('credit-card') }}</div>
+                <div class="empty__title">No payments match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+{% endblock %}

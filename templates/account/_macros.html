@@ -1,0 +1,14 @@
+{# Reusable bits for the account area. #}
+{% macro status_pill(status) %}
+  {%- set s = (status or '')|lower -%}
+  {%- if s in ['delivered', 'paid', 'completed', 'converted to order'] -%}
+    {%- set cls = 'is-green' -%}
+  {%- elif s in ['cancelled', 'canceled', 'failed', 'refunded', 'declined'] -%}
+    {%- set cls = 'is-red' -%}
+  {%- elif s in ['out for delivery', 'processing', 'confirmed', 'shipped'] -%}
+    {%- set cls = 'is-blue' -%}
+  {%- else -%}
+    {%- set cls = 'is-amber' -%}
+  {%- endif -%}
+  <span class="status-pill {{ cls }}">{{ status }}</span>
+{% endmacro %}

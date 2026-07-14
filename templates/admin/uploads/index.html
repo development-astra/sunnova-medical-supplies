@@ -1,0 +1,106 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, badge %}
+
+{% block content %}
+  {{ breadcrumbs([{'label': 'Dashboard', 'url': url_for('admin.dashboard')}, {'label': 'Uploads'}]) }}
+
+  {% call page_header('Uploads', 'Product images, category images, quote & account documents') %}
+    <button type="button" class="btn btn--primary" onclick="document.getElementById('fileInput').click()">{{ icon('upload') }} Upload files</button>
+  {% endcall %}
+
+  {# ---------- Storage stats ---------- #}
+  <div class="stat-grid mb-16">
+    <div class="stat">
+      <div class="stat__top">
+        <div><div class="stat__label">Total files</div><div class="stat__value">{{ stats.total_files }}</div></div>
+        <div class="stat__icon tone-blue">{{ icon('folder') }}</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div><div class="stat__label">Storage used</div><div class="stat__value">{{ stats.total_size }}</div></div>
+        <div class="stat__icon tone-teal">{{ icon('layers') }}</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div><div class="stat__label">Images</div><div class="stat__value">{{ stats.images }}</div></div>
+        <div class="stat__icon tone-brand">{{ icon('image') }}</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat__top">
+        <div><div class="stat__label">Documents</div><div class="stat__value">{{ stats.documents }}</div></div>
+        <div class="stat__icon tone-amber">{{ icon('file') }}</div>
+      </div>
+    </div>
+  </div>
+
+  {# CDN / storage note #}
+  <p class="text-sm text-mute flex items-center gap-8 mb-24">
+    {{ icon('shield-check') }}
+    <span>Served from <span class="fw-600 text-soft">{{ stats.cdn }}</span> — in production files are stored in DigitalOcean Spaces, never on the VPS.</span>
+  </p>
+
+  {# ---------- Upload form (multipart) ---------- #}
+  <form id="uploadForm" method="post" action="{{ url_for('admin.upload_files') }}" enctype="multipart/form-data" class="mb-24">
+    <div class="flex items-center gap-10 mb-12 flex-wrap">
+      <label class="field__label" for="uploadFolder" style="margin:0">Upload to folder</label>
+      <select class="select select--sm" id="uploadFolder" name="folder">
+        {% for f in folders %}<option value="{{ f }}">{{ f|capitalize }}</option>{% endfor %}
+      </select>
+    </div>
+    <label class="dropzone" style="display:block;cursor:pointer">
+      <span class="dropzone__icon">{{ icon('upload-cloud') }}</span>
+      <span class="dropzone__title">Drop files to upload or click to browse</span>
+      <span class="dropzone__hint">PNG, JPG, WEBP, GIF or PDF up to 5MB</span>
+      <input type="file" name="files" id="fileInput" multiple accept=".png,.jpg,.jpeg,.webp,.gif,.pdf"
+             style="display:none" onchange="if(this.files.length){document.getElementById('uploadForm').submit()}" />
+    </label>
+  </form>
+
+  {# ---------- Folder filter ---------- #}
+  <div class="segmented mb-16">
+    <button class="segmented__btn is-active" data-segment="all">All</button>
+    {% for f in folders %}<button class="segmented__btn" data-segment="{{ f }}">{{ f|capitalize }}</button>{% endfor %}
+  </div>
+
+  {# ---------- File gallery ---------- #}
+  {% if uploads %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px">
+      {% for u in uploads %}
+        <div class="card">
+          <div class="card__body">
+            {% if u.is_image and u.url %}
+              <img src="{{ u.url }}" alt="{{ u.name }}" class="mb-12" style="width:100%;height:120px;object-fit:cover;border-radius:10px" />
+            {% else %}
+              <span class="thumb-sq thumb--{{ u.tone }} mb-12" style="width:100%;height:120px;border-radius:10px">
+                {{ icon('image' if u.is_image else 'file') }}
+              </span>
+            {% endif %}
+            <div class="fw-600 mb-8" style="word-break:break-word">{{ u.name }}</div>
+            <div class="mb-8">{{ badge(u.type, 'gray') }}</div>
+            <div class="text-xs text-mute">{{ u.size }}{% if u.dims and u.dims != '—' %} — {{ u.dims }}{% endif %}</div>
+            <div class="text-xs text-mute">{{ u.uploaded }} — {{ u.by }}</div>
+          </div>
+          <div class="card__foot flex gap-8">
+            <button type="button" class="btn btn--subtle btn--sm" data-url="{{ u.url or '' }}"
+                    onclick="if(navigator.clipboard){navigator.clipboard.writeText(this.dataset.url)};var t=this;t.innerHTML=t.innerHTML.replace('Copy URL','Copied!');setTimeout(function(){t.innerHTML=t.innerHTML.replace('Copied!','Copy URL')},1200)">
+              {{ icon('link') }} Copy URL
+            </button>
+            <form method="post" action="{{ url_for('admin.upload_delete', upload_id=u.id) }}" style="display:inline">
+              <button type="submit" class="btn btn--danger btn--sm btn--icon" aria-label="Delete file">{{ icon('trash') }}</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty">
+      <div class="empty__icon">{{ icon('image') }}</div>
+      <div class="empty__title">No files yet</div>
+      <p class="text-soft">Upload product images, category images, or documents to get started.</p>
+    </div>
+  {% endif %}
+{% endblock %}

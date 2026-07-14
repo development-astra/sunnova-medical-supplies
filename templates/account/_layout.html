@@ -1,0 +1,28 @@
+{# Shared shell for the customer account area (full standalone page, storefront style). #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}My Account{% endblock %} — Sunnova Medical Supplies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}" />
+</head>
+<body class="page-account">
+  {% include 'header.html' %}
+  <main>
+    <section class="section account">
+      <div class="container account__inner">
+        {% block content %}{% endblock %}
+      </div>
+    </section>
+  </main>
+  {% include 'footer.html' %}
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

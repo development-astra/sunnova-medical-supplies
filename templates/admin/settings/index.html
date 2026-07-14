@@ -1,0 +1,138 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs %}
+
+{% set store = settings.store %}
+{% set delivery = settings.delivery %}
+{% set social = settings.social %}
+
+{% block content %}
+  {{ breadcrumbs([
+      {'label':'Dashboard','url':url_for('admin.dashboard')},
+      {'label':'Settings'}
+  ]) }}
+
+  {{ page_header('Settings', 'Store, delivery and social configuration') }}
+
+  <form id="settingsForm" method="post" action="{{ url_for('admin.settings') }}">
+    {# ---------- Tabs group (bar + panels share one parent) ---------- #}
+    <div>
+      <div class="tabs">
+        <button type="button" class="tab is-active" data-tab="tab-general">General</button>
+        <button type="button" class="tab" data-tab="tab-delivery">Delivery</button>
+        <button type="button" class="tab" data-tab="tab-social">Social</button>
+      </div>
+
+      {# ---------- General ---------- #}
+      <div class="tab-panel is-active" id="tab-general">
+        <div class="card">
+          <div class="card__head"><div class="card__title">Store details</div></div>
+          <div class="card__body form-grid">
+            <div class="field">
+              <label class="field__label" for="store-name">Store name <span class="req">*</span></label>
+              <input class="input" id="store-name" name="store_name" value="{{ store.name }}" placeholder="Sunnova Medical Supplies" />
+            </div>
+            <div class="field__row">
+              <div class="field">
+                <label class="field__label" for="store-phone">Phone number</label>
+                <input class="input" id="store-phone" name="store_phone" value="{{ store.phone }}" placeholder="(786) 000-0000" />
+              </div>
+              <div class="field">
+                <label class="field__label" for="store-email">Support email</label>
+                <input class="input" id="store-email" name="store_support_email" value="{{ store.support_email }}" placeholder="support@example.com" />
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="store-address">Business address</label>
+              <input class="input" id="store-address" name="store_address" value="{{ store.address }}" placeholder="Miami-Dade County, FL" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="store-hours">Business hours</label>
+              <input class="input" id="store-hours" name="store_hours" value="{{ store.hours }}" placeholder="Mon–Fri, 8:00 AM – 6:00 PM" />
+            </div>
+            <div class="field__row">
+              <div class="field">
+                <label class="field__label" for="min-order">Minimum order amount</label>
+                <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="min-order" name="store_min_order" value="{{ store.min_order }}" placeholder="0.00" /></div>
+                <span class="field__hint">Orders below this amount cannot be placed.</span>
+              </div>
+              <div class="field">
+                <label class="field__label" for="free-threshold">Free delivery threshold</label>
+                <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="free-threshold" name="store_free_delivery_threshold" value="{{ store.free_delivery_threshold }}" placeholder="0.00" /></div>
+                <span class="field__hint">Waive the delivery fee at or above this total.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ---------- Delivery ---------- #}
+      <div class="tab-panel" id="tab-delivery">
+        <div class="card">
+          <div class="card__head"><div class="card__title">Delivery settings</div></div>
+          <div class="card__body form-grid">
+            <div class="field">
+              <label class="switch"><input type="checkbox" name="delivery_enabled" {% if delivery.enabled %}checked{% endif %} /><span class="switch__track"></span><span class="switch__label">Miami-Dade delivery enabled</span></label>
+              <span class="field__hint">Turn local delivery on or off across the storefront.</span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="delivery-fee">Delivery fee</label>
+              <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="delivery-fee" name="delivery_fee" value="{{ delivery.fee }}" placeholder="0.00" /></div>
+            </div>
+            <div class="field">
+              <label class="switch"><input type="checkbox" name="delivery_same_week" {% if delivery.same_week %}checked{% endif %} /><span class="switch__track"></span><span class="switch__label">Same-week delivery messaging</span></label>
+              <span class="field__hint">Show “delivered this week” copy on product and checkout pages.</span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="delivery-zips">Allowed ZIP codes</label>
+              <textarea class="textarea" id="delivery-zips" name="delivery_zip_codes" rows="4" placeholder="33101, 33125, …">{{ delivery.zip_codes }}</textarea>
+              <span class="field__hint">Comma-separated list of serviceable ZIP codes.</span>
+            </div>
+            <div class="field__row">
+              <div class="field">
+                <label class="field__label" for="delivery-cutoff">Delivery cutoff time</label>
+                <input class="input" id="delivery-cutoff" name="delivery_cutoff" value="{{ delivery.cutoff }}" placeholder="2:00 PM" />
+              </div>
+              <div class="field">
+                <label class="field__label" for="delivery-days">Delivery days</label>
+                <input class="input" id="delivery-days" name="delivery_days" value="{{ delivery.days }}" placeholder="Monday, Wednesday, Friday" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ---------- Social ---------- #}
+      <div class="tab-panel" id="tab-social">
+        <div class="card">
+          <div class="card__head"><div class="card__title">Social links</div></div>
+          <div class="card__body form-grid">
+            <div class="field">
+              <label class="field__label" for="social-facebook">Facebook</label>
+              <div class="input-group"><span class="input-group__addon">{{ icon('link') }}</span><input class="input" id="social-facebook" name="social_facebook" value="{{ social.facebook }}" placeholder="facebook.com/…" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="social-instagram">Instagram</label>
+              <div class="input-group"><span class="input-group__addon">{{ icon('link') }}</span><input class="input" id="social-instagram" name="social_instagram" value="{{ social.instagram }}" placeholder="instagram.com/…" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="social-linkedin">LinkedIn</label>
+              <div class="input-group"><span class="input-group__addon">{{ icon('link') }}</span><input class="input" id="social-linkedin" name="social_linkedin" value="{{ social.linkedin }}" placeholder="linkedin.com/company/…" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {# Sticky action bar #}
+  <div class="actionbar">
+    <div>
+      <a href="{{ url_for('admin.settings') }}" class="btn btn--subtle">Reset</a>
+    </div>
+    <div class="flex gap-10">
+      <a href="{{ url_for('admin.dashboard') }}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" form="settingsForm" class="btn btn--primary">{{ icon('save') }} Save changes</button>
+    </div>
+  </div>
+{% endblock %}

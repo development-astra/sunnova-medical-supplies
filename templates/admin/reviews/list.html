@@ -1,0 +1,81 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, badge, row_menu %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Reviews'}]) }}
+
+  {% call page_header('Reviews & Testimonials', 'Approve, feature and manage customer testimonials that power our "trusted locally" positioning') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+  {% endcall %}
+
+  {# Status segmented control #}
+  <div class="segmented mb-16">
+    <button class="segmented__btn is-active" data-segment>All <span class="count">{{ reviews|length }}</span></button>
+    <button class="segmented__btn" data-segment>Pending <span class="count">{{ reviews|selectattr('status','equalto','Pending')|list|length }}</span></button>
+    <button class="segmented__btn" data-segment>Approved <span class="count">{{ reviews|selectattr('status','equalto','Approved')|list|length }}</span></button>
+    <button class="segmented__btn" data-segment>Rejected <span class="count">{{ reviews|selectattr('status','equalto','Rejected')|list|length }}</span></button>
+  </div>
+
+  {% if reviews %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+      {% for review in reviews %}
+        <div class="card">
+          <div class="card__body">
+            <div class="flex items-center justify-between gap-12 mb-16">
+              <div class="flex items-center gap-8 flex-wrap">
+                <span class="fw-600">{{ review.author }}</span>
+                {{ badge(review.business_type, 'blue') }}
+              </div>
+              {{ status_pill(review.status) }}
+            </div>
+
+            <div class="text-brand fw-600 mb-16" aria-label="{{ review.rating }} out of 5 stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</div>
+
+            <p class="text-soft">{{ review.body }}</p>
+
+            <div class="flex items-center justify-between gap-8 flex-wrap mt-16">
+              <span class="text-mute text-xs">{{ review.date }}</span>
+              {% if review.featured %}{{ badge('Featured', 'brand') }}{% endif %}
+            </div>
+          </div>
+
+          <div class="card__foot flex items-center gap-8 flex-wrap">
+            <form method="post" action="{{ url_for('admin.review_action', review_id=review.id) }}">
+              <input type="hidden" name="action" value="approve" />
+              <button type="submit" class="btn btn--primary btn--sm">{{ icon('check') }} Approve</button>
+            </form>
+            <form method="post" action="{{ url_for('admin.review_action', review_id=review.id) }}">
+              <input type="hidden" name="action" value="reject" />
+              <button type="submit" class="btn btn--danger btn--sm">{{ icon('x') }} Reject</button>
+            </form>
+
+            <div class="flex-1"></div>
+
+            {% call row_menu() %}
+              <form method="post" action="{{ url_for('admin.review_action', review_id=review.id) }}">
+                <input type="hidden" name="action" value="feature" />
+                <button type="submit" class="menu__item w-full">{{ icon('star') }} {{ 'Unfeature' if review.featured else 'Feature' }}</button>
+              </form>
+              <div class="menu__divider"></div>
+              <form method="post" action="{{ url_for('admin.review_action', review_id=review.id) }}">
+                <input type="hidden" name="action" value="delete" />
+                <button type="submit" class="menu__item menu__item--danger w-full">{{ icon('trash') }} Delete</button>
+              </form>
+            {% endcall %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card__body">
+        <div class="empty">
+          <div class="empty__icon">{{ icon('star') }}</div>
+          <div class="empty__title">No reviews yet</div>
+          <p class="text-soft">Customer testimonials will appear here for moderation.</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

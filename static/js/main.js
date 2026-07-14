@@ -7,6 +7,23 @@
 (function () {
   "use strict";
 
+  /* ---------- 0. CSRF: inject the session token into POST forms + fetch ---------- */
+  function csrfToken() {
+    var m = document.querySelector('meta[name="csrf-token"]');
+    return m ? m.getAttribute("content") : "";
+  }
+  function injectCsrf(form) {
+    if (!form || (form.getAttribute("method") || "get").toLowerCase() !== "post") return;
+    if (form.querySelector('input[name="csrf_token"]')) return;
+    var i = document.createElement("input");
+    i.type = "hidden"; i.name = "csrf_token"; i.value = csrfToken();
+    form.appendChild(i);
+  }
+  document.querySelectorAll("form").forEach(injectCsrf);
+  document.addEventListener("submit", function (e) {
+    if (e.target && e.target.tagName === "FORM") injectCsrf(e.target);
+  }, true);
+
   const header = document.getElementById("siteHeader");
   const navToggle = document.getElementById("navToggle");
   const navList = document.getElementById("navList");

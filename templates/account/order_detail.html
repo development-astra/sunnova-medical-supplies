@@ -1,0 +1,66 @@
+{% extends 'account/_dash.html' %}
+{% from 'account/_macros.html' import status_pill %}
+{% block title %}Order {{ order.id }}{% endblock %}
+{% block dash %}
+
+<a href="{{ url_for('account_orders') }}" class="account-back">‹ Back to orders</a>
+
+<div class="account-head">
+  <div>
+    <h1 class="account-head__title">Order {{ order.id }}</h1>
+    <p class="account-head__sub">Placed {{ order.date }}</p>
+  </div>
+  {{ status_pill(order.status) }}
+</div>
+
+<div class="account-card">
+  <h2 class="account-card__title">Items</h2>
+  <div class="detail-lines">
+    {% for line in order.lines %}
+    <div class="detail-line">
+      <div>
+        <p class="detail-line__name">{{ line.name }}</p>
+        <p class="detail-line__sku">SKU {{ line.sku }} · Qty {{ line.qty }}</p>
+      </div>
+      <span class="detail-line__price">${{ '%.2f'|format(line.subtotal) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <dl class="detail-totals">
+    <div class="detail-totals__row"><dt>Subtotal</dt><dd>${{ '%.2f'|format(order.subtotal) }}</dd></div>
+    {% if order.discount %}<div class="detail-totals__row"><dt>Discount</dt><dd>-${{ '%.2f'|format(-order.discount if order.discount < 0 else order.discount) }}</dd></div>{% endif %}
+    <div class="detail-totals__row"><dt>Delivery</dt><dd>{{ 'Free' if order.delivery_fee == 0 else '$%.2f'|format(order.delivery_fee) }}</dd></div>
+    {% if order.tax %}<div class="detail-totals__row"><dt>Tax</dt><dd>${{ '%.2f'|format(order.tax) }}</dd></div>{% endif %}
+    <div class="detail-totals__row detail-totals__row--grand"><dt>Total</dt><dd>${{ '%.2f'|format(order.total) }}</dd></div>
+  </dl>
+</div>
+
+<div class="account-cols">
+  <div class="account-card">
+    <h2 class="account-card__title">Delivery</h2>
+    <p class="detail-kv"><span>Address</span>{{ order.delivery_address or '—' }}</p>
+    <p class="detail-kv"><span>Method</span>{{ order.delivery }}</p>
+    <p class="detail-kv"><span>Status</span>{{ order.delivery_status }}</p>
+    <p class="detail-kv"><span>Payment</span>{{ order.payment }}</p>
+  </div>
+
+  {% if order.timeline %}
+  <div class="account-card">
+    <h2 class="account-card__title">Progress</h2>
+    <ol class="timeline">
+      {% for t in order.timeline %}
+      <li class="timeline__step timeline__step--{{ t.state }}">
+        <span class="timeline__dot" aria-hidden="true"></span>
+        <div>
+          <p class="timeline__label">{{ t.label }}</p>
+          {% if t.time %}<p class="timeline__time">{{ t.time }}</p>{% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

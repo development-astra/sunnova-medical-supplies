@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — Sunnova Medical Supplies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}" />
+</head>
+<body class="page-cart">
+  {% include 'header.html' %}
+  <main>
+    <section class="section cart">
+      <div class="container" style="max-width:720px">
+        <div style="text-align:center;padding:24px 0">
+          <span style="display:inline-grid;place-items:center;width:72px;height:72px;border-radius:50%;background:#e7f6ec;color:#1b5e20;margin-bottom:16px">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </span>
+          <h1 class="cart__title" style="margin:0">Thank you — your order is confirmed</h1>
+          <p style="color:#64748b;margin-top:8px">Order <strong>{{ order.id }}</strong> · a confirmation email is on its way to {{ order.customer.email }}.</p>
+        </div>
+
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px">
+          <h2 style="margin-top:0">Order summary</h2>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr style="text-align:left;color:#64748b;font-size:.8rem"><th style="padding:6px 0">Product</th><th style="text-align:right">Qty</th><th style="text-align:right">Subtotal</th></tr></thead>
+            <tbody>
+              {% for line in order.lines %}
+                <tr style="border-top:1px solid #eef2f7"><td style="padding:8px 0">{{ line.name }}<br><span style="color:#94a3b8;font-size:.8rem">{{ line.sku }}</span></td><td style="text-align:right">{{ line.qty }}</td><td style="text-align:right">${{ '%.2f'|format(line.subtotal) }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div style="max-width:280px;margin-left:auto;margin-top:14px">
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span>Subtotal</span><span>${{ '%.2f'|format(order.subtotal) }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span>Delivery</span><span>${{ '%.2f'|format(order.delivery_fee) }}</span></div>
+            {% if order.discount %}<div style="display:flex;justify-content:space-between;padding:3px 0;color:#1b5e20"><span>Discount</span><span>${{ '%.2f'|format(order.discount) }}</span></div>{% endif %}
+            <div style="display:flex;justify-content:space-between;border-top:2px solid #0b3d91;margin-top:6px;padding-top:8px;font-weight:700;font-size:1.1rem"><span>Total</span><span>${{ '%.2f'|format(order.total) }}</span></div>
+          </div>
+          <div style="margin-top:14px;padding:12px;background:#f4f7fb;border-radius:10px;color:#334155">
+            <strong>Delivery to:</strong> {{ order.delivery_address }}<br>
+            <strong>Status:</strong> {{ order.status }} · we'll schedule your Miami-Dade delivery shortly.
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="{{ url_for('track_order', order=order.id) }}" class="btn btn--primary">Track this order</a>
+          <a href="{{ url_for('services_and_catalog') }}" class="btn">Continue shopping</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  {% include 'footer.html' %}
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

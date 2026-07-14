@@ -1,0 +1,120 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header %}
+
+{% block content %}
+  {% call page_header('Dashboard', 'Welcome back, ' ~ current_admin.name.split(' ')[0] ~ ' — here’s what’s happening at Sunnova today.') %}
+    <a class="btn btn--ghost" href="{{ url_for('admin.reports') }}">{{ icon('trending-up') }} Full reports</a>
+    <a class="btn btn--ghost" href="{{ url_for('admin.reports_export') }}">{{ icon('download') }} Export</a>
+  {% endcall %}
+
+  {# ---------- Key metric cards ---------- #}
+  <div class="stat-grid mb-24">
+    {% for m in metrics %}
+      <div class="stat">
+        <div class="stat__top">
+          <div>
+            <div class="stat__label">{{ m.label }}</div>
+            <div class="stat__value">{{ m.value }}</div>
+          </div>
+          <div class="stat__icon tone-{{ m.tone }}">{{ icon(m.icon) }}</div>
+        </div>
+        <div class="stat__foot">
+          <span class="stat__delta stat__delta--{{ m.trend }}">
+            {% if m.trend == 'up' %}{{ icon('trending-up') }}{% elif m.trend == 'down' %}{{ icon('trending-down') }}{% endif %}
+            {{ m.delta }}
+          </span>
+          <span class="stat__note">{{ m.note }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {# ---------- Sales chart + quick actions ---------- #}
+  <div class="grid grid-main-side mb-24">
+    <div class="card">
+      <div class="card__head">
+        <div>
+          <div class="card__title">Sales — last 12 days</div>
+          <div class="card__sub">Daily revenue across all channels</div>
+        </div>
+        <span class="badge badge--green"><span class="badge__dot"></span>${{ '{:,.0f}'.format(sales_trend|sum) }}</span>
+      </div>
+      <div class="card__body">
+        {% set peak = sales_trend|max or 1 %}
+        <div class="chart">
+          {% for v in sales_trend %}
+            <div class="chart__col" title="{{ sales_labels[loop.index0] }}: ${{ '{:,}'.format(v) }}">
+              <div class="chart__bar" style="height: {{ (v / peak * 100)|round(1) }}%"></div>
+              <div class="chart__label">{{ sales_labels[loop.index0].split(' ')[1] }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><div class="card__title">Quick Actions</div></div>
+      <div class="card__body flex-col gap-8">
+        <a href="{{ url_for('admin.product_new') }}" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('plus') }} Add Product</a>
+        <a href="{{ url_for('admin.quotes') }}" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('file-text') }} View Quotes</a>
+        <a href="{{ url_for('admin.inventory') }}" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('alert') }} View Low Stock</a>
+        <a href="{{ url_for('admin.uploads') }}" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('image') }} Upload Images</a>
+        <a href="{{ url_for('admin.categories') }}" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('tag') }} Add Category</a>
+        <a href="{{ url_for('admin.coupons') }}" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('percent') }} Create Coupon</a>
+      </div>
+    </div>
+  </div>
+
+  {# ---------- Best sellers + activity feed ---------- #}
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card__head">
+        <div class="card__title">Best-selling products</div>
+        <a href="{{ url_for('admin.products') }}" class="btn btn--subtle btn--sm">View all</a>
+      </div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Product</th><th class="table__num">Sold</th><th class="table__num">Revenue</th><th class="table__num">Stock</th></tr>
+            </thead>
+            <tbody>
+              {% for p in best_sellers %}
+                <tr>
+                  <td>
+                    <div class="cell-name">{{ p.name }}</div>
+                    <div class="cell-sub">{{ p.sku }}</div>
+                  </td>
+                  <td class="table__num num">{{ p.sold }}</td>
+                  <td class="table__num num fw-600">{{ p.revenue }}</td>
+                  <td class="table__num num">{{ p.stock }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head">
+        <div class="card__title">Recent activity</div>
+        <a href="{{ url_for('admin.audit_logs') }}" class="btn btn--subtle btn--sm">Audit log</a>
+      </div>
+      <div class="card__body">
+        <div class="feed">
+          {% for a in activity %}
+            <div class="feed__item">
+              <div class="feed__icon tone-{{ a.tone }}">{{ icon(a.icon) }}</div>
+              <div class="flex-1">
+                <div class="feed__text">{{ a.text|safe }}</div>
+                <div class="feed__time">{{ a.time }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

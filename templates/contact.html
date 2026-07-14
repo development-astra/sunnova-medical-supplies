@@ -49,7 +49,7 @@
               Shop Products
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
-            <a href="#sign-in" class="btn btn--light">Open an Account</a>
+            <a href="{{ url_for('account_register') }}" class="btn btn--light">Open an Account</a>
           </div>
           <p class="whyhero__assurance">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -151,18 +151,29 @@
           </ol>
         </div>
 
-        <form class="reqform" action="#" method="post">
+        <form class="reqform" method="post" action="{{ url_for('contact') }}">
           <h2 class="reqform__title">Request A Catalog or Quote</h2>
           <p class="reqform__sub">Tell us about your practice — Isabella will follow up within the hour.</p>
 
           <div class="reqform__row">
             <div class="reqform__field">
               <label class="reqform__label" for="full-name">Full Name <span class="req">*</span></label>
-              <input class="reqform__input" id="full-name" name="full_name" type="text" placeholder="Jordan Rivera" required />
+              <input class="reqform__input" id="full-name" name="name" type="text" placeholder="Jordan Rivera" required />
             </div>
             <div class="reqform__field">
               <label class="reqform__label" for="practice-name">Practice Name <span class="req">*</span></label>
               <input class="reqform__input" id="practice-name" name="practice_name" type="text" placeholder="Brickell Aesthetics" required />
+            </div>
+          </div>
+
+          <div class="reqform__row">
+            <div class="reqform__field">
+              <label class="reqform__label" for="email">Email <span class="req">*</span></label>
+              <input class="reqform__input" id="email" name="email" type="email" placeholder="jordan@brickellaesthetics.com" required />
+            </div>
+            <div class="reqform__field">
+              <label class="reqform__label" for="phone">Phone</label>
+              <input class="reqform__input" id="phone" name="phone" type="tel" placeholder="(305) 555-0123" />
             </div>
           </div>
 
@@ -189,7 +200,7 @@
           <div class="reqform__row">
             <div class="reqform__field reqform__field--full">
               <label class="reqform__label" for="products">Products/Categories Needed <span class="req">*</span></label>
-              <textarea class="reqform__textarea" id="products" name="products" placeholder="e.g. nitrile gloves, exam table paper, syringes" required></textarea>
+              <textarea class="reqform__textarea" id="products" name="message" placeholder="e.g. nitrile gloves, exam table paper, syringes" required></textarea>
             </div>
           </div>
 
@@ -200,6 +211,7 @@
             </div>
           </div>
 
+          <input type="hidden" name="subject" value="Website enquiry" />
           <button type="submit" class="reqform__btn">Send Inquiry</button>
         </form>
       </div>

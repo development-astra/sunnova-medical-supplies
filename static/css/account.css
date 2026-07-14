@@ -1,0 +1,150 @@
+/* ============================================================
+   Customer account area — dashboard, auth, orders, profile
+   Harmonized with the storefront (Poppins, Sunnova blue/orange).
+   ============================================================ */
+:root{
+  --acc-blue:#0b3d91; --acc-blue-dark:#072a63; --acc-orange:#f7941d;
+  --acc-ink:#12233b; --acc-muted:#6b7a90; --acc-faint:#9aa6b6;
+  --acc-line:#e7ecf3; --acc-bg:#f4f7fb; --acc-card:#ffffff;
+}
+
+.page-account{background:var(--acc-bg)}
+.section.account{padding:36px 0 72px}
+.account__inner{max-width:1080px}
+
+/* ---------- Auth cards (login / register) ---------- */
+.auth-card{max-width:460px;margin:12px auto;background:var(--acc-card);border:1px solid var(--acc-line);
+  border-radius:18px;padding:32px 30px;box-shadow:0 18px 50px -28px rgba(11,61,145,.35)}
+.auth-card__head{text-align:center;margin-bottom:22px}
+.auth-card__title{margin:0 0 6px;font-size:1.6rem;font-weight:800;color:var(--acc-ink)}
+.auth-card__sub{margin:0;color:var(--acc-muted);font-size:.95rem}
+.auth-card__alt{margin:20px 0 0;text-align:center;color:var(--acc-muted);font-size:.9rem}
+.auth-card__alt a{color:var(--acc-blue);font-weight:700;text-decoration:none}
+.auth-card__alt a:hover{text-decoration:underline}
+
+.auth-form{display:flex;flex-direction:column;gap:16px}
+.auth-form__row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.auth-form__note{margin:-4px 0 0;font-size:.8rem;color:var(--acc-faint)}
+.auth-form__btn{width:100%;margin-top:4px;justify-content:center}
+.auth-form__btn--inline{width:auto;align-self:flex-start;padding-left:28px;padding-right:28px}
+.reqform__hint{color:var(--acc-faint);font-weight:500;font-size:.8em}
+
+/* ---------- Dashboard layout ---------- */
+.account-grid{display:grid;grid-template-columns:248px 1fr;gap:26px;align-items:start}
+.account-side{position:sticky;top:24px;background:var(--acc-card);border:1px solid var(--acc-line);
+  border-radius:16px;padding:18px;box-shadow:0 10px 30px -22px rgba(11,61,145,.4)}
+.account-side__user{display:flex;align-items:center;gap:12px;padding:4px 4px 16px;border-bottom:1px solid var(--acc-line);margin-bottom:12px}
+.account-side__avatar{width:44px;height:44px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
+  font-weight:800;color:#fff;background:linear-gradient(135deg,var(--acc-blue),var(--acc-blue-dark))}
+.account-side__id{min-width:0}
+.account-side__name{margin:0;font-weight:700;color:var(--acc-ink);font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.account-side__email{margin:2px 0 0;font-size:.78rem;color:var(--acc-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.account-nav{display:flex;flex-direction:column;gap:2px}
+.account-nav__link{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;
+  color:var(--acc-muted);font-weight:600;font-size:.92rem;text-decoration:none;transition:.15s}
+.account-nav__link svg{width:18px;height:18px;flex:0 0 auto}
+.account-nav__link:hover{background:#f1f5fb;color:var(--acc-ink)}
+.account-nav__link.is-active{background:rgba(11,61,145,.09);color:var(--acc-blue)}
+.account-nav__link--out{color:#c0492f;margin-top:6px}
+.account-nav__link--out:hover{background:#fdecea;color:#a5341c}
+
+.account-main{min-width:0;display:flex;flex-direction:column;gap:20px}
+
+/* ---------- Headings ---------- */
+.account-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.account-head__title{margin:0;font-size:1.55rem;font-weight:800;color:var(--acc-ink)}
+.account-head__sub{margin:4px 0 0;color:var(--acc-muted);font-size:.92rem}
+.account-back{display:inline-block;color:var(--acc-muted);font-weight:600;font-size:.85rem;text-decoration:none;margin-bottom:-4px}
+.account-back:hover{color:var(--acc-blue)}
+
+/* ---------- Stat tiles ---------- */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-tile{background:var(--acc-card);border:1px solid var(--acc-line);border-radius:14px;padding:18px 18px;
+  box-shadow:0 8px 24px -20px rgba(11,61,145,.5)}
+.stat-tile__n{display:block;font-size:1.7rem;font-weight:800;color:var(--acc-blue);line-height:1}
+.stat-tile__l{display:block;margin-top:6px;font-size:.8rem;color:var(--acc-muted);font-weight:600}
+
+/* ---------- Cards ---------- */
+.account-card{background:var(--acc-card);border:1px solid var(--acc-line);border-radius:16px;padding:22px 24px;
+  box-shadow:0 10px 30px -24px rgba(11,61,145,.45)}
+.account-card__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.account-card__title{margin:0 0 14px;font-size:1.05rem;font-weight:700;color:var(--acc-ink)}
+.account-card__head .account-card__title{margin:0}
+.account-card__link{color:var(--acc-blue);font-weight:700;font-size:.85rem;text-decoration:none}
+.account-card__link:hover{text-decoration:underline}
+.account-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* ---------- Order table (semantic grid) ---------- */
+.order-table{display:flex;flex-direction:column}
+.order-table__head,.order-table__row{display:grid;grid-template-columns:1.1fr 1fr .9fr .9fr auto;
+  gap:12px;align-items:center;padding:12px 6px}
+.order-table__row--6,.order-table__head:has(~ .order-table__row--6){grid-template-columns:1.1fr 1fr .8fr .9fr .8fr auto}
+.order-table__head{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--acc-faint);
+  font-weight:700;border-bottom:1px solid var(--acc-line);padding-bottom:9px}
+.order-table__row{border-bottom:1px solid #f1f4f8;text-decoration:none;transition:.12s}
+.order-table__row:hover{background:#f7faff}
+.order-table__id{font-weight:700;color:var(--acc-blue)}
+.order-table__muted{color:var(--acc-muted);font-size:.9rem}
+.order-table__total{font-weight:700;color:var(--acc-ink)}
+.order-table__chev{color:var(--acc-faint);font-size:1.3rem;line-height:1}
+.ta-right{text-align:right;justify-self:end}
+
+/* ---------- Status pill ---------- */
+.status-pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:.75rem;font-weight:700;
+  white-space:nowrap;border:1px solid transparent}
+.status-pill.is-green{background:#e7f6ec;color:#1b7a3d;border-color:#bfe6cd}
+.status-pill.is-amber{background:#fff4e2;color:#9a6212;border-color:#f3ddb4}
+.status-pill.is-blue{background:#e8f0fc;color:#1552a8;border-color:#c4d8f4}
+.status-pill.is-red{background:#fdecea;color:#b3261e;border-color:#f4c9c5}
+
+/* ---------- Empty state ---------- */
+.account-empty{text-align:center;padding:34px 20px}
+.account-empty__title{margin:0 0 6px;font-weight:700;color:var(--acc-ink)}
+.account-empty__sub{margin:0 0 18px;color:var(--acc-muted);font-size:.9rem}
+
+/* ---------- Order detail ---------- */
+.detail-lines{display:flex;flex-direction:column}
+.detail-line{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #f1f4f8}
+.detail-line__name{margin:0;font-weight:600;color:var(--acc-ink)}
+.detail-line__sku{margin:3px 0 0;font-size:.8rem;color:var(--acc-faint)}
+.detail-line__price{font-weight:700;color:var(--acc-ink);white-space:nowrap}
+.detail-totals{margin:18px 0 0;padding-top:14px;border-top:1px solid var(--acc-line);display:flex;flex-direction:column;gap:8px}
+.detail-totals__row{display:flex;justify-content:space-between;font-size:.92rem;color:var(--acc-muted)}
+.detail-totals__row dt,.detail-totals__row dd{margin:0}
+.detail-totals__row dd{font-weight:600;color:var(--acc-ink)}
+.detail-totals__row--grand{padding-top:8px;border-top:1px dashed var(--acc-line);font-size:1.05rem}
+.detail-totals__row--grand dt{font-weight:700;color:var(--acc-ink)}
+.detail-totals__row--grand dd{color:var(--acc-blue);font-weight:800}
+.detail-kv{display:flex;gap:10px;margin:0 0 10px;font-size:.92rem;color:var(--acc-ink)}
+.detail-kv span{flex:0 0 88px;color:var(--acc-faint);font-weight:600}
+
+/* ---------- Timeline ---------- */
+.timeline{list-style:none;margin:0;padding:0}
+.timeline__step{display:flex;gap:13px;padding-bottom:16px}
+.timeline__step:last-child{padding-bottom:0}
+.timeline__dot{width:13px;height:13px;flex:0 0 auto;margin-top:3px;border-radius:50%;background:#d0d8e2;position:relative}
+.timeline__step:not(:last-child) .timeline__dot::after{content:"";position:absolute;left:50%;top:16px;transform:translateX(-50%);
+  width:2px;height:26px;background:#e7ecf3}
+.timeline__step--done .timeline__dot{background:#2bb673}
+.timeline__step--current .timeline__dot{background:var(--acc-orange);box-shadow:0 0 0 3px rgba(247,148,29,.2)}
+.timeline__label{margin:0;font-weight:600;color:var(--acc-ink);font-size:.92rem}
+.timeline__step--todo .timeline__label{color:var(--acc-faint)}
+.timeline__time{margin:2px 0 0;font-size:.8rem;color:var(--acc-faint)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:860px){
+  .account-grid{grid-template-columns:1fr}
+  .account-side{position:static}
+  .account-nav{flex-direction:row;flex-wrap:wrap}
+  .account-nav__link{flex:1 1 auto}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .account-cols{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .auth-form__row{grid-template-columns:1fr}
+  .order-table__head{display:none}
+  .order-table__row,.order-table__row--6{grid-template-columns:1fr auto;grid-auto-rows:auto;row-gap:2px;padding:14px 6px}
+  .order-table__muted{font-size:.82rem}
+  .order-table__chev{display:none}
+  .ta-right{justify-self:end}
+}

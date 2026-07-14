@@ -1,0 +1,748 @@
+Thought for 4s
+
+For Sunnova Medical Supplies, I would build the admin dashboard as a serious e-commerce operations hub, not just a basic product editor.
+
+The admin dashboard should manage products, orders, quotes, customers, inventory, delivery, uploads, payments, reports, and store settings.
+
+1. Admin Overview Dashboard
+
+This is the main screen after login.
+
+I would include:
+
+Key Metrics Cards
+Total sales
+Today’s sales
+Pending orders
+Pending quote requests
+Low-stock products
+New customers
+Open account applications
+Orders out for delivery
+Abandoned carts
+Best-selling products
+Quick Action Buttons
+Add Product
+Create Order
+View Quotes
+View Low Stock
+Upload Product Images
+Add Category
+Create Coupon
+Recent Activity Feed
+
+Show recent actions like:
+
+New order placed
+Quote submitted
+Product updated
+Customer registered
+Payment completed
+Inventory changed
+Admin changed order status
+
+This helps the Sunnova team quickly understand what is happening in the business.
+
+2. Product Management
+
+This is one of the most important sections.
+
+Product List
+
+The admin should be able to view all products in a clean table with:
+
+Product image
+Product name
+SKU
+Category
+Brand
+Price
+Stock quantity
+Availability status
+Sale mode
+Featured status
+Last updated date
+Actions: View, Edit, Duplicate, Archive
+
+Filters:
+
+Category
+Brand
+Stock status
+Sale mode
+Availability
+Featured products
+Draft/published/archived
+Search by name or SKU
+Add/Edit Product
+
+Product fields:
+
+Product name
+Slug
+SKU
+Brand
+Category
+Subcategory
+Product description
+Short description
+Product specifications
+Price
+Sale price
+Cost price, admin-only
+Inventory quantity
+Low-stock threshold
+Product images
+Product gallery
+Product variants
+SEO title
+SEO description
+Featured product toggle
+Published/draft toggle
+Product Sale Modes
+
+This is important for medical supplies.
+
+I would support:
+
+Direct Purchase
+Quote Only
+Direct Purchase or Quote
+Account Only
+
+Example:
+
+Some normal supplies can be purchased directly, but bulk clinic orders or special-order supplies may need a quote.
+
+Product Availability
+
+Statuses:
+
+In Stock
+Low Stock
+Out of Stock
+Special Order
+Quote Required
+3. Category Management
+
+The admin should manage product categories easily.
+
+Features:
+
+Add category
+Edit category
+Delete/archive category
+Parent and child categories
+Category image
+Category description
+SEO title
+SEO description
+Category slug
+Featured category toggle
+Sort order
+
+Example categories:
+
+Exam Gloves
+Medical Disposables
+PPE
+Wound Care
+Aesthetic Supplies
+Syringes and Needles
+Clinic Essentials
+Infection Control
+Treatment Room Supplies
+4. Order Management
+
+This should be built for daily operations.
+
+Order List
+
+Show:
+
+Order number
+Customer name
+Business/practice name
+Order date
+Total amount
+Payment status
+Order status
+Delivery method
+Delivery date/status
+Actions
+
+Filters:
+
+Pending
+Confirmed
+Processing
+Out for Delivery
+Delivered
+Cancelled
+Refunded
+Payment status
+Date range
+Customer
+Delivery area
+Order Detail Page
+
+Each order should show:
+
+Customer information
+Business name
+Contact information
+Delivery address
+Billing address
+Ordered products
+Quantity
+Price
+Subtotal
+Tax
+Delivery fee
+Total
+Payment status
+Order notes
+Internal admin notes
+Timeline/history
+Status update controls
+
+Admin actions:
+
+Update order status
+Mark as paid
+Mark as processing
+Mark as out for delivery
+Mark as delivered
+Cancel order
+Issue refund placeholder
+Print packing slip
+Print invoice
+Send order update email
+Add internal note
+5. Quote Request Management
+
+Because Sunnova has a strong Request a Quote CTA, this needs its own section.
+
+Quote List
+
+Show:
+
+Quote number
+Customer name
+Business/practice
+Products requested
+Date submitted
+Status
+Assigned admin
+Last updated
+Actions
+
+Quote statuses:
+
+New
+Reviewing
+Responded
+Accepted
+Declined
+Converted to Order
+Quote Detail Page
+
+Show:
+
+Customer contact info
+Business/practice name
+Requested products
+Quantities
+Uploaded files
+Notes
+Preferred delivery date
+Internal notes
+Quote response history
+
+Admin actions:
+
+Add quoted prices
+Add internal notes
+Upload quote document
+Email customer
+Mark as responded
+Convert quote to order
+Decline quote
+Assign quote to admin/team member
+
+This is very important for B2B medical supply ordering.
+
+6. Customer Management
+
+The admin should have a full customer database.
+
+Customer List
+
+Show:
+
+Customer name
+Email
+Phone
+Business/practice name
+Customer type
+Account status
+Total orders
+Total spent
+Last order date
+Actions
+
+Filters:
+
+Individual customer
+Business account
+Clinic
+Med spa
+Practice
+Verified account
+Pending approval
+Customer Detail Page
+
+Show:
+
+Profile information
+Business details
+Saved addresses
+Order history
+Quote history
+Total spending
+Notes
+Account status
+Uploaded account documents
+
+Admin actions:
+
+Approve business account
+Suspend account
+Reset password link
+Add internal note
+View orders
+View quotes
+Create manual order
+7. Open Account Applications
+
+Since the homepage has Open an Account, I would create a dedicated admin workflow.
+
+Features:
+
+View new account applications
+Business/practice name
+Contact person
+Email
+Phone
+Business type
+Delivery address
+Uploaded documents
+Notes
+Application status
+
+Statuses:
+
+New
+Under Review
+Approved
+Rejected
+More Info Needed
+
+Admin actions:
+
+Approve account
+Reject application
+Request more information
+Convert to verified customer
+Send email notification
+8. Inventory Management
+
+This is important for medical supplies.
+
+Features:
+
+Inventory table by product/SKU
+Stock quantity
+Low-stock threshold
+Stock status
+Inventory adjustment history
+Manual stock adjustment
+Reason for adjustment
+Low-stock alerts
+Out-of-stock alerts
+
+Inventory actions:
+
+Add stock
+Reduce stock
+Mark as damaged
+Mark as returned
+Correct stock count
+Export inventory report
+
+Each inventory adjustment should be logged for accountability.
+
+9. Delivery Management
+
+Because Sunnova focuses on local Miami-Dade delivery, I would add a delivery operations section.
+
+Features:
+
+Orders scheduled for delivery
+Delivery status
+Delivery address
+Customer phone
+Preferred delivery date
+Driver/admin notes
+Delivery timeline
+
+Delivery statuses:
+
+Awaiting Scheduling
+Scheduled
+Preparing
+Out for Delivery
+Delivered
+Failed Delivery
+Rescheduled
+
+Admin actions:
+
+Assign delivery date
+Add delivery notes
+Mark out for delivery
+Mark delivered
+Send delivery update email
+Print delivery manifest
+
+This would make the local delivery promise easier to manage.
+
+10. File and Image Manager
+
+Since images should be stored in DigitalOcean Spaces, I would add an upload manager.
+
+Features:
+
+Product image uploads
+Category image uploads
+Quote attachment uploads
+Account document uploads
+File preview
+File type validation
+File size validation
+CDN URL preview
+Delete unused files
+Copy image URL
+Organize by folder/type
+
+Important:
+
+Do not store images on the VPS.
+Store metadata in PostgreSQL.
+Store actual files in DigitalOcean Spaces.
+11. Coupons and Discounts
+
+Useful for future promotions.
+
+Features:
+
+Create coupon
+Edit coupon
+Disable coupon
+Fixed amount discount
+Percentage discount
+Free delivery discount
+Minimum order amount
+Usage limit
+Expiration date
+Customer-specific coupon
+Category/product-specific coupon
+
+Examples:
+
+WELCOME10
+CLINICFIRST
+LOCALDELIVERY
+12. Payments and Transactions
+
+Admin should be able to view payment activity.
+
+Features:
+
+Payment list
+Payment status
+Order number
+Customer
+Amount
+Payment provider
+Transaction ID
+Refund status
+Failed payment reason
+
+Payment statuses:
+
+Pending
+Authorized
+Paid
+Failed
+Refunded
+Partially Refunded
+Cancelled
+
+Admin actions:
+
+View payment details
+Retry payment notification
+Issue refund placeholder
+Mark manual payment received, if allowed
+13. Reports and Analytics
+
+I would add a reporting section so Sunnova can make business decisions.
+
+Reports:
+
+Sales by date range
+Sales by category
+Sales by product
+Best-selling products
+Low-stock products
+Quote conversion rate
+Customer lifetime value
+Repeat customers
+Average order value
+Delivery volume
+Revenue by customer type
+Abandoned carts
+Products frequently viewed
+Products frequently added to cart
+
+Export options:
+
+CSV
+Excel
+PDF summary
+14. Search Management
+
+For PostgreSQL full-text search, I would include basic search management.
+
+Features:
+
+View popular searches
+View searches with no results
+Add search synonyms
+Promote products for certain keywords
+Track search conversion
+
+Example:
+
+If users search for “gloves,” admin can promote nitrile gloves first.
+
+15. Reviews or Testimonials
+
+Optional but useful.
+
+Features:
+
+Manage testimonials
+Approve/reject reviews
+Feature selected testimonials on homepage
+Link testimonial to customer or business type
+
+This can help support the “trusted locally” positioning.
+
+16. Content Management
+
+I would include a simple CMS area for editable website content.
+
+Features:
+
+Homepage hero text
+Feature strip text
+Homepage CTA sections
+How It Works content
+Contact page content
+Delivery policy content
+Footer text
+SEO defaults
+Announcement bar
+
+This prevents the owner from needing a developer for small copy changes.
+
+17. Email Templates
+
+Admin should manage transactional emails.
+
+Templates:
+
+Welcome email
+Verify email
+Password reset
+Order confirmation
+Order status update
+Quote received
+Quote response
+Account application received
+Account approved
+Delivery update
+
+Use Sunnova branding:
+
+Logo
+Blue header
+Orange/gold CTA
+Clean white card layout
+18. Store Settings
+
+General settings:
+
+Store name
+Phone number
+Support email
+Business address
+Delivery areas
+Business hours
+Tax settings placeholder
+Payment settings
+Quote settings
+Minimum order amount
+Free delivery threshold
+Social links
+SEO defaults
+Maintenance mode
+
+Delivery settings:
+
+Miami-Dade delivery enabled
+Delivery fee
+Same-week delivery messaging
+Allowed ZIP codes
+Delivery cutoff time
+Delivery days
+19. Admin Users and Roles
+
+I would add role-based admin access.
+
+Roles:
+
+Super Admin
+
+Full access to everything.
+
+Store Manager
+
+Products, orders, customers, quotes, inventory.
+
+Fulfillment Staff
+
+Orders, delivery, inventory only.
+
+Sales/Admin Staff
+
+Quotes, customers, account applications.
+
+Content Editor
+
+CMS content, testimonials, SEO content only.
+
+Support Staff
+
+Customers, orders, quotes, but limited edit permissions.
+
+Features:
+
+Invite admin user
+Edit role
+Disable admin user
+View admin activity
+Require secure password
+20. Audit Logs
+
+Every serious admin dashboard should have logs.
+
+Track:
+
+Product created/updated/deleted
+Price changed
+Inventory changed
+Order status changed
+Quote converted to order
+Customer account approved
+Admin login
+File deleted
+Coupon created
+Settings changed
+
+This protects the business from mistakes and makes operations easier to review.
+
+21. Notifications
+
+Admin notifications should show:
+
+New order
+New quote request
+New account application
+Low stock
+Failed payment
+Delivery issue
+Contact form submission
+Product out of stock
+
+Notification types:
+
+In-dashboard notification
+Email notification
+Optional SMS later
+22. Admin Dashboard UI Layout
+
+I would design the admin dashboard with:
+
+Left sidebar navigation
+Top bar with search, notifications, and profile
+Clean card-based layout
+Tables with filters and bulk actions
+Sticky action bars on edit pages
+Slide-over drawers for quick views
+Modal confirmations for dangerous actions
+Status badges
+Breadcrumbs
+Responsive tablet support
+
+Main sidebar items:
+
+Dashboard
+Products
+Categories
+Orders
+Quotes
+Customers
+Account Applications
+Inventory
+Delivery
+Coupons
+Payments
+Reports
+Uploads
+Content
+Email Templates
+Admin Users
+Settings
+Audit Logs
+My recommended must-have admin features for version 1
+
+For the first production version, I would prioritize:
+
+Dashboard overview
+Product management
+Category management
+Order management
+Quote management
+Customer management
+Open account applications
+Inventory management
+Delivery management
+Upload manager
+Store settings
+Admin roles
+Audit logs
+
+These would give Sunnova a strong operational backend from day one.

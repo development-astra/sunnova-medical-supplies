@@ -1,0 +1,60 @@
+{% extends 'account/_layout.html' %}
+{% block title %}Create Account{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <div class="auth-card__head">
+    <h1 class="auth-card__title">Create your account</h1>
+    <p class="auth-card__sub">Track orders, reorder supplies, and check out faster.</p>
+  </div>
+
+  <form class="auth-form" method="post" action="{{ url_for('account_register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="reqform__field">
+      <label class="reqform__label" for="name">Full name <span class="req">*</span></label>
+      <input class="reqform__input" id="name" name="name" type="text"
+             value="{{ form.get('name', '') }}" placeholder="Jane Doe" required autofocus />
+    </div>
+
+    <div class="reqform__field">
+      <label class="reqform__label" for="email">Email <span class="req">*</span></label>
+      <input class="reqform__input" id="email" name="email" type="email"
+             value="{{ form.get('email', '') }}" autocomplete="username"
+             placeholder="you@example.com" required />
+    </div>
+
+    <div class="auth-form__row">
+      <div class="reqform__field">
+        <label class="reqform__label" for="phone">Phone</label>
+        <input class="reqform__input" id="phone" name="phone" type="tel"
+               value="{{ form.get('phone', '') }}" placeholder="(786) 000-0000" />
+      </div>
+      <div class="reqform__field">
+        <label class="reqform__label" for="business">Practice / business <span class="reqform__hint">(optional)</span></label>
+        <input class="reqform__input" id="business" name="business" type="text"
+               value="{{ form.get('business', '') }}" placeholder="Bayview Clinic" />
+      </div>
+    </div>
+
+    <div class="auth-form__row">
+      <div class="reqform__field">
+        <label class="reqform__label" for="password">Password <span class="req">*</span></label>
+        <input class="reqform__input" id="password" name="password" type="password"
+               autocomplete="new-password" placeholder="At least 8 characters" required />
+      </div>
+      <div class="reqform__field">
+        <label class="reqform__label" for="confirm">Confirm password <span class="req">*</span></label>
+        <input class="reqform__input" id="confirm" name="confirm" type="password"
+               autocomplete="new-password" placeholder="Re-enter password" required />
+      </div>
+    </div>
+    <p class="auth-form__note">Use at least 8 characters with both letters and numbers.</p>
+
+    <button type="submit" class="btn btn--primary auth-form__btn">Create Account</button>
+  </form>
+
+  <p class="auth-card__alt">
+    Already have an account? <a href="{{ url_for('account_login') }}">Sign in</a>
+  </p>
+</div>
+{% endblock %}

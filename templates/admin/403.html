@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% block page_title %}Access denied{% endblock %}
+{% block content %}
+  <div class="card" style="max-width:520px;margin:60px auto">
+    <div class="card__body">
+      <div class="empty">
+        <div class="empty__icon tone-red">{{ icon('lock') }}</div>
+        <div class="empty__title">You don’t have access to this section</div>
+        <p class="text-soft">Your role (<strong>{{ current_admin.role }}</strong>) doesn’t include permission for this page. Contact a Super Admin if you need access.</p>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn--primary mt-16">{{ icon('grid') }} Back to dashboard</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

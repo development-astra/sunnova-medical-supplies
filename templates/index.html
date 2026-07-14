@@ -33,11 +33,10 @@
         <div class="hero__content">
           <p class="hero__badge">Founded by a Medical Professional</p>
 
-          <h1 class="hero__title">Miami's Local Medical Supply Partner</h1>
+          <h1 class="hero__title">{{ content.get('home.hero_title', "Miami's Local Medical Supply Partner") }}</h1>
 
           <p class="hero__text">
-            Professional medical and aesthetic supplies, delivered fast across
-            Miami-Dade with the personal service a national warehouse can't match.
+            {{ content.get('home.hero_sub', "Professional medical and aesthetic supplies, delivered fast across Miami-Dade with the personal service a national warehouse can't match.") }}
           </p>
 
           <div class="hero__actions">
@@ -45,7 +44,7 @@
               Shop Products
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
-            <a href="#sign-in" class="btn btn--light">Open an Account</a>
+            <a href="{{ url_for('account_register') }}" class="btn btn--light">Open an Account</a>
           </div>
 
           <p class="hero__assurance">
@@ -542,8 +541,8 @@
               Shop Products
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
-            <a href="#sign-in" class="btn btn--blue">Open an Account</a>
-            <a href="#how-to-order" class="btn btn--ghost">Request a Quote</a>
+            <a href="{{ url_for('account_register') }}" class="btn btn--blue">Open an Account</a>
+            <a href="{{ url_for('services_and_catalog') }}" class="btn btn--ghost">Request a Quote</a>
           </div>
         </div>
 

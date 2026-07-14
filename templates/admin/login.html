@@ -1,0 +1,111 @@
+{# Admin sign-in — standalone (no sidebar shell). Auth is a stub for now. #}
+{% from 'admin/_icons.html' import icon %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in · Sunnova Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+  <style>
+    .auth {
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+    }
+    .auth__aside {
+      background: linear-gradient(185deg, var(--blue-900), #072a63);
+      color: #fff; padding: 48px; display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .auth__aside::after {
+      content: ""; position: absolute; right: -120px; bottom: -120px;
+      width: 360px; height: 360px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(247,148,29,.35), transparent 70%);
+    }
+    .auth__brand { display: flex; align-items: center; gap: 12px; }
+    .auth__brand .sidebar__logo { width: 40px; height: 40px; }
+    .auth__brand-name { font-size: 1.15rem; font-weight: 700; }
+    .auth__brand-sub { font-size: .68rem; text-transform: uppercase; letter-spacing: .16em; color: rgba(255,255,255,.6); }
+    .auth__headline { font-size: 1.9rem; font-weight: 700; line-height: 1.25; letter-spacing: -.01em; max-width: 420px; position: relative; z-index: 1; }
+    .auth__points { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; position: relative; z-index: 1; }
+    .auth__point { display: flex; align-items: center; gap: 11px; color: rgba(255,255,255,.82); font-size: .9rem; }
+    .auth__point span { width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,.12); display: grid; place-items: center; flex-shrink: 0; }
+    .auth__point svg { width: 16px; height: 16px; }
+    .auth__foot { font-size: .78rem; color: rgba(255,255,255,.55); position: relative; z-index: 1; }
+    .auth__main { display: grid; place-items: center; padding: 40px; }
+    .auth__card { width: 100%; max-width: 380px; }
+    .auth__card h1 { font-size: 1.5rem; font-weight: 700; }
+    @media (max-width: 880px) { .auth { grid-template-columns: 1fr; } .auth__aside { display: none; } }
+  </style>
+</head>
+<body class="admin">
+  <div class="auth">
+    <aside class="auth__aside">
+      <div class="auth__brand">
+        <span class="sidebar__logo">{{ icon('sun') }}</span>
+        <span>
+          <div class="auth__brand-name">Sunnova Medical Supplies</div>
+          <div class="auth__brand-sub">Operations Admin</div>
+        </span>
+      </div>
+
+      <div>
+        <h2 class="auth__headline">The operations hub behind fast, reliable Miami-Dade supply delivery.</h2>
+        <div class="auth__points">
+          <div class="auth__point"><span>{{ icon('cart') }}</span> Orders, quotes &amp; delivery in one place</div>
+          <div class="auth__point"><span>{{ icon('layers') }}</span> Live inventory &amp; low-stock alerts</div>
+          <div class="auth__point"><span>{{ icon('shield-check') }}</span> Role-based access &amp; full audit trail</div>
+        </div>
+      </div>
+
+      <div class="auth__foot">© 2026 Sunnova Medical Supplies · Miami-Dade County, FL</div>
+    </aside>
+
+    <main class="auth__main">
+      <div class="auth__card">
+        <h1 class="mb-8">Welcome back</h1>
+        <p class="text-soft mb-24">Sign in to the Sunnova admin dashboard.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flashes">
+              {% for category, msg in messages %}
+                {% set cat = 'error' if category == 'error' else ('success' if category == 'success' else 'info') %}
+                <div class="flash flash--{{ cat }}">{{ icon('alert' if cat == 'error' else 'check-circle') }}<span>{{ msg }}</span></div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form class="form-grid" action="{{ url_for('admin.login') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="field">
+            <label class="field__label" for="email">Email address</label>
+            <input class="input" type="email" id="email" name="email" placeholder="you@sunnovamedical.com" autocomplete="username" autofocus />
+          </div>
+          <div class="field">
+            <div class="flex justify-between items-center">
+              <label class="field__label" for="password">Password</label>
+              <a href="{{ url_for('admin.forgot') }}" class="text-sm text-brand fw-600">Forgot?</a>
+            </div>
+            <input class="input" type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <label class="switch mt-8">
+            <input type="checkbox" name="remember" checked />
+            <span class="switch__track"></span>
+            <span class="switch__label">Keep me signed in</span>
+          </label>
+          <button type="submit" class="btn btn--primary btn--lg btn--block mt-8">{{ icon('lock') }} Sign in</button>
+        </form>
+
+        {% if config.DEBUG %}
+          <p class="text-sm text-mute center mt-16">Dev login · <code>ana@sunnovamedical.com</code> / <code>password</code></p>
+        {% endif %}
+        <p class="text-sm text-mute center mt-24">Protected area · authorized personnel only</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

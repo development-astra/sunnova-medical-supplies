@@ -1,0 +1,305 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill %}
+
+{% block content %}
+  {{ breadcrumbs([{'label': 'Dashboard', 'url': url_for('admin.dashboard')}, {'label': 'Reports'}]) }}
+
+  {% call page_header('Reports', 'Sales and operations analytics') %}
+    <a href="{{ url_for('admin.reports_export') }}" class="btn btn--primary">{{ icon('download') }} Export CSV</a>
+    <a href="{{ url_for('admin.reports_export_xlsx') }}" class="btn btn--ghost">{{ icon('download') }} Excel</a>
+    <a href="{{ url_for('admin.reports_print') }}" target="_blank" class="btn btn--ghost">{{ icon('printer') }} PDF</a>
+  {% endcall %}
+
+  {# ---------- KPI cards ---------- #}
+  <div class="stat-grid mb-24">
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Total Revenue</div>
+          <div class="stat__value">${{ '{:,.0f}'.format(r.revenue) }}</div>
+        </div>
+        <div class="stat__icon tone-brand">{{ icon('dollar') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Across all orders</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Orders</div>
+          <div class="stat__value">{{ r.order_count }}</div>
+        </div>
+        <div class="stat__icon tone-blue">{{ icon('cart') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Total placed</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Avg Order Value</div>
+          <div class="stat__value">${{ '%.2f'|format(r.aov) }}</div>
+        </div>
+        <div class="stat__icon tone-green">{{ icon('trending-up') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Per order</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Customers</div>
+          <div class="stat__value">{{ r.customers }}</div>
+        </div>
+        <div class="stat__icon tone-teal">{{ icon('users') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Registered accounts</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Repeat Customers</div>
+          <div class="stat__value">{{ r.repeat }}</div>
+        </div>
+        <div class="stat__icon tone-purple">{{ icon('refresh') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">More than one order</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Quote Conversion</div>
+          <div class="stat__value">{{ '%.1f'|format(r.conv_rate) }}%</div>
+        </div>
+        <div class="stat__icon tone-amber">{{ icon('file-text') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">{{ r.quote_count }} quotes total</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Customer Lifetime Value</div>
+          <div class="stat__value">${{ '%.0f'|format(r.clv) }}</div>
+        </div>
+        <div class="stat__icon tone-brand">{{ icon('dollar') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Avg spend per customer</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Delivery Volume</div>
+          <div class="stat__value">{{ r.delivery_count }}</div>
+        </div>
+        <div class="stat__icon tone-teal">{{ icon('truck') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">Total deliveries</span></div>
+    </div>
+
+    <div class="stat">
+      <div class="stat__top">
+        <div>
+          <div class="stat__label">Abandoned Carts</div>
+          <div class="stat__value">{{ r.abandoned_count }}</div>
+        </div>
+        <div class="stat__icon tone-red">{{ icon('cart') }}</div>
+      </div>
+      <div class="stat__foot"><span class="stat__note">${{ '%.0f'|format(r.abandoned_value) }} in idle carts</span></div>
+    </div>
+  </div>
+
+  {# ---------- Sales chart ---------- #}
+  <div class="card mb-24">
+    <div class="card__head">
+      <div>
+        <div class="card__title">Sales — last 12 days</div>
+        <div class="card__sub">Daily revenue across all channels</div>
+      </div>
+    </div>
+    <div class="card__body">
+      {% set peak = sales_trend|max or 1 %}
+      <div class="chart">
+        {% for v in sales_trend %}
+          <div class="chart__col" title="{{ sales_labels[loop.index0] }}: ${{ '{:,}'.format(v) }}">
+            <div class="chart__bar" style="height: {{ (v / peak * 100)|round(1) }}%"></div>
+            <div class="chart__label">{{ sales_labels[loop.index0].split(' ')[1] }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# ---------- Category + Best sellers ---------- #}
+  <div class="grid grid-2 mb-24">
+    <div class="card">
+      <div class="card__head"><div class="card__title">Sales by category</div></div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Category</th><th>Share</th><th class="table__num">Revenue</th></tr>
+            </thead>
+            <tbody>
+              {% for c in r.by_category %}
+                <tr>
+                  <td><div class="cell-name">{{ c.name }}</div></td>
+                  <td>
+                    <div class="progress" style="min-width:120px">
+                      <div class="progress__bar" style="width: {{ c.pct }}%"></div>
+                    </div>
+                  </td>
+                  <td class="table__num num fw-600">${{ '%.2f'|format(c.revenue) }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="3" class="center text-mute">No category sales yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><div class="card__title">Best-selling products</div></div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Product</th><th class="table__num">Revenue</th></tr>
+            </thead>
+            <tbody>
+              {% for p in r.best %}
+                <tr>
+                  <td><div class="cell-name">{{ p.name }}</div></td>
+                  <td class="table__num num fw-600">${{ '%.2f'|format(p.revenue) }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="2" class="center text-mute">No sales yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ---------- Customer type + Low stock ---------- #}
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card__head"><div class="card__title">Revenue by customer type</div></div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Customer type</th><th class="table__num">Revenue</th></tr>
+            </thead>
+            <tbody>
+              {% for t in r.by_type %}
+                <tr>
+                  <td><div class="cell-name">{{ t.type }}</div></td>
+                  <td class="table__num num fw-600">${{ '%.2f'|format(t.revenue) }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="2" class="center text-mute">No revenue yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><div class="card__title">Low-stock products</div></div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Product</th><th class="table__num">Stock</th><th class="table__num">Threshold</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {% for p in r.low %}
+                <tr>
+                  <td>
+                    <div class="cell-name">{{ p.name }}</div>
+                    <div class="cell-sub">{{ p.sku }}</div>
+                  </td>
+                  <td class="table__num num">{{ p.stock }}</td>
+                  <td class="table__num num">{{ p.threshold }}</td>
+                  <td>{{ status_pill(p.availability) }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="4" class="center text-mute">All products well stocked</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ---------- Top customers (CLV) + storefront analytics ---------- #}
+  <div class="grid grid-2 mt-24">
+    <div class="card">
+      <div class="card__head"><div class="card__title">Top customers by spend</div><div class="card__sub">Lifetime value leaders</div></div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Customer</th><th class="table__num">Orders</th><th class="table__num">Total spent</th></tr></thead>
+            <tbody>
+              {% for c in r.top_customers %}
+                <tr>
+                  <td><div class="cell-name">{{ c.name }}</div><div class="cell-sub">{{ c.business }}</div></td>
+                  <td class="table__num num">{{ c.orders }}</td>
+                  <td class="table__num num fw-600">${{ '%.2f'|format(c.spent) }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="3" class="center text-mute">No customer spend yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head"><div class="card__title">Most viewed products</div><div class="card__sub">Storefront product-page views</div></div>
+      <div class="card__body card__body--flush">
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Product</th><th class="table__num">Views</th></tr></thead>
+            <tbody>
+              {% for p in r.freq_viewed %}
+                <tr><td><div class="cell-name">{{ p.name }}</div><div class="cell-sub">{{ p.sku }}</div></td><td class="table__num num fw-600">{{ p.count }}</td></tr>
+              {% else %}
+                <tr><td colspan="2" class="center text-mute">No product views tracked yet</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-24">
+    <div class="card__head"><div class="card__title">Most added to cart</div><div class="card__sub">Products customers add most often</div></div>
+    <div class="card__body card__body--flush">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Product</th><th class="table__num">Add-to-cart events</th></tr></thead>
+          <tbody>
+            {% for p in r.freq_added %}
+              <tr><td><div class="cell-name">{{ p.name }}</div><div class="cell-sub">{{ p.sku }}</div></td><td class="table__num num fw-600">{{ p.count }}</td></tr>
+            {% else %}
+              <tr><td colspan="2" class="center text-mute">No add-to-cart events tracked yet</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

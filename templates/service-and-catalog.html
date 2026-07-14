@@ -41,11 +41,11 @@
             offices in Miami-Dade County.
           </p>
           <div class="whyhero__actions">
-            <a href="#contact" class="btn btn--primary">
+            <a href="{{ url_for('contact') }}" class="btn btn--primary">
               Request Pricing
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
-            <a href="#how-to-order" class="btn btn--light">How to Order</a>
+            <a href="{{ url_for('how_to_order') }}" class="btn btn--light">How to Order</a>
           </div>
           <p class="whyhero__assurance">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -172,143 +172,146 @@
     </section>
 
     {# ============================================================
-       PRODUCT CATALOG — 5 category tables (data-driven)
+       PRODUCT CATALOG — real product data (search + category filter)
        ============================================================ #}
-    {% set catalog = [
-      {
-        'num': '01', 'accent': 'blue',
-        'title': 'PPE & Protection',
-        'sub': 'Gloves · Masks · Gowns · Face Shields',
-        'rows': [
-          ['01', 'Nitrile Exam Gloves - Small', '100/box', 'same'],
-          ['02', 'Nitrile Exam Gloves - Medium', '100/box', 'same'],
-          ['03', 'Nitrile Exam Gloves - Large', '100/box', 'same'],
-          ['04', 'Level 2 Surgical Masks', '50/box', 'same'],
-          ['05', 'Disposable Isolation Gowns', '10/pack', 'same']
-        ],
-        'notes': [
-          'All nitrile gloves are powder-free, latex-free, and FDA exam-grade compliant.',
-          'Level 2 Surgical Masks are ASTM F2100 rated — BFE and PFE 98%+, the correct standard for injectable and laser procedures.',
-          'XL gloves and case pricing available — ask your rep.'
-        ]
-      },
-      {
-        'num': '02', 'accent': 'orange',
-        'title': 'Exam Room & Linen Supplies',
-        'sub': 'Table Paper · Pillow Covers · Bed Sheets · Drapes',
-        'rows': [
-          ['06', 'Exam Table Paper Roll — 18" x 225ft', '12/case', 'same'],
-          ['07', 'Disposable Pillow Covers', '100/pack', 'same'],
-          ['08', 'Disposable Bed Sheet Roll — 31" x 180ft', 'Each roll', 'next'],
-          ['09', 'Disposable Paper Drapes', '50/pack', 'same']
-        ],
-        'notes': [
-          'Set up a monthly standing order on exam room linens and never run out mid-treatment day.',
-          'Standing order clients receive priority same-day delivery.'
-        ]
-      },
-      {
-        'num': '03', 'accent': 'blue',
-        'title': 'Wound Care & Procedure Supplies',
-        'sub': 'Gauze · Bandages · Tape · Wound Closure · Antiseptics',
-        'rows': [
-          ['10', 'Sterile Gauze Pads 4x4"', '200/box', 'same'],
-          ['11', 'Adhesive Bandages — Assorted', '100/box', 'same'],
-          ['12', 'Medical Tape — 1" Paper', '12/box', 'same'],
-          ['13', 'Alcohol Prep Pads', '200/box', 'same'],
-          ['14', 'Wound Closure Strips 1/4" x 3"', '50/box', 'same'],
-          ['15', 'Povidone-Iodine Swabsticks', '50/box', 'same'],
-          ['16', 'Saline Wound Wash Spray 7oz', '/pc', 'same']
-        ],
-        'notes': [
-          'All single-use and individually packaged for hygiene compliance.',
-          'Alcohol prep pads and sterile gauze available in bulk case quantities — contact us for pricing.'
-        ]
-      },
-      {
-        'num': '04', 'accent': 'orange',
-        'title': 'General Clinical Disposables',
-        'sub': 'Tongue Depressors · Speculums · Spatulas',
-        'rows': [
-          ['17', 'Tongue Depressors — Wooden', '12/case', 'same'],
-          ['18', 'Disposable Speculums — Vaginal, Asst. Sizes', 'Each', 'next'],
-          ['19', 'Disposable Spatulas — Wood', '50/pack', 'same']
-        ],
-        'notes': [
-          'High-volume packs designed for busy practices. Speculums available in assorted sizes.'
-        ]
-      },
-      {
-        'num': '05', 'accent': 'blue',
-        'title': 'Esthetic & Spa Supplies',
-        'sub': 'Facial Rounds · Esthetic Wipes · Headbands · Eye Pads · Microneedling',
-        'rows': [
-          ['20', 'Non-Woven Esthetic Wipes 3x3"', '200/pack', 'same'],
-          ['21', 'Disposable Facial Rounds', '100/bag', 'same'],
-          ['22', 'Disposable Headbands', '50/pack', 'same'],
-          ['23', 'Under-Eye Gel Pads', '50 pairs/pack', 'same'],
-          ['24', 'Microneedling Cartridges — 36 Pin', '10/box', 'same']
-        ],
-        'notes': [
-          'Microneedling cartridges compatible with most standard RF and manual microneedling devices.',
-          'Contact us with your device brand and model to confirm compatibility before your first order.'
-        ]
+    <style>
+      /* Scoped storefront product grid — reuses brand tokens + .badge/.btn */
+      .pcat-filter { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+      .pcat-chip {
+        display: inline-flex; align-items: center; padding: 8px 16px;
+        border: 1px solid #dfe5ee; border-radius: 999px; background: var(--white);
+        font-size: 0.85rem; font-weight: 600; color: #5a6b82;
+        text-decoration: none; transition: color .18s ease, background .18s ease, border-color .18s ease;
       }
-    ] %}
+      .pcat-chip:hover { border-color: var(--blue-600); color: var(--blue-700); }
+      .pcat-chip.is-active { background: var(--blue-700); border-color: var(--blue-700); color: var(--white); }
+
+      .pcat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 34px; }
+      .pcard {
+        display: flex; flex-direction: column; background: var(--white);
+        border: 1px solid #eef1f6; border-radius: 14px; overflow: hidden;
+        box-shadow: 0 4px 14px rgba(8, 35, 80, 0.05);
+        transition: transform .18s ease, box-shadow .18s ease;
+      }
+      .pcard:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(8, 35, 80, 0.1); }
+      .pcard__media {
+        position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden;
+        background: linear-gradient(135deg, #e7f0ff 0%, #cfe0fb 100%);
+      }
+      .pcard__media--orange { background: linear-gradient(135deg, #fff0df 0%, #ffd9ad 100%); }
+      .pcard__media--green  { background: linear-gradient(135deg, #e4f6ec 0%, #c4ecd3 100%); }
+      .pcard__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .pcard__stock { position: absolute; top: 12px; left: 12px; }
+
+      .pcard__body { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 20px; flex: 1; }
+      .pcard__brand { margin: 0; font-size: 0.72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8392a6; }
+      .pcard__title { margin: 0; font-size: 1.02rem; font-weight: 700; line-height: 1.3; }
+      .pcard__title a { color: var(--ink); text-decoration: none; }
+      .pcard__title a:hover { color: var(--blue-700); }
+      .pcard__desc { margin: 0; font-size: 0.85rem; line-height: 1.5; color: #5a6b82; }
+      .pcard__price { margin: 4px 0 0; display: flex; align-items: baseline; gap: 8px; }
+      .pcard__price-now { font-size: 1.15rem; font-weight: 800; color: var(--ink); }
+      .pcard__price-was { font-size: 0.9rem; color: #9aa7b8; text-decoration: line-through; }
+      .pcard__price-quote { font-size: 0.95rem; font-weight: 700; color: var(--blue-700); }
+      .pcard__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 6px; }
+      .pcard__actions .btn { flex: 1 1 auto; justify-content: center; text-align: center; }
+      .pcard__form { flex: 1 1 auto; display: flex; }
+      .pcard__form .btn { width: 100%; }
+
+      .pcat-empty { text-align: center; padding: 60px 20px; }
+      .pcat-empty__title { margin: 0 0 6px; font-size: 1.3rem; font-weight: 700; color: var(--ink); }
+      .pcat-empty__text { margin: 0 0 20px; color: #5a6b82; }
+
+      @media (max-width: 900px) { .pcat-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 560px) { .pcat-grid { grid-template-columns: 1fr; } }
+    </style>
 
     <section class="section catalog2">
       <div class="container">
         <div class="catalog2__head">
           <p class="eyebrow eyebrow--dash">Product Catalog</p>
-          <h2 class="section__title section__title--left">25 products. 5 categories. All clinical grade.</h2>
+          {% if q %}
+          <h2 class="section__title section__title--left">
+            {{ result_count }} result{{ '' if result_count == 1 else 's' }} for &ldquo;{{ q }}&rdquo;
+          </h2>
+          {% else %}
+          <h2 class="section__title section__title--left">Clinical-grade supplies, ready to order.</h2>
+          {% endif %}
           <p class="catalog2__sub">
-            Contact us for pricing. All products available for same-day or next-day
-            delivery across Miami-Dade.
+            Same-day or next-day delivery across Miami-Dade. Order online or request a
+            quote — no minimums, no contracts.
           </p>
-        </div>
 
-        <div class="catcat-list" data-catalog>
-        {% for cat in catalog %}
-        <article class="catcat catcat--{{ cat.accent }}">
-          <div class="catcat__head">
-            <span class="catcat__num catcat__num--{{ cat.accent }}">{{ cat.num }}</span>
-            <div>
-              <h3 class="catcat__title">{{ cat.title }}</h3>
-              <p class="catcat__sub">{{ cat.sub }}</p>
-            </div>
-            {# Chevron — visible only on mobile, where the catalog is a collapsible accordion #}
-            <svg class="catcat__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-          </div>
-
-          <div class="catcat__tablewrap">
-            <table class="cattable">
-              <thead>
-                <tr><th>#</th><th>Product</th><th>Pack Size</th><th>Delivery</th></tr>
-              </thead>
-              <tbody>
-                {% for r in cat.rows %}
-                <tr>
-                  <td class="cattable__num">{{ r[0] }}</td>
-                  <td class="cattable__product">{{ r[1] }}</td>
-                  <td>{{ r[2] }}</td>
-                  <td><span class="delivery-pill delivery-pill--{{ r[3] }}">{{ 'Same Day' if r[3] == 'same' else 'Next Day' }}</span></td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-
-          <ul class="catcat__notes">
-            {% for n in cat.notes %}
-            <li>
-              <svg class="catcat__bullet" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7z"/></svg>
-              {{ n }}
-            </li>
+          {# ---- Category filter row ---- #}
+          <nav class="pcat-filter" aria-label="Filter products by category">
+            <a href="{{ url_for('services_and_catalog') }}"
+               class="pcat-chip{% if not active_category %} is-active{% endif %}">All</a>
+            {% for c in categories %}
+            <a href="{{ url_for('services_and_catalog', category=c.name) }}"
+               class="pcat-chip{% if c.name == active_category %} is-active{% endif %}">{{ c.name }}</a>
             {% endfor %}
-          </ul>
-        </article>
-        {% endfor %}
+          </nav>
         </div>
+
+        {% if products %}
+        <div class="pcat-grid" data-catalog>
+          {% for p in products %}
+          <article class="pcard">
+            <a class="pcard__media pcard__media--{{ p.img_tone or 'blue' }}"
+               href="{{ url_for('product', slug=p.slug) }}"
+               aria-label="{{ p.name }}">
+              {% if p.image_url %}
+                <img src="{{ p.image_url }}" alt="{{ p.name }}" loading="lazy" />
+              {% else %}
+                {# Gradient placeholder tile (background from .pcard__media--tone) #}
+              {% endif %}
+              <span class="badge pcard__stock badge--{{ 'orange' if p.availability in ['Out of Stock', 'Low Stock', 'Quote Required', 'Special Order'] else 'blue' }}">{{ p.availability }}</span>
+            </a>
+
+            <div class="pcard__body">
+              {% if p.brand %}<p class="pcard__brand">{{ p.brand }}</p>{% endif %}
+              <h3 class="pcard__title">
+                <a href="{{ url_for('product', slug=p.slug) }}">{{ p.name }}</a>
+              </h3>
+              {% if p.short %}<p class="pcard__desc">{{ p.short }}</p>{% endif %}
+
+              <p class="pcard__price">
+                {% if p.sale_price %}
+                  <span class="pcard__price-now">${{ '%.2f'|format(p.sale_price) }}</span>
+                  {% if p.price %}<span class="pcard__price-was">${{ '%.2f'|format(p.price) }}</span>{% endif %}
+                {% elif p.price %}
+                  <span class="pcard__price-now">${{ '%.2f'|format(p.price) }}</span>
+                {% else %}
+                  <span class="pcard__price-quote">Quote for pricing</span>
+                {% endif %}
+              </p>
+
+              <div class="pcard__actions">
+                {% if p.buyable %}
+                <form method="post" action="{{ url_for('cart_add') }}" class="pcard__form">
+                  <input type="hidden" name="sku" value="{{ p.sku }}" />
+                  <input type="hidden" name="qty" value="1" />
+                  <button type="submit" class="btn btn--primary">Add to cart</button>
+                </form>
+                {% endif %}
+                {% if p.quotable %}
+                <a href="{{ url_for('product', slug=p.slug) }}" class="btn btn--light">Request a quote</a>
+                {% endif %}
+                {% if not p.buyable and not p.quotable %}
+                <a href="{{ url_for('product', slug=p.slug) }}" class="btn btn--light">View details</a>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="pcat-empty">
+          <p class="pcat-empty__title">No products found</p>
+          <p class="pcat-empty__text">Try a different search or browse all.</p>
+          <a href="{{ url_for('services_and_catalog') }}" class="btn btn--primary">Browse all products</a>
+        </div>
+        {% endif %}
       </div>
     </section>
 
@@ -421,11 +424,11 @@
             orders@sunnovamedical.com
           </p>
           <div class="cta__actions">
-            <a href="#contact" class="btn btn--light">
+            <a href="{{ url_for('contact') }}" class="btn btn--light">
               Request Pricing
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
-            <a href="#how-to-order" class="btn btn--ghost">How to Order</a>
+            <a href="{{ url_for('how_to_order') }}" class="btn btn--ghost">How to Order</a>
           </div>
         </div>
       </div>

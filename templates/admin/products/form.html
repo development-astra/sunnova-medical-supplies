@@ -1,0 +1,263 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, thumb %}
+
+{% set p = product or {} %}
+{% set editing = product is not none %}
+{% set form_action = url_for('admin.product_edit', product_id=p.id) if editing else url_for('admin.product_new') %}
+
+{% block content %}
+  {{ breadcrumbs([
+      {'label':'Dashboard','url':url_for('admin.dashboard')},
+      {'label':'Products','url':url_for('admin.products')},
+      {'label': (p.name if editing else 'Add Product')}
+  ]) }}
+
+  {% call page_header(('Edit Product' if editing else 'Add Product'),
+                      (p.sku if editing else 'Create a new catalog item')) %}
+    <a href="{{ url_for('admin.products') }}" class="btn btn--ghost">Cancel</a>
+    <button type="submit" form="productForm" class="btn btn--primary">{{ icon('save') }} Save Product</button>
+  {% endcall %}
+
+  <form id="productForm" method="post" action="{{ form_action }}" enctype="multipart/form-data" class="grid grid-main-side">
+    {# ---------- Main column ---------- #}
+    <div class="flex-col gap-20">
+      <div class="card">
+        <div class="card__head"><div class="card__title">General</div></div>
+        <div class="card__body form-grid">
+          <div class="field">
+            <label class="field__label" for="name">Product name <span class="req">*</span></label>
+            <input class="input" id="name" name="name" value="{{ p.get('name','') }}" placeholder="e.g. Nitrile Exam Gloves (Box of 100)" required />
+          </div>
+          <div class="field__row">
+            <div class="field">
+              <label class="field__label" for="slug">Slug</label>
+              <input class="input" id="slug" name="slug" value="{{ p.get('slug') or (p.get('name','')|lower|replace(' ','-')) }}" placeholder="nitrile-exam-gloves" />
+              <span class="field__hint">Used in the storefront URL. Auto-generated if left blank.</span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="sku">SKU <span class="req">*</span></label>
+              <input class="input" id="sku" name="sku" value="{{ p.get('sku','') }}" placeholder="GLV-NIT-100" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="short">Short description</label>
+            <input class="input" id="short" name="short" value="{{ p.get('short','') }}" placeholder="One-line summary shown on cards" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="desc">Product description</label>
+            <textarea class="textarea" id="desc" name="description" rows="5" placeholder="Full product description…">{{ p.get('description','') }}</textarea>
+          </div>
+          <div class="field">
+            <label class="field__label" for="specs">Specifications</label>
+            <textarea class="textarea" id="specs" name="specs" rows="4" placeholder="Material, size, certifications, packaging…">{{ p.get('specs','') }}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Pricing</div></div>
+        <div class="card__body form-grid">
+          <div class="field__row">
+            <div class="field">
+              <label class="field__label" for="price">Price <span class="req">*</span></label>
+              <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="price" name="price" value="{{ '%.2f'|format(p.price) if p.get('price') else '' }}" placeholder="0.00" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="sale">Sale price</label>
+              <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="sale" name="sale_price" value="{{ '%.2f'|format(p.sale_price) if p.get('sale_price') else '' }}" placeholder="0.00" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="cost">Cost price</label>
+              <div class="input-group"><span class="input-group__addon">$</span><input class="input" id="cost" name="cost" value="{{ '%.2f'|format(p.cost) if p.get('cost') else '' }}" placeholder="0.00" /></div>
+              <span class="field__hint">{{ icon('lock', 'text-mute') }} Admin-only — never shown to customers.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Inventory</div></div>
+        <div class="card__body form-grid">
+          <div class="field__row">
+            <div class="field">
+              <label class="field__label" for="qty">Inventory quantity</label>
+              <input class="input" id="qty" name="stock" value="{{ p.get('stock','') }}" placeholder="0" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="threshold">Low-stock threshold</label>
+              <input class="input" id="threshold" name="threshold" value="{{ p.get('threshold','') }}" placeholder="0" />
+              <span class="field__hint">Trigger a low-stock alert at or below this level.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Media</div></div>
+        <div class="card__body">
+          <label class="dropzone" style="cursor:pointer;display:block">
+            <input type="file" name="images" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden />
+            <div class="dropzone__icon">{{ icon('upload-cloud') }}</div>
+            <div class="dropzone__title">Drop images here or click to upload</div>
+            <div class="dropzone__hint">PNG, JPG or WEBP up to 5MB · stored in DigitalOcean Spaces</div>
+          </label>
+          {% if editing and p.gallery %}
+            <div class="flex gap-12 mt-16 flex-wrap">
+              {% for im in p.gallery %}
+                <div style="position:relative">
+                  <img src="{{ im.url }}" alt="Product image" style="width:72px;height:72px;border-radius:11px;object-fit:cover;border:1px solid var(--line)" />
+                  <button type="submit" formaction="{{ url_for('admin.product_image_delete', image_id=im.id) }}" class="btn btn--danger" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;padding:0;border-radius:50%" title="Remove image">{{ icon('x') }}</button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Search engine optimization</div></div>
+        <div class="card__body form-grid">
+          <div class="field">
+            <label class="field__label" for="seotitle">SEO title</label>
+            <input class="input" id="seotitle" name="seo_title" value="{{ p.get('seo_title') or p.get('name','') }}" placeholder="Meta title" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="seodesc">SEO description</label>
+            <textarea class="textarea" id="seodesc" name="seo_description" rows="3" placeholder="Meta description">{{ p.get('seo_description') or p.get('short','') }}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ---------- Side column ---------- #}
+    <div class="flex-col gap-20">
+      <div class="card">
+        <div class="card__head"><div class="card__title">Status</div></div>
+        <div class="card__body flex-col gap-16">
+          <label class="switch"><input type="checkbox" name="published" {% if p.get('status','Published') == 'Published' %}checked{% endif %} /><span class="switch__track"></span><span class="switch__label">Published</span></label>
+          <label class="switch"><input type="checkbox" name="featured" {% if p.get('featured') %}checked{% endif %} /><span class="switch__track"></span><span class="switch__label">Featured product</span></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Organization</div></div>
+        <div class="card__body form-grid">
+          <div class="field">
+            <label class="field__label" for="category">Category</label>
+            <select class="input" id="category" name="category">
+              {% for c in categories %}<option {% if p.get('category') == c.name %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="subcategory">Subcategory</label>
+            <input class="input" id="subcategory" name="subcategory" value="{{ p.get('subcategory','') }}" placeholder="Optional" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="brand">Brand</label>
+            <select class="input" id="brand" name="brand">
+              {% for b in brands %}<option {% if p.get('brand') == b %}selected{% endif %}>{{ b }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="salemode">Sale mode</label>
+            <select class="input" id="salemode" name="sale_mode">
+              {% for s in sale_modes %}<option {% if p.get('sale_mode') == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+            </select>
+            <span class="field__hint">How customers can buy this item.</span>
+          </div>
+          <div class="field">
+            <label class="field__label" for="availability">Availability</label>
+            <select class="input" id="availability" name="availability" disabled>
+              {% for a in availability %}<option {% if p.get('availability') == a %}selected{% endif %}>{{ a }}</option>{% endfor %}
+            </select>
+            <span class="field__hint">Derived automatically from stock &amp; sale mode.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Variants</div></div>
+        <div class="card__body">
+          {% if editing %}
+            {% if p.variant_list %}
+              <ul class="text-sm text-soft mb-12" style="list-style:none;margin:0;padding:0">
+                {% for v in p.variant_list %}<li class="flex justify-between" style="padding:3px 0">{{ v.name }}<span class="text-mute">{{ '+' if v.price_delta >= 0 else '' }}${{ '%.2f'|format(v.price_delta) }} · {{ v.stock }} in stock</span></li>{% endfor %}
+              </ul>
+            {% endif %}
+            <p class="text-sm text-mute">Add or remove variants in the panel below.</p>
+          {% else %}
+            <p class="text-sm text-soft">Save the product first, then add size, colour or pack-count variants.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {# ---------- Variant management (edit only, its own forms) ---------- #}
+  {% if editing %}
+  <div class="card mt-20">
+    <div class="card__head"><div class="card__title">Manage variants</div>
+      <div class="card__sub">Size, colour or pack-count options for this product.</div></div>
+    <div class="card__body">
+      {% if p.variant_list %}
+        <div class="table-wrap mb-16">
+          <table class="table">
+            <thead><tr><th>Variant</th><th>SKU suffix</th><th class="table__num">Price Δ</th><th class="table__num">Stock</th><th></th></tr></thead>
+            <tbody>
+              {% for v in p.variant_list %}
+                <tr>
+                  <td class="cell-name">{{ v.name }}</td>
+                  <td class="text-soft">{{ v.sku_suffix or '—' }}</td>
+                  <td class="table__num num">{{ '+' if v.price_delta >= 0 else '' }}${{ '%.2f'|format(v.price_delta) }}</td>
+                  <td class="table__num num">{{ v.stock }}</td>
+                  <td class="table__actions">
+                    <form method="post" action="{{ url_for('admin.product_variant_delete', variant_id=v.id) }}">
+                      <button type="submit" class="btn btn--ghost btn--icon" title="Remove">{{ icon('trash') }}</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+      <form method="post" action="{{ url_for('admin.product_variant_add', product_id=p.id) }}" class="flex gap-8 flex-wrap items-end">
+        <div class="field" style="flex:2;min-width:160px"><label class="field__label">Variant name</label><input class="input" name="variant_name" placeholder="e.g. Box of 200" required /></div>
+        <div class="field" style="flex:1;min-width:110px"><label class="field__label">SKU suffix</label><input class="input" name="variant_sku" placeholder="-200" /></div>
+        <div class="field" style="flex:1;min-width:100px"><label class="field__label">Price Δ</label><input class="input" name="variant_price" placeholder="0.00" /></div>
+        <div class="field" style="flex:1;min-width:90px"><label class="field__label">Stock</label><input class="input" name="variant_stock" placeholder="0" /></div>
+        <button type="submit" class="btn btn--primary">{{ icon('plus') }} Add</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  {# Sticky action bar #}
+  <div class="actionbar">
+    <div>
+      {% if editing %}<button type="button" class="btn btn--danger" data-modal-open="deleteProduct">{{ icon('trash') }} Archive</button>{% endif %}
+    </div>
+    <div class="flex gap-10">
+      <a href="{{ url_for('admin.products') }}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" form="productForm" class="btn btn--primary">{{ icon('save') }} Save Product</button>
+    </div>
+  </div>
+
+  {# Archive confirmation modal #}
+  {% if editing %}
+  <div class="modal" id="deleteProduct">
+    <div class="modal__body">
+      <div class="modal__icon tone-red">{{ icon('archive') }}</div>
+      <div class="modal__title">Archive this product?</div>
+      <p class="modal__text">“{{ p.get('name','This product') }}” will be hidden from the storefront. You can restore it later.</p>
+    </div>
+    <div class="modal__foot">
+      <button type="button" class="btn btn--ghost" data-modal-close>Cancel</button>
+      <form method="post" action="{{ url_for('admin.product_archive', product_id=p.id) }}">
+        <button type="submit" class="btn btn--danger">{{ icon('archive') }} Archive product</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

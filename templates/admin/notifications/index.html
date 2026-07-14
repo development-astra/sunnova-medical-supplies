@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs %}
+
+{% block content %}
+  {{ breadcrumbs([
+    {'label': 'Dashboard', 'url': url_for('admin.dashboard')},
+    {'label': 'Notifications'}
+  ]) }}
+
+  {% call page_header('Notifications', 'What needs your attention right now') %}
+    <button class="btn btn--ghost">{{ icon('check') }} Mark all read</button>
+  {% endcall %}
+
+  <p class="text-soft text-sm mb-16">
+    These alerts are derived live from your current orders, inventory, quotes, account applications,
+    payments and delivery state — no configuration required.
+  </p>
+
+  {% if notifications %}
+    <div class="card">
+      <div class="card__body">
+        <div class="feed">
+          {% for n in notifications %}
+            <div class="feed__item">
+              <div class="feed__icon tone-{{ n.tone }}">{{ icon(n.icon) }}</div>
+              <div class="flex-1">
+                <div class="feed__text">
+                  <strong>{{ n.title }}</strong>
+                  <div class="text-soft">{{ n.text }}</div>
+                </div>
+              </div>
+              <a href="{{ n.url }}" class="btn btn--subtle btn--sm">View {{ icon('chevron-right') }}</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card__body">
+        <div class="empty">
+          <div class="empty__icon">{{ icon('check-circle') }}</div>
+          <div class="empty__title">You're all caught up</div>
+          <p class="text-soft">No orders, inventory, quotes, applications, payments or deliveries need attention right now.</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

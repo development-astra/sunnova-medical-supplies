@@ -1,0 +1,203 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, badge, thumb, row_menu %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Categories'}]) }}
+
+  {% call page_header('Categories', categories|length ~ ' categories') %}
+    <button class="btn btn--primary" data-drawer-open="categoryDrawer" data-cat-add>{{ icon('plus') }} Add Category</button>
+  {% endcall %}
+
+  {# Filter bar — GET form #}
+  <form method="get" class="filterbar">
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search categories…" aria-label="Search categories" />
+    </div>
+    <select class="select select--sm" name="status" onchange="this.form.submit()" aria-label="Filter by status">
+      <option value="">All statuses</option>
+      {% for s in ['Published','Draft','Archived'] %}<option value="{{ s }}"{% if filters.get('status')==s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="featured" onchange="this.form.submit()" aria-label="Filter by featured">
+      <option value="">All categories</option>
+      <option value="1"{% if filters.get('featured')=='1' %} selected{% endif %}>Featured only</option>
+      <option value="0"{% if filters.get('featured')=='0' %} selected{% endif %}>Not featured</option>
+    </select>
+    <div class="filterbar__spacer"></div>
+    <button type="submit" class="btn btn--subtle btn--sm">{{ icon('filter') }} Apply</button>
+    {% if filters %}<a class="btn btn--ghost btn--sm" href="{{ url_for('admin.categories') }}">Clear</a>{% endif %}
+  </form>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Parent</th>
+            <th class="table__num">Products</th>
+            <th>Featured</th>
+            <th class="table__num">Sort order</th>
+            <th>Status</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in categories %}
+            {% set editattrs %}data-id="{{ c.id }}" data-name="{{ c.name }}" data-slug="{{ c.slug }}" data-parent="{{ c.parent or '' }}" data-description="{{ c.description }}" data-seo-title="{{ c.seo_title or '' }}" data-seo-desc="{{ c.seo_description or '' }}" data-featured="{{ '1' if c.featured else '' }}" data-sort="{{ c.sort }}"{% endset %}
+            <tr>
+              <td>
+                <div class="cell-product">
+                  {% if c.image_url %}<img src="{{ c.image_url }}" alt="" style="width:38px;height:38px;border-radius:9px;object-fit:cover" />{% else %}{{ thumb('brand', 'tag') }}{% endif %}
+                  <div>
+                    <a href="#" class="cell-name link" data-drawer-open="categoryDrawer" data-cat-edit {{ editattrs }}>{{ c.name }}</a>
+                    <div class="cell-sub">/{{ c.slug }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="nowrap text-soft">{{ c.parent or '—' }}</td>
+              <td class="table__num num">{{ c.products }}</td>
+              <td>
+                {% if c.featured %}{{ badge('Featured', 'brand') }}{% else %}<span class="text-mute">—</span>{% endif %}
+              </td>
+              <td class="table__num num">{{ c.sort }}</td>
+              <td>{{ status_pill(c.status) }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <button class="menu__item" data-drawer-open="categoryDrawer" data-cat-edit {{ editattrs }}>{{ icon('edit') }} Edit</button>
+                  <button class="menu__item" data-drawer-open="categoryDrawer" data-cat-add data-parent="{{ c.name }}">{{ icon('plus') }} Add subcategory</button>
+                  <div class="menu__divider"></div>
+                  <form method="post" action="{{ url_for('admin.category_archive', category_id=c.id) }}">
+                    <button type="submit" class="menu__item menu__item--danger">{{ icon('archive') }} {{ 'Restore' if c.status == 'Archived' else 'Archive' }}</button>
+                  </form>
+                  <form method="post" action="{{ url_for('admin.category_delete', category_id=c.id) }}" onsubmit="return confirm('Delete “{{ c.name }}” permanently? This cannot be undone.');">
+                    <button type="submit" class="menu__item menu__item--danger">{{ icon('trash') }} Delete</button>
+                  </form>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="7"><div class="empty"><div class="empty__icon">{{ icon('tag') }}</div><div class="empty__title">No categories match these filters</div></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      <div class="pagination__info">Showing {{ categories|length }} categor{{ 'y' if categories|length == 1 else 'ies' }}</div>
+    </div>
+  </div>
+
+  {# ---------------------------------------------------------------
+     Add / edit category drawer. Opened via data-drawer-open="categoryDrawer".
+     The Edit buttons carry data-* attributes; a script below prefills the form.
+     --------------------------------------------------------------- #}
+  <div class="drawer" id="categoryDrawer" aria-labelledby="categoryDrawerTitle">
+    <div class="drawer__head">
+      <h2 id="categoryDrawerTitle" class="section-title" style="margin:0">Add Category</h2>
+      <button class="drawer__close" data-drawer-close aria-label="Close">{{ icon('x') }}</button>
+    </div>
+
+    <div class="drawer__body">
+      <form class="form-grid" id="categoryForm" method="post" action="{{ url_for('admin.categories') }}" enctype="multipart/form-data">
+        <input type="hidden" name="category_id" value="" />
+        <div class="field">
+          <label class="field__label" for="catName">Category name <span class="req">*</span></label>
+          <input class="input" id="catName" name="name" type="text" placeholder="e.g. Mobility Aids" required />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="catSlug">Slug</label>
+          <input class="input" id="catSlug" name="slug" type="text" placeholder="mobility-aids" />
+          <span class="field__hint">Used in the storefront URL. Leave blank to auto-generate from the name.</span>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="catParent">Parent category</label>
+          <select class="input" id="catParent" name="parent">
+            <option value="">None (top level)</option>
+            {% for c in all_categories %}<option value="{{ c.name }}">{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="catDesc">Description</label>
+          <textarea class="textarea" id="catDesc" name="description" placeholder="Short summary shown on the category page…"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="catImage">Category image</label>
+          <label class="dropzone" style="cursor:pointer;display:block">
+            <input type="file" id="catImage" name="image" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+            <div class="dropzone__icon">{{ icon('image') }}</div>
+            <div class="dropzone__title">Drop an image or click to upload</div>
+            <div class="dropzone__hint">PNG or JPG, up to 5MB. Recommended 800×800.</div>
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="catSeoTitle">SEO title</label>
+          <input class="input" id="catSeoTitle" name="seo_title" type="text" placeholder="Meta title for search engines" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="catSeoDesc">SEO description</label>
+          <textarea class="textarea" id="catSeoDesc" name="seo_description" placeholder="Meta description shown in search results…"></textarea>
+        </div>
+
+        <div class="field__row">
+          <div class="field">
+            <label class="field__label">Featured</label>
+            <label class="switch">
+              <input type="checkbox" name="featured" />
+              <span class="switch__track"></span>
+              <span class="switch__label">Show in featured categories</span>
+            </label>
+          </div>
+          <div class="field">
+            <label class="field__label" for="catSort">Sort order</label>
+            <input class="input" id="catSort" name="sort" type="number" value="0" min="0" />
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="drawer__foot">
+      <button class="btn btn--subtle" data-drawer-close>Cancel</button>
+      <button class="btn btn--primary" type="submit" form="categoryForm">{{ icon('save') }} Save Category</button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  (function () {
+    var form = document.getElementById('categoryForm');
+    var title = document.getElementById('categoryDrawerTitle');
+    if (!form) return;
+    document.addEventListener('click', function (e) {
+      var add = e.target.closest('[data-cat-add]');
+      if (add) {
+        form.reset();
+        form.category_id.value = '';
+        form.parent.value = add.dataset.parent || '';
+        title.textContent = add.dataset.parent ? 'Add Subcategory' : 'Add Category';
+        return;
+      }
+      var ed = e.target.closest('[data-cat-edit]');
+      if (!ed) return;
+      form.category_id.value = ed.dataset.id || '';
+      form.name.value = ed.dataset.name || '';
+      form.slug.value = ed.dataset.slug || '';
+      form.parent.value = ed.dataset.parent || '';
+      form.description.value = ed.dataset.description || '';
+      form.seo_title.value = ed.dataset.seoTitle || '';
+      form.seo_description.value = ed.dataset.seoDesc || '';
+      form.featured.checked = ed.dataset.featured === '1';
+      form.sort.value = ed.dataset.sort || '0';
+      title.textContent = 'Edit Category';
+    });
+  })();
+</script>
+{% endblock %}

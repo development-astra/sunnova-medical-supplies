@@ -1,0 +1,123 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, row_menu, pagination, tab_link %}
+
+{% block content %}
+  {{ breadcrumbs([{'label':'Dashboard','url':url_for('admin.dashboard')}, {'label':'Orders'}]) }}
+
+  {% call page_header('Orders', orders|length ~ ' orders') %}
+    <button class="btn btn--ghost">{{ icon('download') }} Export</button>
+    <button class="btn btn--primary">{{ icon('plus') }} Create Order</button>
+  {% endcall %}
+
+  {# Status segmented control — real links that filter server-side #}
+  {% set cur_status = filters.get('status', '') %}
+  <div class="segmented mb-16">
+    <a class="segmented__btn{% if not cur_status %} is-active{% endif %}" href="{{ tab_link('status','') }}">All <span class="count">{{ counts.all }}</span></a>
+    {% for s in order_statuses %}
+      <a class="segmented__btn{% if cur_status == s %} is-active{% endif %}" href="{{ tab_link('status',s) }}">{{ s }} <span class="count">{{ counts[s] }}</span></a>
+    {% endfor %}
+  </div>
+
+  {# Filter bar — a GET form; selects auto-submit on change #}
+  <form method="get" class="filterbar">
+    {% if cur_status %}<input type="hidden" name="status" value="{{ cur_status }}" />{% endif %}
+    <div class="filterbar__search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ filters.get('q','') }}" placeholder="Search order # or customer…" aria-label="Search orders" />
+    </div>
+    <select class="select select--sm" name="payment" onchange="this.form.submit()">
+      <option value="">All payments</option>
+      {% for p in payment_statuses %}<option value="{{ p }}"{% if filters.get('payment')==p %} selected{% endif %}>{{ p }}</option>{% endfor %}
+    </select>
+    <select class="select select--sm" name="date" onchange="this.form.submit()">
+      <option value="">Any date</option>
+      <option value="today"{% if filters.get('date')=='today' %} selected{% endif %}>Today</option>
+      <option value="7"{% if filters.get('date')=='7' %} selected{% endif %}>Last 7 days</option>
+      <option value="30"{% if filters.get('date')=='30' %} selected{% endif %}>Last 30 days</option>
+    </select>
+    <select class="select select--sm" name="delivery" onchange="this.form.submit()">
+      <option value="">All delivery</option>
+      {% for d in delivery_methods %}<option value="{{ d }}"{% if filters.get('delivery')==d %} selected{% endif %}>{{ d }}</option>{% endfor %}
+    </select>
+    <div class="filterbar__spacer"></div>
+    <button type="submit" class="btn btn--subtle btn--sm">{{ icon('filter') }} Apply</button>
+    {% if filters %}<a class="btn btn--ghost btn--sm" href="{{ url_for('admin.orders') }}">Clear</a>{% endif %}
+  </form>
+
+  <div class="card" data-table-group>
+    {# Bulk action bar (revealed when rows are checked) #}
+    <div class="bulkbar">
+      <span class="bulkbar__count">0 selected</span>
+      <div class="bulkbar__actions">
+        <button class="btn btn--subtle btn--sm">{{ icon('refresh') }} Update status</button>
+        <button class="btn btn--subtle btn--sm">{{ icon('printer') }} Print</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <label class="checkbox"><input type="checkbox" data-select-all /><span class="checkbox__box">{{ icon('check') }}</span></label>
+            </th>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th class="table__num">Items</th>
+            <th class="table__num">Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Delivery</th>
+            <th class="table__actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+            <tr>
+              <td><label class="checkbox"><input type="checkbox" data-row-check /><span class="checkbox__box">{{ icon('check') }}</span></label></td>
+              <td><a href="{{ url_for('admin.order_detail', order_id=o.id) }}" class="link fw-600 nowrap">{{ o.id }}</a></td>
+              <td>
+                <div class="cell-name">{{ o.customer }}</div>
+                <div class="cell-sub">{{ o.business }}</div>
+              </td>
+              <td class="nowrap text-mute text-sm">{{ o.date }}</td>
+              <td class="table__num num">{{ o.items }}</td>
+              <td class="table__num num nowrap fw-600">${{ '%.2f'|format(o.total) }}</td>
+              <td>{{ status_pill(o.payment) }}</td>
+              <td>{{ status_pill(o.status) }}</td>
+              <td class="nowrap">{{ o.delivery }}</td>
+              <td class="table__actions">
+                {% call row_menu() %}
+                  <a class="menu__item" href="{{ url_for('admin.order_detail', order_id=o.id) }}">{{ icon('eye') }} View</a>
+                  <a class="menu__item" href="{{ url_for('admin.order_print', order_id=o.id, doc='invoice') }}" target="_blank" rel="noopener">{{ icon('printer') }} Print invoice</a>
+                  <a class="menu__item" href="{{ url_for('admin.order_print', order_id=o.id, doc='packing-slip') }}" target="_blank" rel="noopener">{{ icon('file-text') }} Print packing slip</a>
+                  <form method="post" action="{{ url_for('admin.order_email', order_id=o.id) }}">
+                    <button type="submit" class="menu__item w-full">{{ icon('send') }} Send update</button>
+                  </form>
+                  <div class="menu__divider"></div>
+                  <form method="post" action="{{ url_for('admin.order_status', order_id=o.id) }}" onsubmit="return confirm('Cancel order {{ o.id }}? The customer will be emailed.');">
+                    <input type="hidden" name="status" value="Cancelled" />
+                    <button type="submit" class="menu__item menu__item--danger w-full">{{ icon('x-circle') }} Cancel order</button>
+                  </form>
+                {% endcall %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="10">
+              <div class="empty">
+                <div class="empty__icon">{{ icon('cart') }}</div>
+                <div class="empty__title">No orders match these filters</div>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card__foot">
+      {{ pagination(pg) }}
+    </div>
+  </div>
+{% endblock %}

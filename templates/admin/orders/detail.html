@@ -1,0 +1,168 @@
+{% extends 'admin/base.html' %}
+{% from 'admin/_icons.html' import icon %}
+{% from 'admin/_macros.html' import page_header, breadcrumbs, status_pill, info_row %}
+
+{% block content %}
+  {{ breadcrumbs([
+      {'label':'Dashboard','url':url_for('admin.dashboard')},
+      {'label':'Orders','url':url_for('admin.orders')},
+      {'label':'Order ' ~ order.id}
+  ]) }}
+
+  <div class="page-head">
+    <div>
+      <div class="flex items-center gap-12">
+        <h1 class="page-head__title">Order {{ order.id }}</h1>
+        {{ status_pill(order.status) }}
+        {{ status_pill(order.payment) }}
+      </div>
+      <p class="page-head__sub">Placed {{ order.date }} · {{ order.delivery }}</p>
+    </div>
+    <div class="page-head__actions">
+      <a class="btn btn--ghost" href="{{ url_for('admin.order_print', order_id=order.id, doc='packing-slip') }}" target="_blank">{{ icon('printer') }} Packing slip</a>
+      <a class="btn btn--ghost" href="{{ url_for('admin.order_print', order_id=order.id, doc='invoice') }}" target="_blank">{{ icon('file-text') }} Invoice</a>
+      <form method="post" action="{{ url_for('admin.order_email', order_id=order.id) }}">
+        <button type="submit" class="btn btn--primary">{{ icon('send') }} Send update</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="grid grid-main-side">
+    {# ---------- Main column ---------- #}
+    <div class="flex-col gap-20">
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">Order items</div>
+          <span class="tag">{{ order.lines|length }} products · {{ order.lines|sum(attribute='qty') }} units</span>
+        </div>
+        <div class="card__body card__body--flush">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Product</th><th class="table__num">Qty</th><th class="table__num">Price</th><th class="table__num">Subtotal</th></tr>
+              </thead>
+              <tbody>
+                {% for line in order.lines %}
+                  <tr>
+                    <td><div class="cell-name">{{ line.name }}</div><div class="cell-sub">{{ line.sku }}</div></td>
+                    <td class="table__num num">{{ line.qty }}</td>
+                    <td class="table__num num">${{ '%.2f'|format(line.price) }}</td>
+                    <td class="table__num num fw-600">${{ '%.2f'|format(line.subtotal) }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card__foot" style="display:block">
+          <div style="max-width:320px;margin-left:auto">
+            <div class="flex justify-between text-sm mb-8"><span class="text-soft">Subtotal</span><span class="num">${{ '%.2f'|format(order.subtotal) }}</span></div>
+            <div class="flex justify-between text-sm mb-8"><span class="text-soft">Tax</span><span class="num">${{ '%.2f'|format(order.tax) }}</span></div>
+            <div class="flex justify-between text-sm mb-8"><span class="text-soft">Delivery fee</span><span class="num">${{ '%.2f'|format(order.delivery_fee) }}</span></div>
+            <div class="flex justify-between text-sm mb-8"><span class="text-soft">Discount</span><span class="num text-green">${{ '%.2f'|format(order.discount) }}</span></div>
+            <hr class="divider" />
+            <div class="flex justify-between"><span class="fw-700">Total</span><span class="fw-700 num text-lg">${{ '%.2f'|format(order.total) }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card__head"><div class="card__title">Customer note</div></div>
+          <div class="card__body"><p class="text-sm text-soft" style="margin:0">{{ order.notes }}</p></div>
+        </div>
+        <div class="card">
+          <div class="card__head"><div class="card__title">Internal note</div></div>
+          <div class="card__body">
+            <form method="post" action="{{ url_for('admin.order_note', order_id=order.id) }}" class="flex-col gap-8">
+              <textarea class="textarea" name="internal_notes" rows="3" placeholder="Notes visible to staff only…">{{ order.internal_notes }}</textarea>
+              <button type="submit" class="btn btn--subtle btn--sm" style="align-self:flex-start">{{ icon('save') }} Save note</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Order timeline</div></div>
+        <div class="card__body">
+          <div class="timeline">
+            {% for t in order.timeline %}
+              <div class="timeline__item timeline__item--{{ t.state }}">
+                <span class="timeline__dot">{% if t.state == 'done' %}{{ icon('check') }}{% endif %}</span>
+                <div class="timeline__label">{{ t.label }}</div>
+                <div class="timeline__meta">{{ t.time }} · {{ t.who }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ---------- Side column ---------- #}
+    <div class="flex-col gap-20">
+      <div class="card">
+        <div class="card__head"><div class="card__title">Update status</div></div>
+        <div class="card__body flex-col gap-12">
+          <form method="post" action="{{ url_for('admin.order_status', order_id=order.id) }}" class="flex-col gap-12">
+            <select class="input" name="status">
+              {% for s in order_statuses %}<option {% if s == order.status %}selected{% endif %}>{{ s }}</option>{% endfor %}
+            </select>
+            <button type="submit" class="btn btn--primary btn--block">{{ icon('check') }} Update order</button>
+          </form>
+          <hr class="divider" />
+          <form method="post" action="{{ url_for('admin.order_pay', order_id=order.id) }}"><button type="submit" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('dollar') }} Mark as paid</button></form>
+          <form method="post" action="{{ url_for('admin.order_status', order_id=order.id) }}"><input type="hidden" name="status" value="Processing" /><button type="submit" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('box') }} Mark processing</button></form>
+          <form method="post" action="{{ url_for('admin.order_status', order_id=order.id) }}"><input type="hidden" name="status" value="Out for Delivery" /><button type="submit" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('truck') }} Out for delivery</button></form>
+          <form method="post" action="{{ url_for('admin.order_status', order_id=order.id) }}"><input type="hidden" name="status" value="Delivered" /><button type="submit" class="btn btn--ghost btn--block" style="justify-content:flex-start">{{ icon('check-circle') }} Mark delivered</button></form>
+          <button class="btn btn--danger btn--block" style="justify-content:flex-start" data-modal-open="cancelOrder">{{ icon('x-circle') }} Cancel order</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">Customer</div>
+          {% if order.customer_id %}<a href="{{ url_for('admin.customer_detail', customer_id=order.customer_id) }}" class="btn btn--subtle btn--sm">View</a>{% endif %}
+        </div>
+        <div class="card__body">
+          <div class="flex items-center gap-12 mb-16">
+            <span class="avatar avatar--lg">{{ order.customer.name.split(' ')|map('first')|join|upper }}</span>
+            <div>
+              <div class="fw-600 text-ink">{{ order.customer.name }}</div>
+              <div class="text-sm text-mute">{{ order.customer.business }}</div>
+            </div>
+          </div>
+          {{ info_row('Type', order.customer.type) }}
+          {{ info_row('Email', order.customer.email) }}
+          {{ info_row('Phone', order.customer.phone) }}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><div class="card__title">Delivery</div></div>
+        <div class="card__body">
+          <div class="mb-12">{{ status_pill(order.delivery_status) }}</div>
+          <div class="flex gap-10 text-sm">{{ icon('map-pin', 'text-mute') }}<span class="text-soft">{{ order.delivery_address }}</span></div>
+          <hr class="divider" />
+          <div class="section-title">Billing address</div>
+          <div class="flex gap-10 text-sm">{{ icon('credit-card', 'text-mute') }}<span class="text-soft">{{ order.billing_address }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Cancel confirmation modal #}
+  <div class="modal" id="cancelOrder">
+    <div class="modal__body">
+      <div class="modal__icon tone-red">{{ icon('x-circle') }}</div>
+      <div class="modal__title">Cancel order {{ order.id }}?</div>
+      <p class="modal__text">The customer will be notified and any authorized payment will be released. This action is logged in the audit trail.</p>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" data-modal-close>Keep order</button>
+      <form method="post" action="{{ url_for('admin.order_status', order_id=order.id) }}">
+        <input type="hidden" name="status" value="Cancelled" />
+        <button type="submit" class="btn btn--danger">{{ icon('x-circle') }} Cancel order</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
